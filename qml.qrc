@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>src/modules/Menus.qml</file>
+    </qresource>
+    <qresource prefix="/modules">
+        <file alias="Menus.qml">src/modules/Menus.qml</file>
+    </qresource>
+</RCC>

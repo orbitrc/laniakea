@@ -1,0 +1,2 @@
+module LaniakeaShell
+singleton Menus 0.1 Menus.qml
