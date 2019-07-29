@@ -29,7 +29,6 @@ class MenuBarMenuDelegate : public QQuickItem
     Q_PROPERTY(bool activated READ activated)
     Q_PROPERTY(int focusedItemIndex READ focusedItemIndex WRITE setFocusedItemIndex NOTIFY focusedItemIndexChanged)
     Q_PROPERTY(QObject* menuBar READ menuBar WRITE setMenuBar)
-//    Q_PROPERTY(int width READ width WRITE setWidth NOTIFY hourChanged)
 
     MenuBarMenuActivated activated_menu;
 private:

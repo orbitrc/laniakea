@@ -79,7 +79,6 @@ QtQuickWindow.Window {
     }
     onClicked: {
       Shell.openMenu(root.testMenu);
-//      Shell.openMenu();
     }
   }
 
