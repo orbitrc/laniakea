@@ -34,6 +34,7 @@ bool MenuBarMenuDelegate::activated() const
     return this->activated_menu.isVisible();
 }
 
+
 int MenuBarMenuDelegate::focusedItemIndex() const
 {
     return this->m_focused_item_index;
@@ -45,6 +46,7 @@ void MenuBarMenuDelegate::setFocusedItemIndex(int idx)
     emit this->focusedItemIndexChanged();
 }
 
+
 QObject* MenuBarMenuDelegate::menuBar() const
 {
     return this->m_menu_bar;
@@ -55,6 +57,10 @@ void MenuBarMenuDelegate::setMenuBar(QObject *menuBar)
     this->m_menu_bar = menuBar;
 }
 
+
+//======================
+// Events
+//======================
 void MenuBarMenuDelegate::mousePressEvent(QMouseEvent *event)
 {
     this->activated_menu.popup(QPoint(0, 0));

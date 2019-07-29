@@ -47,7 +47,7 @@ QtQuickWindow.Window {
       Repeater {
         id: menuItemRepeater
         model: 0
-        Rectangle {
+        delegate: Rectangle {
           anchors.top: parent.top
           anchors.bottom: parent.bottom
           width: text.implicitWidth
@@ -61,6 +61,14 @@ QtQuickWindow.Window {
             font.pixelSize: 14 * DesktopEnvironment.pixelsPerDp
           }
         }
+        resources: [
+          Connections {
+            target: Shell
+            onMenuBarMenuChanged: {
+              menuItemRepeater.model = Shell.menuBarMenu.items.length;
+            }
+          }
+        ]
       }
     } // Row
     Component.onDestruction: {
@@ -109,13 +117,6 @@ QtQuickWindow.Window {
       }
     }
     onClicked: {
-    }
-  }
-
-  Connections {
-    target: Shell
-    onMenuBarMenuChanged: {
-      menuItemRepeater.model = Shell.menuBarMenu.items.length;
     }
   }
 
