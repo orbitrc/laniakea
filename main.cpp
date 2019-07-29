@@ -1,30 +1,49 @@
 #include <QApplication>
+#include <QQmlEngine>
+#include <QQuickWidget>
 #include <blusher/blusher-qt.h>
 
 #include <curl/curl.h>
 
 #include <stdint.h>
+#include <iostream>
 
 #include "global.h"
 #include "Shell.h"
+#include "BlusherWidget.h"
+#include "MenuBarMenuDelegate.h"
 #include "MenuBar.h"
 #include "RebusListener.h"
-#include <QMenu>
 #include "PopUpMenu.h"
 
 static QList<MenuBar*> menu_bar_list;
 
 namespace la {
     Shell *shell = nullptr;
+    QVariantMap *process = nullptr;
+    QQmlEngine *engine = nullptr;
 }
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    QQmlEngine engine;
 
+    engine.addImportPath(BLUSHER_PATH);
+    engine.addImportPath("qrc:/components");
+    engine.addImportPath("qrc:/modules");
+    la::engine = &engine;
+
+    // Connect to ReBus server and post new host.
     RebusListener rebus;
+    if (rebus.post_host() != 201) {
+        return 1;
+    }
+    QObject::connect(&app, &QApplication::aboutToQuit,
+                     &rebus, &RebusListener::delete_host, Qt::AutoConnection);
 
     QVariantMap process;
+    la::process = &process;
     QVariantMap process_env;
     process_env.insert("BLUSHER_PATH", BLUSHER_PATH);
     process_env.insert("BLUSHER_DE_MODULE_PATH", "");
@@ -36,24 +55,38 @@ int main(int argc, char *argv[])
     process.insert("env", process_env);
     process.insert("app", QVariant::fromValue(&app));
 
-    qmlRegisterType<la::Shell>("Laniakea", 0, 1, "LaniakeaShell");
-    qmlRegisterType<MenuBar>("LaniakeaShell", 0, 1, "MenuBar");
 
     la::Shell shell;
     la::shell = &shell;
+
     shell.show();
+
+    engine.rootContext()->setContextProperty("Process", process);
+    engine.rootContext()->setContextProperty("Shell", QVariant::fromValue(&shell));
+
+    BlusherWidget w(la::engine);
+    w.setGeometry(0, 0, 0, 0);
+    w.setWindowFlag(Qt::FramelessWindowHint);
+
+    qmlRegisterType<MenuBarMenuDelegate>("LaniakeaShell", 0, 1, "MenuBarMenuDelegate");
+
 
     QList<QScreen*> screens = QGuiApplication::screens();
     for (int32_t i = 0; i < screens.length(); ++i) {
-        MenuBar *window = new MenuBar(process);
-        menu_bar_list.append(window);
-        window->moveToScreen(screens[i]);
+//        MenuBar *window = new MenuBar(process);
+//        menu_bar_list.append(window);
+//        window->moveToScreen(screens[i]);
 //        window->show();
     }
-    MenuBar test(process);
-//    test.setParent(&shell);
-    test.moveToScreen(QGuiApplication::screens()[0]);
-    test.show();
+
+//    QObject::connect(
+//        &app, &QObject::objectNameChanged,
+//        &app, [app](const QString& objectName) { app.onObjectNameChanged(objectName); },
+//        Qt::QueuedConnection
+//    );
+
+    w.setSource(QStringLiteral("qrc:/main.qml"));
+    w.show();
 
     return app.exec();
 }

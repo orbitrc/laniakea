@@ -5,8 +5,9 @@
 
 class MenuBar : public QQuickWidget
 {
+    Q_OBJECT
 public:
-    MenuBar(const QVariant& process);
+    MenuBar(QQuickWidget *parent = nullptr);
     void moveToScreen(const QScreen *screen);
 protected:
     bool event(QEvent *event) override;

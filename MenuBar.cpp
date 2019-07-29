@@ -11,13 +11,14 @@
 
 #include <iostream>
 
-MenuBar::MenuBar(const QVariant& process)
+MenuBar::MenuBar(QQuickWidget *parent)
+    : QQuickWidget(parent)
 {
     this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     this->setAttribute(Qt::WA_X11NetWmWindowTypeDock);
 
     // Set up Blusher.
-    this->engine()->rootContext()->setContextProperty("Process", process);
+//    this->engine()->rootContext()->setContextProperty("Process", process);
     this->engine()->addImportPath(BLUSHER_PATH);
 
     this->setResizeMode(QQuickWidget::SizeRootObjectToView);

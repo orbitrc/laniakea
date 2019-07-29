@@ -3,15 +3,29 @@
 
 #include <QMenu>
 
+#include "BlusherWidget.h"
+
 namespace la {
 
 
 class PopUpMenu : public QMenu
 {
+private:
+    BlusherWidget delegate;
 public:
-    explicit PopUpMenu(QWidget *parent = nullptr);
+    explicit PopUpMenu(QObject *menu);
+
+    QSize sizeHint() const override;
 signals:
     void triggered(QAction *action);
+
+    void focusItem(int64_t idx);
+
+public slots:
+    void onAboutToHide();
+
+protected:
+    virtual void leaveEvent(QEvent *) override;
 };
 
 } // namespace la
