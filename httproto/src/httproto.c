@@ -118,6 +118,9 @@ void httproto_protocol_parse(httproto_protocol *protocol, const char *data, size
     case HTTP_POST:
         protocol->method = HTTPROTO_POST;
         break;
+    case HTTP_PUT:
+        protocol->method = HTTPROTO_PUT;
+        break;
     case HTTP_DELETE:
         protocol->method = HTTPROTO_DELETE;
         break;

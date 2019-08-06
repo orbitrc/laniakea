@@ -1,5 +1,5 @@
-#ifndef REBUSLISTENER_H
-#define REBUSLISTENER_H
+#ifndef REBUS_LISTENER_H
+#define REBUS_LISTENER_H
 
 #include <QObject>
 #include <QLocalServer>
@@ -29,4 +29,34 @@ public slots:
     void onNewConnection();
 };
 
-#endif // REBUSLISTENER_H
+//===================
+// ReBus API
+//===================
+struct httproto_protocol;
+
+class Routes {
+public:
+    // [POST] /quit
+    static void quit(const httproto_protocol *request, QLocalSocket *connection);
+
+    // [PUT] /menu/application
+    // [GET] /menu/application
+    static void menuApplication(const httproto_protocol *request, QLocalSocket *connection);
+
+    // [PUT] /menu/menu-bar
+    // [GET] /menu/menu-bar
+    static void menuMenuBar(const httproto_protocol *request, QLocalSocket *connection);
+
+    // [PUT] /menu-bar/application-menu
+    //  argument: object
+    //  e.g. {
+    //    "title": string
+    //    "items": list
+    //  }
+    class MenuBar {
+    public:
+        static void applicationMenu(const httproto_protocol *request, QLocalSocket *connection);
+    };
+};
+
+#endif // REBUS_LISTENER_H

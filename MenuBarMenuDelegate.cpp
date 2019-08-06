@@ -4,6 +4,8 @@
 #include <QQuickWidget>
 #include <QQmlEngine>
 
+#include <kwindowsystem.h>
+
 #include "global.h"
 #include "BlusherWidget.h"
 
@@ -14,8 +16,11 @@
     "}" \
     "QMenu::item {" \
     "  border: 0px solid white;" \
-    "  height: 0;" \
+    "  height: 20px;" \
     "  background-color: transparent;" \
+    "}" \
+    "QMenu::item:selected {" \
+    "  background-color: red;" \
     "}"
 
 
@@ -23,6 +28,10 @@ MenuBarMenuDelegate::MenuBarMenuDelegate(QQuickItem *parent)
     : QQuickItem(parent)
 {
     this->setAcceptedMouseButtons(Qt::LeftButton);
+
+    // Connections
+    QObject::connect(this, &MenuBarMenuDelegate::systemMenuFocusedChanged,
+                     this, &MenuBarMenuDelegate::onSystemMenuFocusedChanged);
 }
 
 
@@ -31,7 +40,7 @@ MenuBarMenuDelegate::MenuBarMenuDelegate(QQuickItem *parent)
 //=================
 bool MenuBarMenuDelegate::activated() const
 {
-    return this->activated_menu.isVisible();
+    return this->m_activated;
 }
 
 
@@ -58,41 +67,75 @@ void MenuBarMenuDelegate::setMenuBar(QObject *menuBar)
 }
 
 
+bool MenuBarMenuDelegate::systemMenuFocused() const
+{
+    return this->system_menu_focused;
+}
+
+void MenuBarMenuDelegate::setSystemMenuFocused(bool val)
+{
+    if (this->system_menu_focused != val) {
+        this->system_menu_focused = val;
+        emit this->systemMenuFocusedChanged();
+    }
+    if (val == false) {
+        return;
+    }
+    if (this->app_menu_focused) {
+        this->app_menu_focused = false;
+        emit this->appMenuFocusedChanged();
+    }
+    if (this->m_focused_item_index != -1) {
+        this->m_focused_item_index = -1;
+        emit this->focusedItemIndexChanged();
+    }
+}
+
+
+bool MenuBarMenuDelegate::appMenuFocused() const
+{
+    return this->app_menu_focused;
+}
+
+void MenuBarMenuDelegate::setAppMenuFocused(bool val)
+{
+    if (this->app_menu_focused != val) {
+        this->app_menu_focused = val;
+        emit this->appMenuFocusedChanged();
+    }
+    if (val == false) {
+        return;
+    }
+    if (this->system_menu_focused) {
+        this->system_menu_focused = false;
+        emit this->systemMenuFocusedChanged();
+    }
+    if (this->m_focused_item_index != -1) {
+        this->m_focused_item_index = -1;
+        emit this->focusedItemIndexChanged();
+    }
+}
+
+
 //======================
 // Events
 //======================
 void MenuBarMenuDelegate::mousePressEvent(QMouseEvent *event)
 {
-    this->activated_menu.popup(QPoint(0, 0));
+//    la::shell->systemMenuDelegate()->popup(QPoint(0, 30));
+    this->m_activated = true;
+    emit this->aboutToActivate();
+//    KWindowSystem::setType(KWindowSystem::activeWindow(), NET::PopupMenu);
     QQuickItem::mousePressEvent(event);
 }
 
-
-
-
-
-//================================
-// MenuBarMenuActivated
-//================================
-MenuBarMenuActivated::MenuBarMenuActivated(QWidget *parent)
-    : QMenu(parent),
-      activated_pop_up(la::engine, nullptr),
-      system_menu(nullptr)
+//=====================
+// Slots
+//=====================
+void MenuBarMenuDelegate::onSystemMenuFocusedChanged()
 {
-    this->setWindowFlags(this->windowFlags() | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
-    this->setAttribute(Qt::WA_TranslucentBackground);
-    this->setStyleSheet(MENU_BAR_MENU_STYLE_SHEET);
-
-    activated_pop_up.setClearColor(Qt::transparent);
-    activated_pop_up.setAttribute(Qt::WA_TranslucentBackground);
-    activated_pop_up.setSource(QUrl("qrc:/components/LaniakeaShell/MenuBarMenuActivated.qml"));
-    QWidgetAction *wa = new QWidgetAction(&this->activated_pop_up);
-    wa->setDefaultWidget(&this->activated_pop_up);
-    this->addAction(wa);
-    this->addMenu(&this->system_menu);
-}
-
-void MenuBarMenuActivated::add_item(const char *title)
-{
-
+    if (this->system_menu_focused == true) {
+    } else {
+        qDebug("false");
+    }
 }

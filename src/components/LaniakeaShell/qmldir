@@ -1,2 +1,3 @@
 module LaniakeaShell
 MenuBar 0.1 MenuBar.qml
+MenuBarMenuItemDelegate 0.1 MenuBarMenuItemDelegate.qml

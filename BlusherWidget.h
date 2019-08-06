@@ -7,7 +7,6 @@
 class BlusherWidget : public QQuickWidget
 {
 public:
-    BlusherWidget(QQuickWidget *parent = nullptr);
     BlusherWidget(QQmlEngine *engine, QQuickWidget *parent = nullptr);
 };
 

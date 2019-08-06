@@ -7,6 +7,7 @@
 
 #include <stdint.h>
 #include <iostream>
+#include <stdio.h>
 
 #include "global.h"
 #include "Shell.h"
@@ -15,6 +16,7 @@
 #include "MenuBar.h"
 #include "RebusListener.h"
 #include "PopUpMenu.h"
+#include "PopUpMenuDelegate.h"
 
 static QList<MenuBar*> menu_bar_list;
 
@@ -55,13 +57,13 @@ int main(int argc, char *argv[])
     process.insert("env", process_env);
     process.insert("app", QVariant::fromValue(&app));
 
+    engine.rootContext()->setContextProperty("Process", process);
 
     la::Shell shell;
     la::shell = &shell;
 
     shell.show();
 
-    engine.rootContext()->setContextProperty("Process", process);
     engine.rootContext()->setContextProperty("Shell", QVariant::fromValue(&shell));
 
     BlusherWidget w(la::engine);
@@ -69,6 +71,7 @@ int main(int argc, char *argv[])
     w.setWindowFlag(Qt::FramelessWindowHint);
 
     qmlRegisterType<MenuBarMenuDelegate>("LaniakeaShell", 0, 1, "MenuBarMenuDelegate");
+    qmlRegisterType<la::PopUpMenuDelegate>("LaniakeaShell", 0, 1, "PopUpMenuDelegate");
 
 
     QList<QScreen*> screens = QGuiApplication::screens();

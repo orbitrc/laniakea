@@ -1,66 +1,244 @@
 #include "PopUpMenu.h"
 
-#include <QWidgetAction>
-#include <QWidget>
+// Unix
+#include <libgen.h>
+
 #include <QQuickWidget>
 #include <QQuickItem>
 #include <QQmlEngine>
+#include <QTimer>
+#include <QStylePainter>
+#include <QStyleOption>
+#include <QCommonStyle>
+
+#include "global.h"
+#include "PopUpMenuDelegate.h"
 
 #define POP_UP_MENU_STYLE_SHEET "QMenu {" \
-    "  border: 0px solid black;" \
-    "  background-color: #11ff0000;" \
-    "}" \
-    "QMenu::item {" \
-    "  margin: 0;" \
-    "  background-color: rgba(0, 255, 0, 0.5);" \
+    "  border: 0px solid white;" \
+    "  border-radius: 10px;" \
     "}"
 
 namespace la {
 
-PopUpMenu::PopUpMenu(QObject *menu)
-    : QMenu(nullptr)
+PopUpMenu::PopUpMenu(PopUpMenuDelegate *menu_delegate)
+    : QMenu(nullptr),
+      menu_delegate(menu_delegate),
+      m_menu(nullptr)
 {
     this->setAttribute(Qt::WA_TranslucentBackground);
+    QCommonStyle *cs = new QCommonStyle();
+    this->setStyle(cs);
     this->setStyleSheet(POP_UP_MENU_STYLE_SHEET);
 
-    this->delegate.setSource(QUrl("qrc:/components/LaniakeaShell/PopUpMenu.qml"));
-    this->delegate.rootObject()->setProperty("menu", QVariant::fromValue(menu));
+//    this->delegate.rootObject()->setProperty("menu", QVariant::fromValue(menu));
 
-    QWidgetAction *wa = new QWidgetAction(&this->delegate);
-    wa->setDefaultWidget(&this->delegate);
-    this->addAction(wa);
-
+    connect(this, &PopUpMenu::aboutToShow, this, &PopUpMenu::onAboutToShow);
     connect(this, &PopUpMenu::aboutToHide, this, &PopUpMenu::onAboutToHide);
+
+    connect(this, &PopUpMenu::focusItem, this, &PopUpMenu::onFocusItem);
+
+    connect(this, &PopUpMenu::hovered, this, &PopUpMenu::onActionHovered);
+    connect(this, &PopUpMenu::triggered, this, &PopUpMenu::onActionTriggered);
 }
 
 QSize PopUpMenu::sizeHint() const
 {
-    return QSize(this->delegate.width(), this->delegate.height());
+    QSize original_size = QMenu::sizeHint();
+    int width = original_size.width();
+    int height = original_size.height();
+    fprintf(stderr, "sizeHint: %dx%d\n", width, height);
+    return QSize(width, height);
 }
 
+void PopUpMenu::add_item_delegate(MenuItemDelegate *item)
+{
+    this->addAction(item);
+}
+
+
+QObject* PopUpMenu::menu() const
+{
+    return this->m_menu;
+}
+
+void PopUpMenu::setMenu(QObject *menu)
+{
+    this->m_menu = menu;
+    QVariant title_var = this->m_menu->property("title");
+    QVariant path_var = this->m_menu->property("path");
+    QQmlListReference items(this->m_menu, "items", engine);
+    for (int i = 0; i < items.count(); ++i) {
+        QObject *item = items.at(i);
+        MenuItemDelegate *del = new MenuItemDelegate(this);
+        del->set_index(i);
+        if (item->property("separator").toBool() != true) {
+            del->set_menu_item_title(item->property("title").toString());
+        } else {
+            del->set_menu_item_separator(true);
+        }
+        this->add_item_delegate(del);
+    }
+}
+
+void PopUpMenu::set_items(QVariantList items)
+{
+    for (int i = 0; i < items.length(); ++i) {
+        const QVariant& item = items.at(i);
+        MenuItemDelegate *del = new MenuItemDelegate(this);
+        del->set_menu_item(item);
+        this->add_item_delegate(del);
+    }
+}
+
+void PopUpMenu::set_path(const QString &path)
+{
+    this->m_path = path;
+}
+
+//================================
+// Non-member functions
+//================================
+const QVariantList PopUpMenu::filter_items(QVariantList items, QString path)
+{
+    QVariantList filtered;
+    QString resolved_menu_path = path;
+    char *resolved_item_path;
+
+    // Strip trailing '/' character.
+    if (resolved_menu_path != "/") {
+        resolved_menu_path.chop(1);
+    }
+
+    for (int i = 0; i < items.length(); ++i) {
+        QVariant item_path = items.at(i).toMap().value("path");
+        // Copy item path.
+        resolved_item_path = new char[item_path.toString().length()];
+        strncpy(resolved_item_path, item_path.toString().toLocal8Bit(),
+            item_path.toString().length());
+        resolved_item_path[item_path.toString().length()] = '\0';
+        // Get parent path.
+        dirname(resolved_item_path);
+        // Add if item is direct child of given path.
+        if (resolved_menu_path == resolved_item_path) {
+            filtered.push_back(items.at(i));
+        }
+        delete[] resolved_item_path;
+    }
+
+    return filtered;
+}
 
 //==================
 // Signals
 //==================
-void PopUpMenu::triggered(QAction *action)
-{
-    qDebug("triggered");
-}
+
 
 //==================
 // Signal handlers
 //==================
+void PopUpMenu::onAboutToShow()
+{
+}
+
 void PopUpMenu::onAboutToHide()
 {
-    qDebug("hide");
 }
+
+void PopUpMenu::onFocusItem(int idx)
+{
+//    fprintf(stderr, "Item %d is focused. %p\n", idx, this->activeAction());
+}
+
+void PopUpMenu::onActionHovered(QAction *action)
+{
+    fprintf(stderr, "action: %p, ", action);
+    fprintf(stderr, "activeAction: %p\n", this->activeAction());
+    if (action != this->activeAction()) {
+        QMenu::setActiveAction(action);
+    }
+
+    MenuItemDelegate *item_delegate = static_cast<MenuItemDelegate*>(action);
+    item_delegate->set_focused(true);
+
+    QList<QAction*> items = this->actions();
+    for (int i = 0; i < items.length(); ++i) {
+        if (items[i] == action) {
+            emit this->focusItem(i);
+        } else {
+            static_cast<MenuItemDelegate*>(items[i])->set_focused(false);
+        }
+    }
+}
+
+void PopUpMenu::onActionTriggered(QAction *action)
+{
+    int index = 0;
+    for (; index < this->actions().length(); ++index) {
+        if (action == this->actions().at(index)) {
+//            emit this->itemTriggered(index);
+            break;
+        }
+    }
+    const QVariantMap& item = this->menu_delegate->property("items").toList().at(index).toMap();
+    emit this->itemTriggered(item.value("path").toString());
+
+    if (!this->isHidden()) {
+        this->close();
+    }
+}
+
+// Connect to PopUpMenuDelegate::itemsChanged.
+void PopUpMenu::onItemsChanged()
+{
+    QVariantList items = PopUpMenu::filter_items(
+        this->menu_delegate->property("items").toList(),
+        this->m_path);
+}
+
 
 //==================
 // Event handlers
 //==================
-void PopUpMenu::leaveEvent(QEvent *)
+void PopUpMenu::paintEvent(QPaintEvent *)
 {
-    return;
+    QStylePainter style_painter(this);
+    QStyleOption option;
+    option.initFrom(this);
+    QPalette p;
+    option.palette = p;
+    style_painter.drawPrimitive(QStyle::PE_Widget, option);
+}
+
+void PopUpMenu::keyPressEvent(QKeyEvent *event)
+{
+    QList<QAction*> actions = this->actions();
+    QAction *action = this->activeAction();
+    int index = -1;
+    for (int i = 0; i < actions.length(); ++i) {
+        if (action == actions[i]) {
+            index = i;
+            break;
+        }
+    }
+
+    if (event->key() == Qt::Key_Up && index == 0) {
+        return;
+    }
+    if (event->key() == Qt::Key_Down && index == actions.length() - 1) {
+        return;
+    }
+    QMenu::keyPressEvent(event);
+}
+
+void PopUpMenu::leaveEvent(QEvent *event)
+{
+    QMenu::leaveEvent(event);
+}
+
+void PopUpMenu::mouseMoveEvent(QMouseEvent *event)
+{
+    QMenu::mouseMoveEvent(event);
 }
 
 } // namespace la

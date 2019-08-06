@@ -20,10 +20,25 @@ Shell::Shell(QWidget *parent)
     this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     this->setAttribute(Qt::WA_X11NetWmWindowTypeDock);
 
-    this->setGeometry(0, 0, 100, 100);
+    this->setGeometry(0, 0, 1, 1);
+
+    MenuItemDelegate *about_system = new MenuItemDelegate(nullptr);
+    MenuItemDelegate *shutdown = new MenuItemDelegate(nullptr);
+    about_system->set_menu_item_title("About Laniakea");
+    shutdown->set_menu_item_title("Shutdown");
+//    this->system_menu_delegate->add_item_delegate(about_system);
+//    this->system_menu_delegate->add_item_delegate(shutdown);
 
     // Properties
     this->m_menu_bar_menu = QJSValue::NullValue;
+
+    // Signals
+    KWindowSystem *kWindowSystem = KWindowSystem::self();
+    QObject::connect(kWindowSystem, &KWindowSystem::numberOfDesktopsChanged,
+                     this, [this](int) { emit this->numberOfDesktopsChanged(); });
+    QObject::connect(kWindowSystem, &KWindowSystem::currentDesktopChanged,
+                     this, [this](int) { emit this->currentDesktopChanged(); });
+    // Belows will connected in QML.
 }
 
 void Shell::show()
@@ -39,13 +54,13 @@ void Shell::openMenu(QObject *menu)
     QVariant menu_title = menu->property("title");
     QVariant menu_items = menu->property("items");
 
-    PopUpMenu *m = new PopUpMenu(menu);
-    m->addAction("please...");
-    m->popup(QPoint(50, 50));
-    PopUpMenu *subm = new PopUpMenu(menu);
-    m->addMenu(subm);
-    QVariant title = menu->property("title");
-    qDebug(title.toString().toLocal8Bit());
+//    PopUpMenu *m = new PopUpMenu(menu);
+//    m->addAction("please...");
+//    m->popup(QPoint(50, 50));
+//    PopUpMenu *subm = new PopUpMenu(menu);
+//    m->addMenu(subm);
+//    QVariant title = menu->property("title");
+//    qDebug(title.toString().toLocal8Bit());
 }
 
 void Shell::openRebusMenu(QVariantMap *menu)
@@ -65,11 +80,28 @@ void Shell::focusMenuItem(int64_t index)
     qDebug("focusMenuItem");
 }
 
+
 void Shell::quit()
 {
     qApp->quit();
 }
 
+
+//==================
+// Signal handlers
+//==================
+
+
+
+// Getters
+PopUpMenu* Shell::systemMenuDelegate() const
+{
+    return nullptr; //this->system_menu_delegate;
+}
+
+//=================
+// Event handlers
+//=================
 bool Shell::event(QEvent *event)
 {
     switch (event->type()) {
@@ -99,6 +131,16 @@ bool Shell::event(QEvent *event)
 //================
 // Properties
 //================
+QVariant Shell::systemMenu()
+{
+    return this->system_menu;
+}
+
+void Shell::setSystemMenu(QVariant menu)
+{
+    this->system_menu = menu;
+//    this->system_menu_delegate->setMenu(qvariant_cast<QObject*>(menu));
+}
 
 QJSValue& Shell::menuBarMenu()
 {
@@ -109,6 +151,16 @@ void Shell::setMenuBarMenu(QJSValue& menuBarMenu)
 {
     this->m_menu_bar_menu = menuBarMenu;
     emit this->menuBarMenuChanged();
+}
+
+int Shell::numberOfDesktops()
+{
+    return KWindowSystem::numberOfDesktops();
+}
+
+int Shell::currentDesktop()
+{
+    return KWindowSystem::currentDesktop();
 }
 
 } // namespace la

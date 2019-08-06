@@ -3,6 +3,9 @@
 
 #include <QVariantMap>
 #include <QQmlEngine>
+#include <QQuickWidget>
+
+#include "Shell.h"
 
 namespace la {
 

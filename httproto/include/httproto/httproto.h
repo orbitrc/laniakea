@@ -19,6 +19,7 @@ enum httproto_type {
 
 enum httproto_request_method {
     HTTPROTO_GET,
+    HTTPROTO_PUT,
     HTTPROTO_POST,
     HTTPROTO_DELETE,
 };

@@ -41,6 +41,7 @@ extern "C" {
     "\r\n"
 
 
+
 //=================
 // Helper classes.
 //=================
@@ -371,6 +372,12 @@ QVariantMap json_object_to_q_variant_map(json_object *obj)
     return qv;
 }
 
+
+void menu_item_triggered_callback()
+{
+
+}
+
 //====================
 // Routes
 //====================
@@ -402,9 +409,13 @@ static void routes(const httproto_protocol *request, QLocalSocket *connection)
         default:
             break;
         }
+    } else if (path == "/menu/application") {
+        Routes::menuApplication(request, connection);
     } else if (path == "/menu/menu-bar") {
         switch (request->method) {
         case HTTPROTO_GET:
+            QObject::connect(la::shell, &la::Shell::menuItemTriggered, menu_item_triggered_callback);
+
             connection->write("HTTP/1.1 200 OK\r\n"
                               "Content-Type: application/json\r\n"
                               "Conetnt-Length: 1\r\n"
@@ -432,26 +443,10 @@ static void routes(const httproto_protocol *request, QLocalSocket *connection)
         default:
             break;
         }
+    } else if (path == "/menu-bar/application-menu") {
+        Routes::MenuBar::applicationMenu(request, connection);
     } else if (path == "/quit") {
-        switch (request->method) {
-        case HTTPROTO_GET:
-            break;
-        case HTTPROTO_POST:
-            connection->write("HTTP/1.1 202 ");
-            connection->write(http_status_str(HTTP_STATUS_ACCEPTED));
-            connection->write("\r\n");
-            connection->write("Content-Type: application/json\r\n"
-                              "Content-Length: 0\r\n"
-                              "\r\n");
-            if (!connection->flush()) {
-                fprintf(stderr, "(slot) [RebusListener::onNewConnection] Failed to write to the connected socket.\n");
-            }
-            connection->close();
-            qApp->quit();
-            break;
-        default:
-            break;
-        }
+        Routes::quit(request, connection);
     } else {
 
     }
@@ -614,5 +609,99 @@ void RebusListener::onNewConnection()
     httproto_protocol_parse(request, received, received.length());
 
     routes(request, conn);
+
+//    httproto_protocol_free(request);
 }
 
+//========================
+// API handlers
+//========================
+void Routes::quit(const httproto_protocol *request, QLocalSocket *connection)
+{
+    switch (request->method) {
+    case HTTPROTO_POST:
+        connection->write("HTTP/1.1 202 ");
+        connection->write(http_status_str(HTTP_STATUS_ACCEPTED));
+        connection->write("\r\n");
+        connection->write("Content-Type: application/json\r\n"
+                          "Content-Length: 0\r\n"
+                          "\r\n");
+        if (!connection->flush()) {
+            fprintf(stderr, "(slot) [RebusListener::onNewConnection] Failed to write to the connected socket.\n");
+        }
+        connection->close();
+        qApp->quit();
+        break;
+    default:
+        connection->write(VOID_BAD_REQUEST_RESPONSE);
+        connection->flush();
+        connection->close();
+        break;
+    }
+}
+
+void Routes::menuApplication(const httproto_protocol *request, QLocalSocket *connection)
+{
+    switch (request->method) {
+    case HTTPROTO_PUT: {
+        QByteArray content = request->content;
+        content += "\0";
+        json_object *json_menu = json_tokener_parse(content);
+        if (json_menu != NULL) {
+            emit la::shell->registerApplicationMenu(content);
+            json_object_put(json_menu);
+
+            connection->write(VOID_OK_RESPONSE);
+        } else {
+            fprintf(stderr, "JSON parse error.\n");
+            connection->write(VOID_BAD_REQUEST_RESPONSE);
+        }
+
+        connection->flush();
+        connection->close();
+        break;
+    }
+    case HTTPROTO_GET:
+        break;
+    default:
+        connection->write(VOID_BAD_REQUEST_RESPONSE);
+        connection->flush();
+        connection->close();
+    }
+}
+
+void Routes::MenuBar::applicationMenu(const httproto_protocol *request, QLocalSocket *connection)
+{
+    switch (request->method) {
+    case HTTPROTO_PUT: {
+        QByteArray content = request->content;
+        content += "\0";
+        json_object *json_menu = json_tokener_parse(content);
+        if (json_menu != NULL) {
+            emit la::shell->applicationMenuRegisterRequested(content);
+            json_object_put(json_menu);
+
+            connection->write(VOID_OK_RESPONSE);
+        } else {
+            fprintf(stderr, "JSON parse error.\n");
+            connection->write(VOID_BAD_REQUEST_RESPONSE);
+        }
+
+        connection->flush();
+        connection->close();
+        break;
+    }
+    case HTTPROTO_GET:
+        break;
+    default:
+        connection->write("HTTP/1.1 405 ");
+        connection->write(http_status_str(HTTP_STATUS_METHOD_NOT_ALLOWED));
+        connection->write("\r\n");
+        connection->write("Content-Type: application/json\r\n"
+                          "Content-Length: 0\r\n"
+                          "Allow: PUT\r\n"
+                          "\r\n");
+        connection->flush();
+        connection->close();
+    }
+}

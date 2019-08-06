@@ -18,9 +18,10 @@ Item {
   height: 0
 
   MenuBar {
-    id: _test
+    id: menuBar
     visible: true
 
+    systemMenu: root.systemMenu
     clock: root.clock
   }
 
@@ -34,17 +35,40 @@ Item {
     }
   }
 
+  Component {
+    id: menuItem
+    MenuItem {
+      title: ''
+    }
+  }
+
   Connections {
     target: Shell
+    onRegisterApplicationMenu: {
+      let menuJsonObject = JSON.parse(menuJson);
+
+      menuBar.applicationMenu.addItem();
+//      menuBar.applicationMenu.addItem();
+    }
+
     onRegisterMenuBarMenu: {
       let menu = JSON.parse(menuJson);
       Shell.menuBarMenu = menu;
+    }
+
+    onApplicationMenuRegisterRequested: {
+      let menu = JSON.parse(menuJson);
+      menuBar.applicationMenu.title = menu.title;
+      menuBar.applicationMenu.items = menu.items;
     }
   }
 
   Component.onCompleted: {
     root.systemMenu = Menus.systemMenu;
+    Shell.systemMenu = Menus.systemMenu;
     root.clock = new Date();
+
+    print(DesktopEnvironment.app.name);
   }
 
   Component.onDestruction: {

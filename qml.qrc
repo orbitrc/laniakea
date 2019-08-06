@@ -5,8 +5,8 @@
     <qresource prefix="/components/LaniakeaShell">
         <file alias="MenuBar.qml">src/components/LaniakeaShell/MenuBar.qml</file>
         <file alias="qmldir">src/components/LaniakeaShell/qmldir</file>
-        <file>PopUpMenu.qml</file>
-        <file>MenuBarMenuActivated.qml</file>
+        <file>MenuItemDelegate.qml</file>
+        <file>MenuBarMenuItemDelegate.qml</file>
     </qresource>
     <qresource prefix="/modules/Laniakea">
         <file alias="Menus.qml">src/modules/Laniakea/Menus.qml</file>

@@ -14,7 +14,16 @@ QtQuickWindow.Window {
   height: 30
 
   color: "#181818"
-  property Menu systemMenu: null
+  property var systemMenu
+  property var applicationMenu: Menu {
+    title: 'Application'
+    type: Menu.MenuType.Submenu
+  }
+  property var menuBarMenu: Menu {
+    title: 'Menu Bar Menu'
+    type: Menu.MenuType.MenuBarMenu
+  }
+
   property list<Menu> menus
   property string clock: ''
   property Menu testMenu: Menu {
@@ -28,53 +37,89 @@ QtQuickWindow.Window {
     }
   }
 
-  MenuBarMenuDelegate {
-    id: menuBarMenuDelegate
 
-    menuBar: root
-    width: 100
-    anchors.top: parent.top
-    anchors.bottom: parent.bottom
-    Row {
-      anchors.fill: parent
-      Rectangle {
-        id: menuBarSystemMenu
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        width: 30 * DesktopEnvironment.pixelsPerDp
-        color: "grey"
-      }
-      Repeater {
-        id: menuItemRepeater
-        model: 0
-        delegate: Rectangle {
-          anchors.top: parent.top
-          anchors.bottom: parent.bottom
-          width: text.implicitWidth
-          color: "cyan"
-          Text {
-            id: text
-            text: Shell.menuBarMenu.items[index].title
-            anchors.verticalCenter: parent.verticalCenter
-            rightPadding: 7.0 * DesktopEnvironment.pixelsPerDp
-            leftPadding: 7.0 * DesktopEnvironment.pixelsPerDp
-            font.pixelSize: 14 * DesktopEnvironment.pixelsPerDp
+  Row {
+    anchors.fill: parent
+    // System menu
+    Rectangle {
+      id: menuBarSystemMenu
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      width: root.height
+      color: "grey"
+
+      PopUpMenuDelegate {
+        id: systemMenuDelegate
+        menu: root.systemMenu // still be used?
+
+        path: '/'
+        items: root.systemMenu.items
+        onItemTriggered: {
+          let item = root.menuGetItem(systemMenuDelegate.menu, path);
+          if (item !== null && item.action) {
+            item.action();
           }
         }
-        resources: [
-          Connections {
-            target: Shell
-            onMenuBarMenuChanged: {
-              menuItemRepeater.model = Shell.menuBarMenu.items.length;
-            }
-          }
-        ]
       }
-    } // Row
-    Component.onDestruction: {
-      print('menubarmenudelegate destruction');
+      MouseArea {
+        anchors.fill: parent
+        onClicked: {
+          systemMenuDelegate.show();
+        }
+      }
     }
-  }
+    // Application menu
+    MenuBarMenuItemDelegate {
+      id: menuBarItemApplicationMenu
+
+      title: root.applicationMenu.title
+      bold: true
+
+      visible: root.applicationMenu.items.length > 0
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+
+      PopUpMenuDelegate {
+        id: applicationMenuDelegate
+        menu: root.applicationMenu
+        path: '/'
+        items: root.applicationMenu.items
+      }
+
+      onTriggered: {
+        print('Application Menu Triggered!');
+        applicationMenuDelegate.show();
+      }
+    }
+
+    // Menu bar menu
+    Repeater {
+      id: menuItemRepeater
+      model: root.menuBarMenu.items.length
+      delegate: Rectangle {
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        width: text.implicitWidth
+        color: "cyan"
+        Text {
+          id: text
+          text: root.menuBarMenu.items[index].title
+          anchors.verticalCenter: parent.verticalCenter
+          rightPadding: 7.0 * DesktopEnvironment.pixelsPerDp
+          leftPadding: 7.0 * DesktopEnvironment.pixelsPerDp
+          font.pixelSize: 14 * DesktopEnvironment.pixelsPerDp
+        }
+      }
+      resources: [
+        Connections {
+          target: Shell
+          onMenuBarMenuChanged: {
+            menuItemRepeater.model = Shell.menuBarMenu.items.length;
+          }
+        }
+      ]
+    }
+  } // Row
 
   MouseArea {
     width: 32
@@ -86,13 +131,13 @@ QtQuickWindow.Window {
       color: "lightgreen"
     }
     onClicked: {
-      Shell.openMenu(root.testMenu);
+//      Shell.openMenu(root.testMenu);
     }
   }
 
   MouseArea {
     width: 32
-    x: 200
+    x: 300
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     Rectangle {
@@ -104,20 +149,50 @@ QtQuickWindow.Window {
     }
   }
 
-  MouseArea {
-    width: 100
-    anchors.right: parent.right
+  Row {
     anchors.top: parent.top
     anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    // Desktops
     Rectangle {
-      anchors.fill: parent
-      color: "cyan"
-      Label {
-        text: root.clock
+      width: 100
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      color: "blue"
+      Repeater {
+        model: Shell.numberOfDesktops
+        Rectangle {
+          x: index * this.width
+          anchors.top: parent.top
+          anchors.bottom: parent.bottom
+          width: (100 / Shell.numberOfDesktops)
+          color: (Shell.currentDesktop === index + 1) ? "white" : "red"
+          border.width: 1
+          Text {
+            text: index + 1
+          }
+        }
       }
     }
-    onClicked: {
+    // Clock
+    MouseArea {
+      width: 100
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      Rectangle {
+        anchors.fill: parent
+        color: "cyan"
+        Label {
+          text: root.clock
+        }
+      }
+      onClicked: {
+      }
     }
+  }
+
+  onMenuBarMenuChanged: {
+    print('onMenuBarMenuChanged: ' + root.menuBarMenu);
   }
 
   Component.onCompleted: {
@@ -125,5 +200,14 @@ QtQuickWindow.Window {
   }
   Component.onDestruction: {
     print('[MenuBar] destruction');
+  }
+
+  function menuGetItem(menu, path) {
+    for (let i = 0; i < menu.items.length; ++i) {
+      if (menu.items[i].path === path) {
+        return menu.items[i];
+      }
+    }
+    return null;
   }
 }

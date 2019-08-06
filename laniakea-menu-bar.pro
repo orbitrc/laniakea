@@ -1,6 +1,8 @@
 QT += quick quickwidgets KWindowSystem
 CONFIG += c++11
 
+BLUSHER_APP_NAME = "Laniakea Shell"
+
 VERSION = 0.1.0
 
 LIBS += -lcurl -ljson-c -lhttp_parser
@@ -22,7 +24,9 @@ SOURCES += \
         BlusherWidget.cpp \
         MenuBar.cpp \
         MenuBarMenuDelegate.cpp \
+        MenuItemDelegate.cpp \
         PopUpMenu.cpp \
+        PopUpMenuDelegate.cpp \
         RebusListener.cpp \
         Shell.cpp \
         httproto/src/httproto.c \
@@ -39,8 +43,8 @@ QML_IMPORT_PATH = \
 # Additional import path used to resolve QML modules just for Qt Quick Designer
 QML_DESIGNER_IMPORT_PATH =
 
+DEFINES += "BLUSHER_APP_NAME=\\\"Laniakea\\ Shell\\\""
 DEFINES += BLUSHER_APP_VERSION=\\\"$$VERSION\\\" \
-        BLUSHER_APP_NAME=\\\"Laniakea_Shell\\\" \
         BLUSHER_PATH=\\\"/usr/lib/blusher/qml\\\"
 
 # Default rules for deployment.
@@ -52,7 +56,9 @@ HEADERS += \
     BlusherWidget.h \
     MenuBar.h \
     MenuBarMenuDelegate.h \
+    MenuItemDelegate.h \
     PopUpMenu.h \
+    PopUpMenuDelegate.h \
     RebusListener.h \
     Shell.h \
     global.h \
