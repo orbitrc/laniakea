@@ -84,6 +84,10 @@ QtQuickWindow.Window {
         menu: root.applicationMenu
         path: '/'
         items: root.applicationMenu.items
+
+        onItemTriggered: {
+          Shell.applicationMenuItemTriggered(path);
+        }
       }
 
       onTriggered: {

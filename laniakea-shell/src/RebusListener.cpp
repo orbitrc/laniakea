@@ -451,7 +451,7 @@ static void routes(const httproto_protocol *request, QLocalSocket *connection)
 
     }
     if (connection->isOpen()) {
-        connection->close();
+//        connection->close();
     }
 }
 
@@ -691,8 +691,19 @@ void Routes::MenuBar::applicationMenu(const httproto_protocol *request, QLocalSo
         connection->close();
         break;
     }
-    case HTTPROTO_GET:
+    case HTTPROTO_GET: {
+        QObject::connect(la::shell, &la::Shell::applicationMenuItemTriggered,
+                         connection, [connection](QString path) {
+            connection->write("HTTP/1.1 200 OK\r\n"
+                              "Content-Type: application/json\r\n");
+            connection->write("Content-Length: " + QByteArray::number(path.length()) + "\r\n");
+            connection->write("\r\n");
+            connection->write(path.toLocal8Bit());
+            connection->flush();
+            connection->close();
+        });
         break;
+    }
     default:
         connection->write("HTTP/1.1 405 ");
         connection->write(http_status_str(HTTP_STATUS_METHOD_NOT_ALLOWED));

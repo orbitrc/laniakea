@@ -55,8 +55,8 @@ signals:
 
     void applicationMenuRegisterRequested(QString menuJson);
 
-    void applicationMenuItemTriggered(QList<int> path);
-    void menuBarMenuItemTriggered(QList<int> path);
+    void applicationMenuItemTriggered(QString path);
+    void menuBarMenuItemTriggered(QString path);
     void menuItemTriggered(QString path);
 
     //==========================

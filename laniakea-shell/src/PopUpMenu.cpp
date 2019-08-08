@@ -176,12 +176,13 @@ void PopUpMenu::onActionTriggered(QAction *action)
     int index = 0;
     for (; index < this->actions().length(); ++index) {
         if (action == this->actions().at(index)) {
-//            emit this->itemTriggered(index);
             break;
         }
     }
     const QVariantMap& item = this->menu_delegate->property("items").toList().at(index).toMap();
-    emit this->itemTriggered(item.value("path").toString());
+    const QString path = item.value("path").toString();
+    emit this->itemTriggered(path);
+//    emit la::shell->menuItemTriggered(path);
 
     if (!this->isHidden()) {
         this->close();

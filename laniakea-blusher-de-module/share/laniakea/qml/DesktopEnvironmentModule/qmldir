@@ -1,0 +1,3 @@
+module DesktopEnvironmentModule
+DesktopEnvironmentModule 0.1 DesktopEnvironmentModule.qml
+plugin laniakea-blusher-de-module

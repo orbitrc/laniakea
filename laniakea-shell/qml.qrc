@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="main.qml">src/qml/main.qml</file>
+        <file alias="MenuItemDelegate.qml">src/qml/MenuItemDelegate.qml</file>
+    </qresource>
+    <qresource prefix="/components/LaniakeaShell">
+        <file alias="MenuBar.qml">src/qml/components/LaniakeaShell/MenuBar.qml</file>
+        <file alias="MenuBarMenuItemDelegate">src/qml/components/LaniakeaShell/MenuBarMenuItemDelegate.qml</file>
+        <file alias="qmldir">src/qml/components/LaniakeaShell/qmldir</file>
+    </qresource>
+    <qresource prefix="/modules/Laniakea">
+        <file alias="Menus.qml">src/qml/modules/Laniakea/Menus.qml</file>
+        <file alias="qmldir">src/qml/modules/Laniakea/qmldir</file>
+    </qresource>
+</RCC>
