@@ -3,7 +3,7 @@ CONFIG += c++11
 
 VERSION = 0.1.0
 
-LIBS += -lcurl -ljson-c -lhttp_parser
+LIBS += -ludev -lcurl -ljson-c -lhttp_parser
 
 INCLUDEPATH += ./libraries/httproto/include
 
@@ -35,8 +35,8 @@ RESOURCES += qml.qrc
 # Used to resolve QML modules in Qt Creator code model.
 QML_IMPORT_PATH = \
         /usr/lib/blusher/qml \
-        ./src/components \
-        ./src/modules
+        ./src/qml/components \
+        ./src/qml/modules
 
 # Additional import path used to resolve QML modules just for Qt Quick Designer
 QML_DESIGNER_IMPORT_PATH =
@@ -61,3 +61,5 @@ HEADERS += \
     src/Shell.h \
     src/global.h \
     libraries/httproto/include/httproto/httproto.h
+
+DISTFILES +=

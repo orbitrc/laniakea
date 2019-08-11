@@ -1,0 +1,7 @@
+#!/bin/sh
+
+/bin/kwin_x11 &
+/usr/share/rebus/rebus-server &
+xterm
+
+# /bin/top

@@ -67,8 +67,6 @@ Item {
     root.systemMenu = Menus.systemMenu;
     Shell.systemMenu = Menus.systemMenu;
     root.clock = new Date();
-
-    print(DesktopEnvironment.app.name);
   }
 
   Component.onDestruction: {

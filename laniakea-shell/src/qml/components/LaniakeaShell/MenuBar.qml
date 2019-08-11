@@ -125,19 +125,6 @@ QtQuickWindow.Window {
     }
   } // Row
 
-  MouseArea {
-    width: 32
-    x: 150
-    anchors.top: parent.top
-    anchors.bottom: parent.bottom
-    Rectangle {
-      anchors.fill: parent
-      color: "lightgreen"
-    }
-    onClicked: {
-//      Shell.openMenu(root.testMenu);
-    }
-  }
 
   MouseArea {
     width: 32
@@ -157,6 +144,14 @@ QtQuickWindow.Window {
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.right: parent.right
+    // Power
+    Rectangle {
+      width: 30
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      color: Shell.charging ? "green" : "red"
+    }
+
     // Desktops
     Rectangle {
       width: 100

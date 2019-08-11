@@ -6,6 +6,8 @@
 #include <QJSValue>
 #include <QVariantMap>
 
+#include <libudev.h>
+
 #include "PopUpMenu.h"
 
 namespace la {
@@ -16,11 +18,19 @@ class Shell : public QWidget
 
     Q_PROPERTY(QVariant systemMenu READ systemMenu WRITE setSystemMenu)
     Q_PROPERTY(QJSValue menuBarMenu READ menuBarMenu WRITE setMenuBarMenu NOTIFY menuBarMenuChanged)
+    // Desktop
     Q_PROPERTY(int numberOfDesktops READ numberOfDesktops NOTIFY numberOfDesktopsChanged)
     Q_PROPERTY(int currentDesktop READ currentDesktop NOTIFY currentDesktopChanged)
+    // Power
+    Q_PROPERTY(bool charging READ charging NOTIFY chargingChanged)
+    Q_PROPERTY(int batteryLevel READ batteryLevel NOTIFY batteryLevelChanged)
 private:
     QVariant system_menu;
     QJSValue m_menu_bar_menu;
+    QList<int> inotify_fd_list;
+    QList<int> inotify_wd_list;
+    bool inotify_watching;
+    struct udev *p_udev;
 //    PopUpMenu *system_menu_delegate;
 public:
     explicit Shell(QWidget *parent = nullptr);
@@ -29,6 +39,13 @@ public:
     Q_INVOKABLE void focusMenuItem(int64_t index);
     Q_INVOKABLE void setMenuBarMenu(QVariantMap *menu);
     Q_INVOKABLE void quit();
+
+    // inotify !NOT USED. inotify cannot watch /sys/class files.
+    void watch_files();
+    void remove_watch_files();
+
+    void monitor_devices();
+    void stop_monitoring();
 
     // Getters
     PopUpMenu* systemMenuDelegate() const;
@@ -46,6 +63,10 @@ public:
 
     int numberOfDesktops();
     int currentDesktop();
+
+    bool charging() const;
+
+    int batteryLevel() const;
 
 signals:
     void created();
@@ -67,12 +88,22 @@ signals:
     void numberOfDesktopsChanged();
     void currentDesktopChanged();
 
+    void chargingChanged();
+
+    void batteryLevelChanged();
+
 public slots:
     void show();
 
 protected:
     bool event(QEvent *event) override;
 };
+
+#define LA_SHELL_INOTIFY_LIST_NUM 2
+#define LA_SHELL_INOTIFY_FILE_CHARGING "/sys/class/power_supply/BAT0/status"
+#define LA_SHELL_INOTIFY_FILE_BATTERY_LEVEL "/sys/class/power_supply/BAT0/capacity"
+extern const char* inotify_list[LA_SHELL_INOTIFY_LIST_NUM];
+void _init_inotify_list();
 
 } // namespace la
 #endif // _LA_SHELL_H

@@ -12,7 +12,7 @@ MenuItemDelegate::MenuItemDelegate(QObject *parent)
     : QWidgetAction(parent),
       widget(engine, nullptr)
 {
-    this->widget.setSource(QUrl("qrc:/components/LaniakeaShell/MenuItemDelegate.qml"));
+    this->widget.setSource(QUrl("qrc:/MenuItemDelegate.qml"));
     this->widget.rootObject()->setProperty("self", QVariant::fromValue(this));
     this->widget.rootObject()->setProperty("menuDelegate", QVariant::fromValue(this->parent()));
     this->widget.setClearColor(Qt::transparent);

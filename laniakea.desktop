@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=XSession
+Exec=/usr/share/laniakea/bin/laniakea
+TryExec=/usr/share/laniakea/bin/laniakea
+DesktopNames=Laniakea
+Name=Laniakea
+Name[en_GB]=Laniakea
+Name[ko]=Laniakea
+Comment=Laniakea Desktop Environment Session
+Comment[en_GB]=Laniakea Desktop Environment Session
+Comment[ko]=Laniakea 데스트톱 환경 세션
+X-KDE-PluginInfo-Version=5.15.5

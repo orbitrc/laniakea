@@ -616,6 +616,8 @@ void RebusListener::onNewConnection()
 //========================
 // API handlers
 //========================
+
+// [POST] /quit
 void Routes::quit(const httproto_protocol *request, QLocalSocket *connection)
 {
     switch (request->method) {
@@ -639,6 +641,7 @@ void Routes::quit(const httproto_protocol *request, QLocalSocket *connection)
         break;
     }
 }
+
 
 void Routes::menuApplication(const httproto_protocol *request, QLocalSocket *connection)
 {
@@ -670,6 +673,7 @@ void Routes::menuApplication(const httproto_protocol *request, QLocalSocket *con
     }
 }
 
+// [PUT, GET] /menu-bar/application-menu
 void Routes::MenuBar::applicationMenu(const httproto_protocol *request, QLocalSocket *connection)
 {
     switch (request->method) {
