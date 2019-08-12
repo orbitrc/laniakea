@@ -152,8 +152,8 @@ void PopUpMenu::onFocusItem(int idx)
 
 void PopUpMenu::onActionHovered(QAction *action)
 {
-    fprintf(stderr, "action: %p, ", action);
-    fprintf(stderr, "activeAction: %p\n", this->activeAction());
+//    fprintf(stderr, "action: %p, ", action);
+//    fprintf(stderr, "activeAction: %p\n", this->activeAction());
     if (action != this->activeAction()) {
         QMenu::setActiveAction(action);
     }

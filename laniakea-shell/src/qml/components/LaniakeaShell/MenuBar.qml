@@ -150,6 +150,9 @@ QtQuickWindow.Window {
       anchors.top: parent.top
       anchors.bottom: parent.bottom
       color: Shell.charging ? "green" : "red"
+      Text {
+        text: Shell.batteryLevel
+      }
     }
 
     // Desktops

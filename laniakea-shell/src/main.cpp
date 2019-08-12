@@ -13,12 +13,9 @@
 #include "Shell.h"
 #include "BlusherWidget.h"
 #include "MenuBarMenuDelegate.h"
-#include "MenuBar.h"
 #include "RebusListener.h"
 #include "PopUpMenu.h"
 #include "PopUpMenuDelegate.h"
-
-static QList<MenuBar*> menu_bar_list;
 
 namespace la {
     Shell *shell = nullptr;

@@ -9,6 +9,7 @@
 #include <libudev.h>
 
 #include "PopUpMenu.h"
+#include "ConfFile.h"
 
 namespace la {
 
@@ -27,9 +28,8 @@ class Shell : public QWidget
 private:
     QVariant system_menu;
     QJSValue m_menu_bar_menu;
-    QList<int> inotify_fd_list;
-    QList<int> inotify_wd_list;
-    bool inotify_watching;
+
+    ConfFile conf_file;
     struct udev *p_udev;
 //    PopUpMenu *system_menu_delegate;
 public:
@@ -41,9 +41,8 @@ public:
     Q_INVOKABLE void quit();
 
     // inotify !NOT USED. inotify cannot watch /sys/class files.
-    void watch_files();
-    void remove_watch_files();
 
+    // udev
     void monitor_devices();
     void stop_monitoring();
 
@@ -80,6 +79,8 @@ signals:
     void menuBarMenuItemTriggered(QString path);
     void menuItemTriggered(QString path);
 
+    void confFileChanged();
+
     //==========================
     // Property changed signals
     //==========================
@@ -94,6 +95,8 @@ signals:
 
 public slots:
     void show();
+
+    void onConfFileChanged();
 
 protected:
     bool event(QEvent *event) override;

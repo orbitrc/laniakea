@@ -15,6 +15,7 @@
 #include "PopUpMenu.h"
 
 // C
+#include <stdlib.h>
 #include <string.h>
 
 // Unix
@@ -47,68 +48,31 @@ Shell::Shell(QWidget *parent)
     // Properties
     this->m_menu_bar_menu = QJSValue::NullValue;
 
-    // Signals
+    //=================
+    // Connect signals
+    //=================
+    // KWindowSystem
     KWindowSystem *kWindowSystem = KWindowSystem::self();
     QObject::connect(kWindowSystem, &KWindowSystem::numberOfDesktopsChanged,
                      this, [this](int) { emit this->numberOfDesktopsChanged(); });
     QObject::connect(kWindowSystem, &KWindowSystem::currentDesktopChanged,
                      this, [this](int) { emit this->currentDesktopChanged(); });
+    // Shell
+    QObject::connect(this, &Shell::confFileChanged,
+                     this, &Shell::onConfFileChanged);
     // Belows will connected in QML.
 
 
-    // TIMER TEST
+    // Worker threads
     QThread *thr = QThread::create([this]() {
         this->monitor_devices();
     });
     thr->start();
-}
 
-
-void Shell::watch_files()
-{
-    int fd = 0;
-    struct inotify_event *evt;
-    char *p_evt;
-    int read_len;
-    char buffer[64];
-
-    fd = inotify_init();
-    if (fd == -1) {
-        // ERROR!
-    }
-    for (int i = 0; i < LA_SHELL_INOTIFY_LIST_NUM; ++i) {
-        this->inotify_fd_list.push_back(fd);
-        int wd = inotify_add_watch(fd, inotify_list[i], IN_MODIFY);
-        this->inotify_wd_list.push_back(wd);
-    }
-
-    this->inotify_watching = true;
-    while (this->inotify_watching) {
-        read_len = read(fd, buffer, 64);
-
-        for (p_evt = buffer; p_evt < buffer + read_len; ) {
-            evt = (struct inotify_event*)p_evt;
-
-            if (evt->mask & IN_MODIFY && strcmp(evt->name, LA_SHELL_INOTIFY_FILE_CHARGING) == 0) {
-                emit this->chargingChanged();
-            } else if (evt->mask & IN_MODIFY && strcmp(evt->name, LA_SHELL_INOTIFY_FILE_BATTERY_LEVEL) == 0) {
-                std::cout << this->batteryLevel() << std::endl;
-                emit this->batteryLevelChanged();
-            } else {
-                fprintf(stderr, "inotify warning: evt = %d, name = \"%s\"", evt->mask, evt->name);
-            }
-
-            p_evt += sizeof(struct inotify_event) + evt->len;
-        }
-    }
-}
-
-void Shell::remove_watch_files()
-{
-    this->inotify_watching = false;
-    for (int i = 0; i < this->inotify_fd_list.length(); ++i) {
-        inotify_rm_watch(this->inotify_fd_list[i], this->inotify_wd_list[i]);
-    }
+    QThread *thr_inotify = QThread::create([this]() {
+        this->conf_file.run_watch_loop();
+    });
+    thr_inotify->start();
 }
 
 
@@ -223,7 +187,20 @@ void Shell::quit()
 //==================
 // Signal handlers
 //==================
-
+void Shell::onConfFileChanged()
+{
+    int number_of_desktops = this->conf_file.number_of_desktops();
+// x11
+    if (qApp->platformName() == "xcb") {
+        QString cmd = "wmctrl -n " + QString::number(number_of_desktops);
+        fprintf(stderr, "system(%s)\n", cmd.toStdString().c_str());
+        system(cmd.toLocal8Bit());
+    }
+// wayland
+    if (qApp->platformName() == "wayland") {
+        // TODO: Implement.
+    }
+}
 
 
 // Getters
@@ -339,12 +316,5 @@ int Shell::batteryLevel() const
     return data.toInt();
 }
 
-const char* inotify_list[LA_SHELL_INOTIFY_LIST_NUM];
-
-void _init_inotify_list()
-{
-    inotify_list[0] = LA_SHELL_INOTIFY_FILE_CHARGING;
-    inotify_list[1] = LA_SHELL_INOTIFY_FILE_BATTERY_LEVEL;
-}
 
 } // namespace la
