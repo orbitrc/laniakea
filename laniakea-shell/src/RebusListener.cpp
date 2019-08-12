@@ -465,7 +465,8 @@ private:
 public:
     RebusServer()
     {
-        this->rebus_socket_name = "/tmp/rebus/" + QString::number(getuid()) + "/rebus.sock";
+//        this->rebus_socket_name = "/tmp/rebus/" + QString::number(getuid()) + "/rebus.sock";
+        this->rebus_socket_name = QString(getenv("XDG_RUNTIME_DIR")) + "/rebus.sock";
     }
 
     int32_t connect() const
@@ -532,7 +533,7 @@ RebusListener::~RebusListener()
 
 void RebusListener::listen()
 {
-    QString path = "/tmp/rebus/" + QString::number(getuid()) + "/" + this->id;
+    QString path = QString(getenv("XDG_RUNTIME_DIR")) + "/rebus/" + this->id;
     QObject::connect(&this->socket, &QLocalServer::newConnection,
                      this, &RebusListener::onNewConnection);
     this->socket.listen(path);
