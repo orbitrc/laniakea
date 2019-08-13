@@ -1,4 +1,3 @@
-VERSION = 0.1.0
 
 default:
 	rm -rf build
