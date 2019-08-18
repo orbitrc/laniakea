@@ -23,10 +23,6 @@ PopUpMenuDelegate::PopUpMenuDelegate(QObject *parent)
     this->m_pop_up->set_path(this->path());
     this->focused_item_index = -1;
 
-    QObject::connect(this->m_pop_up, &PopUpMenu::itemTriggered,
-                     this, &PopUpMenuDelegate::emitSignalItemTriggered);
-    QObject::connect(this->m_pop_up, &QMenu::aboutToHide,
-                     this, &PopUpMenuDelegate::emitSignalClosed);
     QObject::connect(this, &PopUpMenuDelegate::closed,
                      this, &PopUpMenuDelegate::onClosed);
 }
@@ -92,6 +88,35 @@ void PopUpMenuDelegate::setItems(QVariantList items)
     emit this->itemsChanged();
 }
 
+QRect PopUpMenuDelegate::menuBarRect() const
+{
+    return this->m_menu_bar_rect;
+}
+
+void PopUpMenuDelegate::setMenuBarRect(QRect rect)
+{
+    this->m_menu_bar_rect = rect;
+
+    this->menuBarRectChanged();
+}
+
+//=========================
+// Private member methods
+//=========================
+
+PopUpMenu* PopUpMenuDelegate::construct_pop_up()
+{
+    PopUpMenu *pop_up = new PopUpMenu(this);
+
+    pop_up->set_items(PopUpMenu::filter_items(this->m_items, this->path()));
+    QObject::connect(pop_up, &PopUpMenu::itemTriggered,
+                     this, &PopUpMenuDelegate::emitSignalItemTriggered);
+    QObject::connect(pop_up, &QMenu::aboutToHide,
+                     this, &PopUpMenuDelegate::emitSignalClosed);
+
+    return pop_up;
+}
+
 
 //=========================
 // Public member methods
@@ -104,9 +129,20 @@ void PopUpMenuDelegate::setItems(QVariantList items)
 
 void PopUpMenuDelegate::show()
 {
-    this->m_pop_up->popup(QPoint(0, 30));
+    PopUpMenu *pop_up = this->construct_pop_up();
+    pop_up->set_menu_bar_rect(this->menuBarRect());
+    pop_up->popup(QPoint(0, 30));
 }
 
+void PopUpMenuDelegate::open()
+{
+    this->show();
+}
+
+void PopUpMenuDelegate::close()
+{
+    this->m_pop_up->close();
+}
 
 //==================
 // Signal handlers
@@ -121,10 +157,10 @@ void PopUpMenuDelegate::onClosed()
 {
     this->setFocusedItemIndex(-1);
 
-    QList<QAction*> items = this->m_pop_up->actions();
-    for (int i = 0; i < items.length(); ++i) {
-        static_cast<MenuItemDelegate*>(items[i])->set_focused(false);
-    }
+//    QList<QAction*> items = this->m_pop_up->actions();
+//    for (int i = 0; i < items.length(); ++i) {
+//        static_cast<MenuItemDelegate*>(items[i])->set_focused(false);
+//    }
 }
 
 void PopUpMenuDelegate::emitSignalItemTriggered(QString path)

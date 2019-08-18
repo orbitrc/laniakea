@@ -6,6 +6,7 @@
     <qresource prefix="/components/LaniakeaShell">
         <file alias="MenuBar.qml">src/qml/components/LaniakeaShell/MenuBar.qml</file>
         <file alias="MenuBarMenuItemDelegate.qml">src/qml/components/LaniakeaShell/MenuBarMenuItemDelegate.qml</file>
+        <file alias="SystemPreferences.qml">src/qml/components/LaniakeaShell/SystemPreferences.qml</file>
         <file alias="qmldir">src/qml/components/LaniakeaShell/qmldir</file>
     </qresource>
     <qresource prefix="/modules/Laniakea">

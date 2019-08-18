@@ -19,6 +19,7 @@ private:
     QObject *m_menu;
     QVariantList items;
     QString m_path;
+    QRect m_menu_bar_rect;
 public:
     explicit PopUpMenu(PopUpMenuDelegate *menu_delegate);
 
@@ -26,6 +27,9 @@ public:
 
     QObject* menu() const;
     void setMenu(QObject *menu);
+
+    const QRect& menu_bar_rect() const;
+    void set_menu_bar_rect(const QRect& rect);
 
     void set_path(const QString& path);
 
@@ -53,9 +57,12 @@ public slots:
 protected:
     virtual void paintEvent(QPaintEvent *) override;
 //    virtual void enterEvent(QEvent *) override;
+    virtual void hideEvent(QHideEvent *) override;
     virtual void keyPressEvent(QKeyEvent *) override;
     virtual void leaveEvent(QEvent *) override;
     virtual void mouseMoveEvent(QMouseEvent *) override;
+    virtual void mousePressEvent(QMouseEvent *) override;
+    virtual void mouseReleaseEvent(QMouseEvent *) override;
 };
 
 } // namespace la

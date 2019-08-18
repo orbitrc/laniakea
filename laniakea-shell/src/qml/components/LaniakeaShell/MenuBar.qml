@@ -37,7 +37,6 @@ QtQuickWindow.Window {
     }
   }
 
-
   Row {
     anchors.fill: parent
     // System menu
@@ -51,6 +50,10 @@ QtQuickWindow.Window {
       PopUpMenuDelegate {
         id: systemMenuDelegate
         menu: root.systemMenu // still be used?
+        menuBarRect.x: root.x
+        menuBarRect.y: root.y
+        menuBarRect.width: root.width
+        menuBarRect.height: root.height
 
         path: '/'
         items: root.systemMenu.items
@@ -62,9 +65,14 @@ QtQuickWindow.Window {
         }
       }
       MouseArea {
+        id: _ma
         anchors.fill: parent
-        onClicked: {
+        onPressed: {
           systemMenuDelegate.show();
+          mouse.accepted = false;
+        }
+        onReleased: {
+          print('released');
         }
       }
     }
@@ -131,12 +139,20 @@ QtQuickWindow.Window {
     x: 300
     anchors.top: parent.top
     anchors.bottom: parent.bottom
+    hoverEnabled: true
     Rectangle {
+      id: _testRect
       anchors.fill: parent
       color: "red"
     }
     onClicked: {
       Shell.quit();
+    }
+    onEntered: {
+      _testRect.color = "blue";
+    }
+    onExited: {
+      _testRect.color = "red";
     }
   }
 

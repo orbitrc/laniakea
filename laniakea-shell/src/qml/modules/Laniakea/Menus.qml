@@ -11,7 +11,10 @@ Item {
     items: [
       {
         path: '/preferences',
-        title: 'System Preferences'
+        title: 'System Preferences',
+        action: function() {
+          Shell.systemPreferences.show();
+        }
       },
       {
         path: '/separator1',

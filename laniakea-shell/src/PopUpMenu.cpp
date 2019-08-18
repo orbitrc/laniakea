@@ -31,6 +31,8 @@ PopUpMenu::PopUpMenu(PopUpMenuDelegate *menu_delegate)
     this->setStyle(cs);
     this->setStyleSheet(POP_UP_MENU_STYLE_SHEET);
 
+    this->setAttribute(Qt::WA_DeleteOnClose);
+
 //    this->delegate.rootObject()->setProperty("menu", QVariant::fromValue(menu));
 
     connect(this, &PopUpMenu::aboutToShow, this, &PopUpMenu::onAboutToShow);
@@ -96,6 +98,16 @@ void PopUpMenu::set_path(const QString &path)
     this->m_path = path;
 }
 
+const QRect& PopUpMenu::menu_bar_rect() const
+{
+    return this->m_menu_bar_rect;
+}
+
+void PopUpMenu::set_menu_bar_rect(const QRect &rect)
+{
+    this->m_menu_bar_rect = rect;
+}
+
 //================================
 // Non-member functions
 //================================
@@ -128,10 +140,6 @@ const QVariantList PopUpMenu::filter_items(QVariantList items, QString path)
 
     return filtered;
 }
-
-//==================
-// Signals
-//==================
 
 
 //==================
@@ -182,6 +190,7 @@ void PopUpMenu::onActionTriggered(QAction *action)
     const QVariantMap& item = this->menu_delegate->property("items").toList().at(index).toMap();
     const QString path = item.value("path").toString();
     emit this->itemTriggered(path);
+    fprintf(stderr, "triggered: %s\n", path.toStdString().c_str());
 //    emit la::shell->menuItemTriggered(path);
 
     if (!this->isHidden()) {
@@ -201,14 +210,20 @@ void PopUpMenu::onItemsChanged()
 //==================
 // Event handlers
 //==================
-void PopUpMenu::paintEvent(QPaintEvent *)
+void PopUpMenu::paintEvent(QPaintEvent *event)
 {
-    QStylePainter style_painter(this);
-    QStyleOption option;
-    option.initFrom(this);
-    QPalette p;
-    option.palette = p;
-    style_painter.drawPrimitive(QStyle::PE_Widget, option);
+//    QStylePainter style_painter(this);
+//    QStyleOption option;
+//    option.initFrom(this);
+//    QPalette p;
+//    option.palette = p;
+//    style_painter.drawPrimitive(QStyle::PE_Widget, option);
+    QMenu::paintEvent(event);
+}
+
+void PopUpMenu::hideEvent(QHideEvent *event)
+{
+    QMenu::hideEvent(event);
 }
 
 void PopUpMenu::keyPressEvent(QKeyEvent *event)
@@ -239,7 +254,24 @@ void PopUpMenu::leaveEvent(QEvent *event)
 
 void PopUpMenu::mouseMoveEvent(QMouseEvent *event)
 {
+    // All mouse move event will processed in QML.
+    return;
     QMenu::mouseMoveEvent(event);
+}
+
+void PopUpMenu::mousePressEvent(QMouseEvent *event)
+{
+    QMenu::mousePressEvent(event);
+}
+
+void PopUpMenu::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (this->menu_bar_rect().contains(event->pos()) &&
+            !this->underMouse()) {
+        this->close();
+    } else {
+        QMenu::mouseReleaseEvent(event);
+    }
 }
 
 } // namespace la

@@ -31,9 +31,13 @@ Item {
 
     MouseArea {
       anchors.fill: parent
-      onClicked: {
+      onPressed: {
         root.triggered();
       }
+
+//      onClicked: {
+//        root.triggered();
+//      }
     }
 //    PopUpMenuDelegate {
 //      id: systemMenuDelegate

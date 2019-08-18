@@ -45,7 +45,9 @@ Shell::Shell(QWidget *parent)
 //    this->system_menu_delegate->add_item_delegate(about_system);
 //    this->system_menu_delegate->add_item_delegate(shutdown);
 
-    // Properties
+    //=================
+    // Set properties
+    //=================
     this->m_menu_bar_menu = QJSValue::NullValue;
 
     //=================
@@ -60,8 +62,12 @@ Shell::Shell(QWidget *parent)
     // Shell
     QObject::connect(this, &Shell::confFileChanged,
                      this, &Shell::onConfFileChanged);
+    QObject::connect(this, &Shell::preferenceChanged,
+                     this, &Shell::onPreferenceChanged);
     // Belows will connected in QML.
 
+
+    emit this->preferencesChanged();
 
     // Worker threads
     QThread *thr = QThread::create([this]() {
@@ -117,8 +123,8 @@ void Shell::monitor_devices()
         dev = udev_monitor_receive_device(monitor);
         const char *sysname = udev_device_get_sysname(dev);
         if (strcmp(sysname, "BAT0") == 0) {
-            const char *capacity = udev_device_get_property_value(dev, "POWER_SUPPLY_CAPACITY");
-            fprintf(stderr, "capacity: <%s>\n", capacity);
+//            const char *capacity = udev_device_get_property_value(dev, "POWER_SUPPLY_CAPACITY");
+//            fprintf(stderr, "capacity: <%s>\n", capacity);
             emit this->batteryLevelChanged();
         } else if (strcmp(sysname, "AC") == 0) {
             emit this->chargingChanged();
@@ -173,6 +179,11 @@ void Shell::focusMenuItem(int64_t index)
 }
 
 
+void Shell::setPreference(QString category, QString key, QVariant val)
+{
+    this->conf_file.set_preference(category.toLocal8Bit(), key.toLocal8Bit(), val);
+}
+
 void Shell::quit()
 {
     // Remove inotify watching file descriptors.
@@ -199,6 +210,36 @@ void Shell::onConfFileChanged()
 // wayland
     if (qApp->platformName() == "wayland") {
         // TODO: Implement.
+    }
+}
+
+void Shell::onPreferenceChanged(QString category, QString key, QVariant value)
+{
+    if (category == "desktop") {
+        // [desktop]
+        if (key == "number_of_desktops") {
+// x11
+            if (qApp->platformName() == "xcb") {
+                QString cmd = "wmctrl -n " + value.toString();
+                fprintf(stderr, "system(%s)\n", cmd.toStdString().c_str());
+                system(cmd.toLocal8Bit());
+            }
+// wayland
+            if (qApp->platformName() == "wayland") {
+                // TODO: Implement.
+            }
+        }
+    } else if (category == "keyboard") {
+        // [keyboard]
+        if (key == "delay_until_repeat") {
+            QVariant repeat = this->conf_file.get_preference("keyboard", "key_repeat");
+            QString cmd = "xset r rate " + value.toString() + " " + repeat.toString();
+            system(cmd.toLocal8Bit());
+        } else if (key == "key_repeat") {
+            QVariant delay = this->conf_file.get_preference("keyboard", "delay_until_repeat");
+            QString cmd = "xset r rate " + delay.toString() + " " + value.toString();
+            system(cmd.toLocal8Bit());
+        }
     }
 }
 
@@ -261,6 +302,22 @@ void Shell::setMenuBarMenu(QJSValue& menuBarMenu)
 {
     this->m_menu_bar_menu = menuBarMenu;
     emit this->menuBarMenuChanged();
+}
+
+
+QObject* Shell::systemPreferences()
+{
+    return this->system_preferences_window;
+}
+
+void Shell::setSystemPreferences(QObject *preferences)
+{
+    this->system_preferences_window = preferences;
+}
+
+Preferences* Shell::preferences()
+{
+    return &(this->conf_file);
 }
 
 int Shell::numberOfDesktops()

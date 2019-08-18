@@ -19,6 +19,8 @@ class Shell : public QWidget
 
     Q_PROPERTY(QVariant systemMenu READ systemMenu WRITE setSystemMenu)
     Q_PROPERTY(QJSValue menuBarMenu READ menuBarMenu WRITE setMenuBarMenu NOTIFY menuBarMenuChanged)
+    Q_PROPERTY(QObject* systemPreferences READ systemPreferences WRITE setSystemPreferences)
+    Q_PROPERTY(QObject* preferences READ preferences NOTIFY preferencesChanged)
     // Desktop
     Q_PROPERTY(int numberOfDesktops READ numberOfDesktops NOTIFY numberOfDesktopsChanged)
     Q_PROPERTY(int currentDesktop READ currentDesktop NOTIFY currentDesktopChanged)
@@ -28,8 +30,10 @@ class Shell : public QWidget
 private:
     QVariant system_menu;
     QJSValue m_menu_bar_menu;
+    // QML references.
+    QObject *system_preferences_window;
 
-    ConfFile conf_file;
+    Preferences conf_file;
     struct udev *p_udev;
 //    PopUpMenu *system_menu_delegate;
 public:
@@ -38,6 +42,7 @@ public:
     Q_INVOKABLE void openMenu(QObject *menu);
     Q_INVOKABLE void focusMenuItem(int64_t index);
     Q_INVOKABLE void setMenuBarMenu(QVariantMap *menu);
+    Q_INVOKABLE void setPreference(QString category, QString key, QVariant val);
     Q_INVOKABLE void quit();
 
     // inotify !NOT USED. inotify cannot watch /sys/class files.
@@ -60,6 +65,11 @@ public:
     QJSValue& menuBarMenu();
     void setMenuBarMenu(QJSValue& menuBarMenu);
 
+    QObject* systemPreferences();
+    void setSystemPreferences(QObject *preferences);
+
+    Preferences* preferences();
+
     int numberOfDesktops();
     int currentDesktop();
 
@@ -80,6 +90,9 @@ signals:
     void menuItemTriggered(QString path);
 
     void confFileChanged();
+    void preferenceChanged(QString category, QString key, QVariant value);
+
+    void preferencesChanged();
 
     //==========================
     // Property changed signals
@@ -97,6 +110,7 @@ public slots:
     void show();
 
     void onConfFileChanged();
+    void onPreferenceChanged(QString category, QString key, QVariant value);
 
 protected:
     bool event(QEvent *event) override;

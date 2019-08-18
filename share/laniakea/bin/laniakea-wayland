@@ -1,0 +1,10 @@
+#!/bin/sh
+
+/bin/kwin_wayland &
+/usr/share/rebus/rebus-server &
+konsole
+
+# Clean background processes.
+uwsgi --stop $XDG_RUNTIME_DIR/rebus.pid
+
+# /bin/top

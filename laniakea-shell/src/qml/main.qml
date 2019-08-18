@@ -35,11 +35,9 @@ Item {
     }
   }
 
-  Component {
-    id: menuItem
-    MenuItem {
-      title: ''
-    }
+  SystemPreferences {
+    id: systemPreferences
+    visible: false
   }
 
   Connections {
@@ -64,8 +62,11 @@ Item {
   }
 
   Component.onCompleted: {
+    menuBar.show();
+
     root.systemMenu = Menus.systemMenu;
     Shell.systemMenu = Menus.systemMenu;
+    Shell.systemPreferences = systemPreferences;
     root.clock = new Date();
   }
 

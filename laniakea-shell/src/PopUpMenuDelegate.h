@@ -17,14 +17,18 @@ class PopUpMenuDelegate : public QObject
     Q_PROPERTY(int focusedItemIndex READ focusedItemIndex WRITE setFocusedItemIndex NOTIFY focusedItemIndexChanged)
     Q_PROPERTY(QString path READ path WRITE setPath NOTIFY pathChanged)
     Q_PROPERTY(QVariantList items READ items WRITE setItems NOTIFY itemsChanged)
+    Q_PROPERTY(QRect menuBarRect READ menuBarRect WRITE setMenuBarRect NOTIFY menuBarRectChanged)
 private:
     // Properties
     QObject *m_menu;
     QString m_path;
     int focused_item_index;
     QVariantList m_items;
+    QRect m_menu_bar_rect;
 
     PopUpMenu *m_pop_up;
+
+    PopUpMenu* construct_pop_up();
 public:
     explicit PopUpMenuDelegate(QObject *parent = nullptr);
 
@@ -43,11 +47,16 @@ public:
     QVariantList items() const;
     void setItems(QVariantList items);
 
+    QRect menuBarRect() const;
+    void setMenuBarRect(QRect rect);
+
     //=========================
     // Public member methods
     //=========================
 
     Q_INVOKABLE void show();
+    Q_INVOKABLE void open();
+    Q_INVOKABLE void close();
 signals:
     //==========================
     // Property change notifies
@@ -56,6 +65,7 @@ signals:
     void focusedItemIndexChanged();
     void pathChanged();
     void itemsChanged();
+    void menuBarRectChanged();
 
 
     void itemFocused(int idx);

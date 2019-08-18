@@ -1,18 +1,17 @@
 #include <QApplication>
 #include <QQmlEngine>
-#include <QQuickWidget>
+#include <QQmlApplicationEngine>
+#include <QScreen>
 #include <blusher/blusher-qt.h>
 
 #include <curl/curl.h>
 
 #include <stdint.h>
-#include <iostream>
 #include <stdio.h>
 
 #include "global.h"
 #include "Shell.h"
 #include "BlusherWidget.h"
-#include "MenuBarMenuDelegate.h"
 #include "RebusListener.h"
 #include "PopUpMenu.h"
 #include "PopUpMenuDelegate.h"
@@ -26,7 +25,7 @@ namespace la {
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    QQmlEngine engine;
+    QQmlApplicationEngine engine;
 
     engine.addImportPath(BLUSHER_PATH);
     engine.addImportPath("qrc:/components");
@@ -63,21 +62,19 @@ int main(int argc, char *argv[])
 
     engine.rootContext()->setContextProperty("Shell", QVariant::fromValue(&shell));
 
-    BlusherWidget w(la::engine);
-    w.setGeometry(0, 0, 0, 0);
-    w.setWindowFlag(Qt::FramelessWindowHint);
-
-    qmlRegisterType<MenuBarMenuDelegate>("LaniakeaShell", 0, 1, "MenuBarMenuDelegate");
     qmlRegisterType<la::PopUpMenuDelegate>("LaniakeaShell", 0, 1, "PopUpMenuDelegate");
 
 
     QList<QScreen*> screens = QGuiApplication::screens();
-    for (int32_t i = 0; i < screens.length(); ++i) {
-//        MenuBar *window = new MenuBar(process);
-//        menu_bar_list.append(window);
-//        window->moveToScreen(screens[i]);
-//        window->show();
-    }
+
+    QObject::connect(&app, &QGuiApplication::screenAdded,
+                     &app, [](QScreen *screen) {
+        fprintf(stderr, "screen added!\n");
+    });
+    QObject::connect(&app, &QGuiApplication::screenRemoved,
+                     &app, [](QScreen *screen) {
+        fprintf(stderr, "screen removed!\n");
+    });
 
 //    QObject::connect(
 //        &app, &QObject::objectNameChanged,
@@ -85,8 +82,7 @@ int main(int argc, char *argv[])
 //        Qt::QueuedConnection
 //    );
 
-    w.setSource(QStringLiteral("qrc:/main.qml"));
-    w.show();
+    engine.load(QUrl("qrc:/main.qml"));
 
     return app.exec();
 }

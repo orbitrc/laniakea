@@ -8,22 +8,25 @@
 #include <QFile>
 #include <QString>
 #include <QMap>
+#include <QVariant>
 
 #include "global.h"
 
 namespace la {
 
-struct ConfFile::Impl {
+struct Preferences::Impl {
     char *conf_path;
     int inotify_fd;
     int inotify_wd;
     bool inotify_watching;
-    QMap<QString, QMap<QString, QString>> conf_dict;
+    QVariantMap conf_dict;
+    Preferences::Desktop *desktop;
+    Preferences::Keyboard *keyboard;
 };
 
-ConfFile::ConfFile()
+Preferences::Preferences()
 {
-    this->pImpl = new ConfFile::Impl;
+    this->pImpl = new Preferences::Impl;
 
     // Set file path.
     this->impl().conf_path = new char[512];
@@ -35,20 +38,27 @@ ConfFile::ConfFile()
     this->impl().inotify_wd = -1;
     this->impl().inotify_watching = false;
 
+    // Create categories.
+    this->impl().desktop = new Desktop(this);
+    emit this->desktopChanged();
+    this->impl().keyboard = new Keyboard(this);
+    emit this->keyboardChanged();
+
+    this->read_conf_file();
     this->sync_with_file();
 }
 
-ConfFile::~ConfFile()
+Preferences::~Preferences()
 {
-    delete (ConfFile::Impl*)(this->pImpl);
+    delete (Preferences::Impl*)(this->pImpl);
 }
 
-ConfFile::Impl& ConfFile::impl()
+Preferences::Impl& Preferences::impl()
 {
-    return *((ConfFile::Impl*)(this->pImpl));
+    return *((Preferences::Impl*)(this->pImpl));
 }
 
-int ConfFile::run_watch_loop()
+int Preferences::run_watch_loop()
 {
     int fd = 0;
     struct inotify_event *evt;
@@ -100,13 +110,13 @@ int ConfFile::run_watch_loop()
 }
 
 
-void ConfFile::exit_loop()
+void Preferences::exit_loop()
 {
     this->impl().inotify_watching = false;
 }
 
 
-void ConfFile::sync_with_file()
+void Preferences::sync_with_file()
 {
     QFile f(this->impl().conf_path);
     if (!f.exists()) {
@@ -127,22 +137,175 @@ void ConfFile::sync_with_file()
         if (line.startsWith("[") && line.endsWith("]")) {
             line.remove(0, 1);
             line.chop(1);
-            this->impl().conf_dict.insert(line, QMap<QString, QString>());
+            this->impl().conf_dict.insert(line, QVariantMap());
         }
         if (line.startsWith("number_of_desktops")) {
             QStringList qv = line.split("=");
-            this->impl().conf_dict["desktop"].insert("number_of_desktops", qv[1]);
+            this->impl().conf_dict["desktop"].toMap().insert("number_of_desktops", qv[1]);
         }
     }
+}
+
+void Preferences::read_conf_file()
+{
+    QFile f(this->impl().conf_path);
+    if (!f.exists()) {
+        fprintf(stderr, "%s\n", f.fileName().toStdString().c_str());
+        fprintf(stderr, "ConfFile::read_conf_file - File not exitsts!\n");
+        return;
+    }
+    f.open(QFile::ReadOnly | QFile::Text);
+    QString data = f.readAll();
+    f.close();
+
+    QVariantMap conf = this->parse_conf_file(data);
+
+    // [desktop]
+    Desktop *desktop = this->impl().desktop;
+    desktop->setNumberOfDesktops(conf["desktop"].toMap()["number_of_desktops"].toInt());
+    // [keyboard]
+    Keyboard *keyboard = this->impl().keyboard;
+    keyboard->setDelayUntilRepeat(conf["keyboard"].toMap()["delay_until_repeat"].toInt());
+    keyboard->setKeyRepeat(conf["keyboard"].toMap()["key_repeat"].toInt());
+}
+
+
+QVariantMap Preferences::parse_conf_file(const QString& file_data)
+{
+    QVariantMap dict;
+    QString section_name; // category
+
+    QStringList lines = file_data.split("\n");
+    for (QString& line: lines) {
+        line = line.trimmed();
+        if (line.startsWith("#") || line.length() == 0) {
+            continue;
+        }
+        if (line.startsWith("[") && line.endsWith("]")) {
+            line.remove(0, 1);
+            line.chop(1);
+            dict.insert(line, QVariantMap());
+            section_name = line;
+        } else {
+            QStringList qv = line.split("=");
+            QVariant number_of_desktops = qv[1].toInt();
+            QVariantMap section = dict[section_name].toMap();
+            section[qv[0]] = number_of_desktops;
+            dict[section_name] = section;
+        }
+    }
+
+    return dict;
+}
+
+
+void Preferences::set_preference(const char *category, const char *key, QVariant value)
+{
+    QVariant original_value = this->impl().conf_dict[category].toMap()[key];
+    if (original_value != value) {
+        this->impl().conf_dict[category].toMap()[key] = value;
+        emit shell->preferenceChanged(category, key, value);
+    }
+}
+
+
+QVariant Preferences::get_preference(const char *category, const char *key)
+{
+    const QVariantMap& category_dict = this->impl().conf_dict[category].toMap();
+    QVariant val = category_dict.value(key);
+
+    return val;
 }
 
 //==============
 // Getters
 //==============
-int ConfFile::number_of_desktops() const
+Preferences::Desktop* Preferences::desktop() const
 {
-    const QMap<QString, QString>& desktop = const_cast<ConfFile*>(this)->impl().conf_dict.value("desktop");
+    return const_cast<Preferences*>(this)->impl().desktop;
+}
+
+Preferences::Keyboard* Preferences::keyboard() const
+{
+    return const_cast<Preferences*>(this)->impl().keyboard;
+}
+
+int Preferences::number_of_desktops() const
+{
+    const QVariantMap& desktop = const_cast<Preferences*>(this)->impl().conf_dict.value("desktop").toMap();
     return desktop.value("number_of_desktops").toInt();
+}
+
+
+
+
+
+
+
+Preferences::Desktop::Desktop(QObject *parent)
+    : QObject(parent)
+{
+
+}
+
+Preferences::Desktop::~Desktop()
+{
+}
+
+int Preferences::Desktop::numberOfDesktops() const
+{
+    return this->m_number_of_desktops;
+}
+
+void Preferences::Desktop::setNumberOfDesktops(int val)
+{
+    this->m_number_of_desktops = val;
+    emit this->numberOfDesktopsChanged(val);
+    if (shell != nullptr) {
+        emit shell->preferenceChanged("desktop", "number_of_desktops", val);
+    }
+}
+
+
+
+
+
+
+Preferences::Keyboard::Keyboard(QObject *parent)
+    : QObject(parent)
+{
+}
+
+Preferences::Keyboard::~Keyboard()
+{
+}
+
+int Preferences::Keyboard::delayUntilRepeat() const
+{
+    return this->m_delay_until_repeat;
+}
+
+void Preferences::Keyboard::setDelayUntilRepeat(int val)
+{
+    this->m_delay_until_repeat = val;
+    emit this->delayUntilRepeatChanged(val);
+    if (shell != nullptr) {
+        emit shell->preferenceChanged("keyboard", "delay_until_repeat", val);
+    }
+}
+
+int Preferences::Keyboard::keyRepeat() const
+{
+    return this->m_key_repeat;
+}
+
+void Preferences::Keyboard::setKeyRepeat(int val)
+{
+    this->m_key_repeat = val;
+    emit this->keyRepeatChanged(val);
+    if (shell != nullptr) {
+        emit shell->preferenceChanged("keyboard", "key_repeat", val);
+    }
 }
 
 } // namespace la

@@ -25,8 +25,10 @@ enum httproto_request_method {
 };
 
 enum httproto_status_code {
-    HTTPROTO_OK,
-    HTTPROTO_NOT_FOUND,
+    HTTPROTO_OK,            // 200
+    HTTPROTO_CREATED,       // 201
+    HTTPROTO_ACCEPTED,      // 202
+    HTTPROTO_NOT_FOUND,     // 404
 };
 
 typedef char* httproto_key_value_pair[2];

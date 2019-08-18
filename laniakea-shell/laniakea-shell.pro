@@ -21,7 +21,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         src/ConfFile.cpp \
         src/BlusherWidget.cpp \
-        src/MenuBarMenuDelegate.cpp \
         src/MenuItemDelegate.cpp \
         src/PopUpMenu.cpp \
         src/PopUpMenuDelegate.cpp \
@@ -51,15 +50,14 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    src/global.h \
     src/ConfFile.h \
     src/BlusherWidget.h \
-    src/MenuBarMenuDelegate.h \
     src/MenuItemDelegate.h \
     src/PopUpMenu.h \
     src/PopUpMenuDelegate.h \
     src/RebusListener.h \
     src/Shell.h \
-    src/global.h \
     libraries/httproto/include/httproto/httproto.h
 
 DISTFILES +=
