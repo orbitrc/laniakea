@@ -18,6 +18,9 @@ pixels_per_dp: float [1.0 - n]
 delay_until_repeat: int [100-n] ms
 key_repeat: [0-n] per/sec
 
+[power]
+show_extension_in_menu_bar: bool
+
  */
 
 class Preferences : public QObject
@@ -29,6 +32,7 @@ class Preferences : public QObject
 public:
     class Desktop;
     class Keyboard;
+    class Display;
 private:
     struct Impl;
 
@@ -57,6 +61,8 @@ public:
     void sync_with_file();
 
     void read_conf_file();
+
+    void write_conf_file();
 
     QVariantMap parse_conf_file(const QString& file_data);
 
@@ -127,6 +133,26 @@ public:
 signals:
     void delayUntilRepeatChanged(int delay);
     void keyRepeatChanged(int repeat);
+};
+
+
+class Preferences::Display : public QObject {
+    Q_OBJECT
+
+    Q_PROPERTY(qreal pixelsPerDp)
+private:
+    qreal m_pixels_per_dp;
+public:
+    Display(QObject *parent);
+    ~Display();
+
+    //==================
+    // Properties
+    //==================
+    qreal pixelsPerDp() const;
+    void setPixelsPerDp(qreal val);
+signals:
+    void pixelsPerDpChanged();
 };
 
 }

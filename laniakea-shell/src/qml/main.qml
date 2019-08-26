@@ -40,6 +40,11 @@ Item {
     visible: false
   }
 
+  ApplicationLauncher {
+    id: applicationLauncher
+    visible: false
+  }
+
   Connections {
     target: Shell
     onRegisterApplicationMenu: {
@@ -58,6 +63,10 @@ Item {
       let menu = JSON.parse(menuJson);
       menuBar.applicationMenu.title = menu.title;
       menuBar.applicationMenu.items = menu.items;
+    }
+
+    onRunCommandPopUpOpenRequested: {
+      applicationLauncher.show();
     }
   }
 

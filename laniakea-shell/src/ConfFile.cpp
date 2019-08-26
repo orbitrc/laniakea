@@ -308,4 +308,16 @@ void Preferences::Keyboard::setKeyRepeat(int val)
     }
 }
 
+
+
+
+Preferences::Display::Display(QObject *parent)
+    : QObject(parent)
+{
+}
+
+Preferences::Display::~Display()
+{
+}
+
 } // namespace la

@@ -266,7 +266,7 @@ void PopUpMenu::mousePressEvent(QMouseEvent *event)
 
 void PopUpMenu::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (this->menu_bar_rect().contains(event->pos()) &&
+    if (!this->menu_bar_rect().contains(event->globalPos()) &&
             !this->underMouse()) {
         this->close();
     } else {

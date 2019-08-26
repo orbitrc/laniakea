@@ -184,6 +184,9 @@ void Shell::setPreference(QString category, QString key, QVariant val)
     this->conf_file.set_preference(category.toLocal8Bit(), key.toLocal8Bit(), val);
 }
 
+//========================
+// QML callable functions
+//========================
 void Shell::quit()
 {
     // Remove inotify watching file descriptors.
@@ -192,6 +195,17 @@ void Shell::quit()
     this->stop_monitoring();
 
     qApp->quit();
+}
+
+void Shell::launchApplication(QString name)
+{
+
+}
+
+void Shell::runCommand(QString cmd)
+{
+    FILE *f = popen(cmd.toLocal8Bit(), "r");
+    fprintf(stderr, "cmd = %s, f = %p\n", cmd.toStdString().c_str(), f);
 }
 
 
@@ -266,7 +280,7 @@ bool Shell::event(QEvent *event)
         KWindowSystem::setExtendedStrut(wid,
             0, 0, 0,
             0, 0, 0,
-            30, rect.x(), rect.width(),
+            30, rect.x(), rect.width() - 1,
             0, 0, 0);
         KWindowSystem::setOnDesktop(wid, NET::OnAllDesktops);
 

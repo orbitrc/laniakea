@@ -57,6 +57,15 @@ public:
     public:
         static void applicationMenu(const httproto_protocol *request, QLocalSocket *connection);
     };
+
+    class Shell {
+    public:
+        // [POST] /shell/launch-application
+//        static void launchApplication(const httproto_protocol *request, QLocalSocket *connection);
+
+        // [POST] /shell/run-command
+         static void runCommand(const httproto_protocol *request, QLocalSocket *connection);
+    };
 };
 
 #endif // REBUS_LISTENER_H

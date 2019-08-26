@@ -63,6 +63,12 @@ Window {
     print(root.body);
   }
 
+  onVisibleChanged: {
+    if (root.visible === false) {
+      root.category = SystemPreferences.Category.All;
+    }
+  }
+
 
   //=========
   // All

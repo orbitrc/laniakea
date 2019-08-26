@@ -40,6 +40,11 @@ extern "C" {
     "Conetnt-Length: 0\r\n" \
     "\r\n"
 
+#define VOID_NOT_FOUND_RESPONSE "HTTP/1.1 404 Not Found\r\n" \
+    "Content-Type: application/json\r\n" \
+    "Content-Length: 0\r\n" \
+    "\r\n"
+
 
 //=================
 // Helper classes.
@@ -444,10 +449,14 @@ static void routes(const httproto_protocol *request, QLocalSocket *connection)
         }
     } else if (path == "/menu-bar/application-menu") {
         Routes::MenuBar::applicationMenu(request, connection);
+    } else if (path == "/shell/run-command") {
+        Routes::Shell::runCommand(request, connection);
     } else if (path == "/quit") {
         Routes::quit(request, connection);
     } else {
-
+        connection->write(VOID_NOT_FOUND_RESPONSE);
+        connection->flush();
+        connection->close();
     }
     if (connection->isOpen()) {
 //        connection->close();
@@ -715,6 +724,30 @@ void Routes::MenuBar::applicationMenu(const httproto_protocol *request, QLocalSo
         connection->write("Content-Type: application/json\r\n"
                           "Content-Length: 0\r\n"
                           "Allow: PUT\r\n"
+                          "\r\n");
+        connection->flush();
+        connection->close();
+    }
+}
+
+// [POST] /shell/runCommand
+void Routes::Shell::runCommand(const httproto_protocol *request, QLocalSocket *connection)
+{
+    switch (request->method) {
+    case HTTPROTO_POST: {
+        emit la::shell->runCommandPopUpOpenRequested();
+        connection->write(VOID_OK_RESPONSE);
+        connection->flush();
+        connection->close();
+        break;
+    }
+    default:
+        connection->write("HTTP/1.1 405 ");
+        connection->write(http_status_str(HTTP_STATUS_METHOD_NOT_ALLOWED));
+        connection->write("\r\n");
+        connection->write("Content-Type: application/json\r\n"
+                          "Content-Length: 0\r\n"
+                          "Allow: POST\r\n"
                           "\r\n");
         connection->flush();
         connection->close();

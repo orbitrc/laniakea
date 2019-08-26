@@ -14,6 +14,10 @@ QtQuickWindow.Window {
   height: 30
 
   color: "#181818"
+
+  property int focusedMenuItemIndex: -1
+  property int focusedExtensionIndex: -1
+
   property var systemMenu
   property var applicationMenu: Menu {
     title: 'Application'
@@ -39,13 +43,15 @@ QtQuickWindow.Window {
 
   Row {
     anchors.fill: parent
+    //================
     // System menu
+    //================
     Rectangle {
       id: menuBarSystemMenu
       anchors.top: parent.top
       anchors.bottom: parent.bottom
       width: root.height
-      color: "grey"
+      color: root.focusedMenuItemIndex === 0 ? "#3e3eff" : "#55fefefe"
 
       PopUpMenuDelegate {
         id: systemMenuDelegate
@@ -63,11 +69,15 @@ QtQuickWindow.Window {
             item.action();
           }
         }
+        onClosed: {
+          root.focusedMenuItemIndex = -1;
+        }
       }
       MouseArea {
         id: _ma
         anchors.fill: parent
         onPressed: {
+          root.focusedMenuItemIndex = 0;
           systemMenuDelegate.show();
           mouse.accepted = false;
         }
@@ -76,7 +86,9 @@ QtQuickWindow.Window {
         }
       }
     }
+    //===================
     // Application menu
+    //===================
     MenuBarMenuItemDelegate {
       id: menuBarItemApplicationMenu
 
@@ -103,8 +115,9 @@ QtQuickWindow.Window {
         applicationMenuDelegate.show();
       }
     }
-
+    //================
     // Menu bar menu
+    //================
     Repeater {
       id: menuItemRepeater
       model: root.menuBarMenu.items.length
@@ -166,7 +179,7 @@ QtQuickWindow.Window {
       anchors.top: parent.top
       anchors.bottom: parent.bottom
       color: Shell.charging ? "green" : "red"
-      Text {
+      Label {
         text: Shell.batteryLevel
       }
     }
@@ -186,7 +199,7 @@ QtQuickWindow.Window {
           width: (100 / Shell.numberOfDesktops)
           color: (Shell.currentDesktop === index + 1) ? "white" : "red"
           border.width: 1
-          Text {
+          Label {
             text: index + 1
           }
         }
