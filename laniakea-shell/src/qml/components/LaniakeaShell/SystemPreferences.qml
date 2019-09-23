@@ -10,7 +10,8 @@ Window {
     All,
     Desktop,
     Display,
-    Keyboard
+    Keyboard,
+    Localization
   }
 
   property int category: SystemPreferences.Category.All
@@ -57,6 +58,9 @@ Window {
     case SystemPreferences.Category.Keyboard:
       root.body = root.keyboard;
       break;
+    case SystemPreferences.Category.Localization:
+      root.body = root.localization;
+      break;
     default:
       break;
     }
@@ -84,6 +88,16 @@ Window {
           }
         }
       }
+      // Language / Region
+      Row {
+        Button {
+          title: 'Language'
+          onClicked: {
+            root.category = SystemPreferences.Category.Localization;
+          }
+        }
+      }
+
       // Input / Output
       Row {
         Button {
@@ -185,6 +199,15 @@ Window {
           title: '+'
         }
       }
+    }
+  }
+
+  //===================
+  // Localization
+  //===================
+  property Item localization: Item {
+    Text {
+      text: 'l10n'
     }
   }
 }

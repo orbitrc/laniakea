@@ -5,7 +5,7 @@ import Blusher 0.1
 
 QtQuickWindow.Window {
   id: root
-  flags: Qt.FramelessWindowHint
+  flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
 
   x: 100
   y: 50
@@ -36,6 +36,12 @@ QtQuickWindow.Window {
   }
 
   onVisibleChanged: {
+    if (visible) {
+      if (Qt.platform.pluginName === 'xcb') {
+        root.requestActivate();
+      }
+    }
+
     if (!visible) {
       textField.text = '';
     }

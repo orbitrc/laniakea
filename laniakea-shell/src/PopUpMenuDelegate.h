@@ -54,7 +54,7 @@ public:
     // Public member methods
     //=========================
 
-    Q_INVOKABLE void show();
+    Q_INVOKABLE void show(int x, int y);
     Q_INVOKABLE void open();
     Q_INVOKABLE void close();
 signals:

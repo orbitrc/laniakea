@@ -198,6 +198,11 @@ QVariantMap Preferences::parse_conf_file(const QString& file_data)
     return dict;
 }
 
+void Preferences::write_conf_file()
+{
+    QFile f(this->impl().conf_path);
+}
+
 
 void Preferences::set_preference(const char *category, const char *key, QVariant value)
 {
@@ -317,6 +322,16 @@ Preferences::Display::Display(QObject *parent)
 }
 
 Preferences::Display::~Display()
+{
+}
+
+
+Preferences::Localization::Localization(QObject *parent)
+    : QObject(parent)
+{
+}
+
+Preferences::Localization::~Localization()
 {
 }
 

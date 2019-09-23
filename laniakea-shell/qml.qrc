@@ -9,6 +9,7 @@
         <file alias="SystemPreferences.qml">src/qml/components/LaniakeaShell/SystemPreferences.qml</file>
         <file alias="ApplicationLauncher.qml">src/qml/components/LaniakeaShell/ApplicationLauncher.qml</file>
         <file alias="qmldir">src/qml/components/LaniakeaShell/qmldir</file>
+        <file>MenuBarItemDelegate.qml</file>
     </qresource>
     <qresource prefix="/modules/Laniakea">
         <file alias="Menus.qml">src/qml/modules/Laniakea/Menus.qml</file>

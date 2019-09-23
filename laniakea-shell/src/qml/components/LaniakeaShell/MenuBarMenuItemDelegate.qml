@@ -1,5 +1,6 @@
 import QtQuick 2.12
 
+import Blusher 0.1
 import Blusher.DesktopEnvironment 0.1
 
 Item {
@@ -7,8 +8,10 @@ Item {
 
   property string title: ''
   property bool bold: false
+  property int fixedWidth: 0
+  property bool focused: false
 
-  signal triggered()
+  signal triggered(int x)
 
   width: rect.width
 
@@ -16,23 +19,28 @@ Item {
     id: rect
     anchors.top: parent.top
     anchors.bottom: parent.bottom
-    width: text.implicitWidth
-    color: "yellow"
+    width: root.fixedWidth > 0 ? root.fixedWidth : text.implicitWidth
+    color: root.focused ? "blue" : "#00ffffff"
 
-    Text {
+    Label {
       id: text
+
+      anchors.fill: rect
       text: root.title
       anchors.verticalCenter: parent.verticalCenter
-      rightPadding: 7.0 * DesktopEnvironment.pixelsPerDp
-      leftPadding: 7.0 * DesktopEnvironment.pixelsPerDp
-      font.pixelSize: 14 * DesktopEnvironment.pixelsPerDp
-      font.bold: root.bold
+//      rightPadding: 7.0 * DesktopEnvironment.pixelsPerDp
+//      leftPadding: 7.0 * DesktopEnvironment.pixelsPerDp
+      fontSize: 14
+      fontColor: "white"
+//      backgroundColor: "green"
+//      font.bold: root.bold
     }
 
     MouseArea {
       anchors.fill: parent
       onPressed: {
-        root.triggered();
+        var pos = mapToGlobal(this.x, this.y);
+        root.triggered(pos.x);
       }
 
 //      onClicked: {

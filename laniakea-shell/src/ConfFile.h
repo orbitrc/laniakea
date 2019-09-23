@@ -33,6 +33,7 @@ public:
     class Desktop;
     class Keyboard;
     class Display;
+    class Localization;
 private:
     struct Impl;
 
@@ -153,6 +154,16 @@ public:
     void setPixelsPerDp(qreal val);
 signals:
     void pixelsPerDpChanged();
+};
+
+
+class Preferences::Localization : public QObject {
+    Q_OBJECT
+private:
+public:
+    Localization(QObject *parent);
+    ~Localization();
+signals:
 };
 
 }

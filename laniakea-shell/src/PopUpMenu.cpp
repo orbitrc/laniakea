@@ -49,7 +49,7 @@ QSize PopUpMenu::sizeHint() const
     QSize original_size = QMenu::sizeHint();
     int width = original_size.width();
     int height = original_size.height();
-    fprintf(stderr, "sizeHint: %dx%d\n", width, height);
+//    fprintf(stderr, "sizeHint: %dx%d\n", width, height);
     return QSize(width, height);
 }
 

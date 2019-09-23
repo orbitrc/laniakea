@@ -31,7 +31,17 @@ Item {
     running: true
     repeat: true
     onTriggered: {
-      root.clock = new Date();
+//      root.clock = new Date();
+      let now = new Date();
+      let text = '';
+      let dateString = {
+        hour: now.getHours().toString().padStart(2, '0'),
+        minute: now.getMinutes().toString().padStart(2, '0'),
+        second: now.getSeconds().toString().padStart(2, '0')
+      };
+
+      text += dateString.hour + ':' + dateString.minute + ':' + dateString.second;
+      root.clock = text;
     }
   }
 

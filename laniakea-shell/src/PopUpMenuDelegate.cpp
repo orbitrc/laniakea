@@ -127,16 +127,16 @@ PopUpMenu* PopUpMenuDelegate::construct_pop_up()
 // QML callable functions
 //=========================
 
-void PopUpMenuDelegate::show()
+void PopUpMenuDelegate::show(int x, int y)
 {
     PopUpMenu *pop_up = this->construct_pop_up();
     pop_up->set_menu_bar_rect(this->menuBarRect());
-    pop_up->popup(QPoint(0, 30));
+    pop_up->popup(QPoint(x, y));
 }
 
 void PopUpMenuDelegate::open()
 {
-    this->show();
+    this->show(0, 30);
 }
 
 void PopUpMenuDelegate::close()

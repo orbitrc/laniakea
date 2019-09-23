@@ -6,6 +6,7 @@
 #include <QEvent>
 #include <QWindow>
 #include <QThread>
+#include <QShortcut>
 
 // KDE Frameworks
 #include <kwindowsystem.h>
@@ -79,6 +80,19 @@ Shell::Shell(QWidget *parent)
         this->conf_file.run_watch_loop();
     });
     thr_inotify->start();
+
+    // DEBUG
+    QObject::connect(kWindowSystem, static_cast<void (KWindowSystem::*)(WId, NET::Properties, NET::Properties2)>(&KWindowSystem::windowChanged),
+                     this, [](WId w_id, NET::Properties props, NET::Properties2 props2) {
+//        fprintf(stderr, "WId: %d\n", w_id);
+//        fprintf(stderr, "WMGeometry: %d", static_cast<bool>(props | NET::WMGeometry));
+//        fprintf(stderr, "\n");
+    });
+
+    QShortcut *shortcut = new QShortcut(QKeySequence(Qt::Key_Alt, Qt::Key_T), parent);
+    shortcut->setContext(Qt::ApplicationShortcut);
+    QObject::connect(shortcut, &QShortcut::activated,
+                     this, []() { fprintf(stderr, "pressed\n"); });
 }
 
 
@@ -184,9 +198,9 @@ void Shell::setPreference(QString category, QString key, QVariant val)
     this->conf_file.set_preference(category.toLocal8Bit(), key.toLocal8Bit(), val);
 }
 
-//========================
+//=========================
 // QML callable functions
-//========================
+//=========================
 void Shell::quit()
 {
     // Remove inotify watching file descriptors.
@@ -199,7 +213,7 @@ void Shell::quit()
 
 void Shell::launchApplication(QString name)
 {
-
+    fprintf(stderr, "launchApplication: %s\n", name.toStdString().c_str());
 }
 
 void Shell::runCommand(QString cmd)

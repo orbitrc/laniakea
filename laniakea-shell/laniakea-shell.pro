@@ -29,7 +29,8 @@ SOURCES += \
         libraries/httproto/src/httproto.c \
         src/main.cpp
 
-RESOURCES += qml.qrc
+RESOURCES += qml.qrc \
+        assets.qrc
 
 # Used to resolve QML modules in Qt Creator code model.
 QML_IMPORT_PATH = \
@@ -60,4 +61,3 @@ HEADERS += \
     src/Shell.h \
     libraries/httproto/include/httproto/httproto.h
 
-DISTFILES +=

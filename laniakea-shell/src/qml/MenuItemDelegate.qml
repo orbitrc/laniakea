@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Window 2.12 as QtQuickWindow
 
+import Blusher 0.1
 import Blusher.DesktopEnvironment 0.1
 
 Item {
@@ -62,6 +63,7 @@ Item {
 //    text: root.menuItemTitle
     text: root.menuItem ? root.menuItem.title : ' '
     visible: !root.menuItemSeparator
+    font.pixelSize: 14 * DesktopEnvironment.pixelsPerDp
   }
 
   Item {

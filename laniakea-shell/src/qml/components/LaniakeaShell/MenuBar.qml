@@ -30,61 +30,37 @@ QtQuickWindow.Window {
 
   property list<Menu> menus
   property string clock: ''
-  property Menu testMenu: Menu {
-    type: Menu.MenuType.MenuBarMenu
-    title: 'TestMenu'
-    MenuItem {
-      title: 'Item 1'
-    }
-    MenuItem {
-      title: 'Item 2'
-    }
-  }
 
   Row {
     anchors.fill: parent
     //================
     // System menu
     //================
-    Rectangle {
+    MenuBarItemDelegate {
       id: menuBarSystemMenu
+
+      itemType: MenuBarItemDelegate.ItemType.MenuItem
+      visualType: MenuBarItemDelegate.VisualType.ImageOnly
+
       anchors.top: parent.top
       anchors.bottom: parent.bottom
-      width: root.height
-      color: root.focusedMenuItemIndex === 0 ? "#3e3eff" : "#55fefefe"
+      image: 'qrc:/assets/orbit-logo-light@256x256.png'
+      focused: focusedMenuItemIndex === 0
 
-      PopUpMenuDelegate {
-        id: systemMenuDelegate
-        menu: root.systemMenu // still be used?
-        menuBarRect.x: root.x
-        menuBarRect.y: root.y
-        menuBarRect.width: root.width
-        menuBarRect.height: root.height
+//      PopUpMenuDelegate {
+//        menu: root.systemMenu // still be used?
 
-        path: '/'
-        items: root.systemMenu.items
-        onItemTriggered: {
-          let item = root.menuGetItem(systemMenuDelegate.menu, path);
-          if (item !== null && item.action) {
-            item.action();
-          }
-        }
-        onClosed: {
-          root.focusedMenuItemIndex = -1;
-        }
-      }
-      MouseArea {
-        id: _ma
-        anchors.fill: parent
-        onPressed: {
-          root.focusedMenuItemIndex = 0;
-          systemMenuDelegate.show();
-          mouse.accepted = false;
-        }
-        onReleased: {
-          print('released');
-        }
-      }
+//        path: '/'
+      menuItems: root.systemMenu.items
+//        onItemTriggered: {
+//          let item = root.menuGetItem(systemMenuDelegate.menu, path);
+//          if (item !== null && item.action) {
+//            item.action();
+//          }
+//        }
+//        onClosed: {
+//          root.focusedMenuItemIndex = -1;
+//        }
     }
     //===================
     // Application menu
@@ -112,7 +88,7 @@ QtQuickWindow.Window {
 
       onTriggered: {
         print('Application Menu Triggered!');
-        applicationMenuDelegate.show();
+        applicationMenuDelegate.show(30, 30);
       }
     }
     //================
@@ -147,8 +123,9 @@ QtQuickWindow.Window {
   } // Row
 
 
+  // Kill button
   MouseArea {
-    width: 32
+    width: 24
     x: 300
     anchors.top: parent.top
     anchors.bottom: parent.bottom
@@ -169,22 +146,68 @@ QtQuickWindow.Window {
     }
   }
 
+  //==========================
+  // Menu bar extensions
+  //==========================
   Row {
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.right: parent.right
     // Power
-    Rectangle {
-      width: 30
-      anchors.top: parent.top
-      anchors.bottom: parent.bottom
-      color: Shell.charging ? "green" : "red"
-      Label {
-        text: Shell.batteryLevel
-      }
+    MenuBarItemDelegate {
+      itemType: MenuBarItemDelegate.ItemType.MenuBarExtension
+      visualType: MenuBarItemDelegate.VisualType.ImageOnly
+      title: Shell.batteryLevel + '%' + (Shell.charging ? '*' : '')
+//      image: 'qrc:/assets/orbit-logo-light@256x256.png'
+//        path: '/'
+//        items: [
+//          { path: '/asdf', title: 'Asdf' },
+//          { path: '/fdsa', title: 'Open power saving preference ...' }
+//        ]
     }
 
     // Desktops
+    MenuBarMenuItemDelegate {
+      title: Shell.currentDesktop
+
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+
+      PopUpMenuDelegate {
+        id: desktopsMenuBarExtensionDelegate
+
+        menuBarRect.x: root.x
+        menuBarRect.y: root.y
+        menuBarRect.width: root.width
+        menuBarRect.height: root.height
+
+        path: '/'
+        items: []
+        onItemTriggered: {
+          let item = root.menuGetItem(desktopsMenuBarExtensionDelegate.menu, path);
+          if (item !== null && item.action) {
+            item.action();
+          }
+        }
+        Component.onCompleted: {
+          desktopsMenuBarExtensionDelegate.items = createItems();
+        }
+        function createItems() {
+          let li = [];
+          for (let i = 0; i < Shell.preferences.desktop.numberOfDesktops; ++i) {
+            li.push({
+              path: '/',
+              title: 'Desktop ' + (i + 1)
+            });
+          }
+          return li;
+        }
+      }
+
+      onTriggered: {
+        desktopsMenuBarExtensionDelegate.show(x, 30);
+      }
+    }
     Rectangle {
       width: 100
       anchors.top: parent.top
@@ -206,18 +229,13 @@ QtQuickWindow.Window {
       }
     }
     // Clock
-    MouseArea {
-      width: 100
+    MenuBarMenuItemDelegate {
+      title: root.clock
+
       anchors.top: parent.top
       anchors.bottom: parent.bottom
-      Rectangle {
-        anchors.fill: parent
-        color: "cyan"
-        Label {
-          text: root.clock
-        }
-      }
-      onClicked: {
+
+      onTriggered: {
       }
     }
   }
@@ -230,7 +248,6 @@ QtQuickWindow.Window {
     root.systemMenu = Menus.systemMenu;
   }
   Component.onDestruction: {
-    print('[MenuBar] destruction');
   }
 
   function menuGetItem(menu, path) {

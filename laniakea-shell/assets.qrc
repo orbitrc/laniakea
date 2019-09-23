@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file >assets/orbit-logo-light@256x256.png</file>
+    </qresource>
+</RCC>
