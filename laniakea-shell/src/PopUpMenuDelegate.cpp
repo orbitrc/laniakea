@@ -133,12 +133,12 @@ void PopUpMenuDelegate::show(int x, int y)
 {
     PopUpMenu *pop_up = this->construct_pop_up();
     pop_up->set_menu_bar_rect(this->menuBarRect());
-    pop_up->popup(QPoint(x, y));
+    pop_up->exec(QPoint(x, y));
 }
 
-void PopUpMenuDelegate::open()
+void PopUpMenuDelegate::open(int x, int y)
 {
-    this->show(0, 30);
+    this->show(x, y);
 }
 
 void PopUpMenuDelegate::close()

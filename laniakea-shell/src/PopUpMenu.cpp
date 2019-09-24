@@ -267,9 +267,15 @@ void PopUpMenu::mousePressEvent(QMouseEvent *event)
 
 void PopUpMenu::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (!this->menu_bar_rect().contains(event->globalPos()) &&
-            !this->underMouse()) {
+    if (this->menu_bar_rect().contains(event->globalPos())) {
+        fprintf(stderr, "mouse is in menu bar\n");
+//        event->setAccepted(true);
+//        this->close();
+    } else if (!this->underMouse()) {
+        fprintf(stderr, "mouse is out of menu\n");
         this->close();
+
+        event->setAccepted(true);
     } else {
         QMenu::mouseReleaseEvent(event);
     }

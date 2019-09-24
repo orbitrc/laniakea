@@ -87,11 +87,10 @@ Rectangle {
   MouseArea {
     anchors.fill: parent
 
-    onPressed: {
-      print('menu item pressed');
+    onClicked: {
       let pos = mapToGlobal(root.x, root.y);
+      mouse.accepted = false;
       _popUp.show(pos.x, pos.y);
-      mouse.accepted = true;
     }
   }
 
