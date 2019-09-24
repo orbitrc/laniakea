@@ -46,6 +46,7 @@ QtQuickWindow.Window {
       anchors.bottom: parent.bottom
       image: 'qrc:/assets/orbit-logo-light@256x256.png'
       focused: focusedMenuItemIndex === 0
+      fixedWidth: 40
 
 //      PopUpMenuDelegate {
 //        menu: root.systemMenu // still be used?
@@ -58,9 +59,13 @@ QtQuickWindow.Window {
 //            item.action();
 //          }
 //        }
-//        onClosed: {
-//          root.focusedMenuItemIndex = -1;
-//        }
+
+      onPopUpOpened: {
+        root.focusedMenuItemIndex = 0;
+      }
+      onPopUpClosed: {
+        root.focusedMenuItemIndex = -1;
+      }
     }
     //===================
     // Application menu
@@ -156,14 +161,14 @@ QtQuickWindow.Window {
     // Power
     MenuBarItemDelegate {
       itemType: MenuBarItemDelegate.ItemType.MenuBarExtension
-      visualType: MenuBarItemDelegate.VisualType.ImageOnly
+      visualType: MenuBarItemDelegate.VisualType.TitleOnly
       title: Shell.batteryLevel + '%' + (Shell.charging ? '*' : '')
 //      image: 'qrc:/assets/orbit-logo-light@256x256.png'
 //        path: '/'
-//        items: [
-//          { path: '/asdf', title: 'Asdf' },
-//          { path: '/fdsa', title: 'Open power saving preference ...' }
-//        ]
+      menuItems: [
+        { path: '/asdf', title: 'Asdf' },
+        { path: '/fdsa', title: 'Open Power Saving Preference ...' }
+      ]
     }
 
     // Desktops

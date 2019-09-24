@@ -71,6 +71,7 @@ signals:
     void itemFocused(int idx);
     void itemTriggered(QString path);
 
+    void opened();
     void closed();
 
 public slots:

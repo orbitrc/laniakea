@@ -26,7 +26,7 @@ Item {
 
     anchors.fill: parent
     border.width: 0
-    color: root.focused ? "cyan" : "grey"
+    color: root.focused ? "#bbb4b1" : "#d6d2d0"
     MouseArea {
       anchors.fill: parent
       hoverEnabled: true
@@ -58,12 +58,24 @@ Item {
     }
   }
 
+  Item {
+    id: _checked
+
+    width: 24
+    height: 24
+
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.leftMargin: 3 * DesktopEnvironment.pixelsPerDp
+  }
+
   Text {
     id: _text
 //    text: root.menuItemTitle
     text: root.menuItem ? root.menuItem.title : ' '
     visible: !root.menuItemSeparator
     font.pixelSize: 14 * DesktopEnvironment.pixelsPerDp
+    anchors.verticalCenter: parent.verticalCenter
+    leftPadding: _checked.width + (3 * DesktopEnvironment.pixelsPerDp)
   }
 
   Item {

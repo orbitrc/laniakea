@@ -261,6 +261,7 @@ void PopUpMenu::mouseMoveEvent(QMouseEvent *event)
 
 void PopUpMenu::mousePressEvent(QMouseEvent *event)
 {
+//    return;
     QMenu::mousePressEvent(event);
 }
 

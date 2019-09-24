@@ -28,11 +28,17 @@ Rectangle {
 
   property bool focused: false
 
+  property real fixedWidth: 0
+
+  signal popUpOpened()
+  signal popUpClosed()
+
   height: 30
-  width: root.visualType !== MenuBarItemDelegate.VisualType.ImageOnly ? _title.implicitWidth : 30
+  width: root.getWidth()
   color: root.focused ? "blue" : "#00ffffff"
 
   Item {
+    anchors.fill: parent
     Label {
       id: _title
 
@@ -43,8 +49,7 @@ Rectangle {
     Item {
       id: _imageFrame
 
-      width: 30
-      height: 30
+      anchors.fill: parent
 
       Image {
         id: _image
@@ -70,14 +75,30 @@ Rectangle {
     menuBarRect.y: 0
     menuBarRect.width: 1024
     menuBarRect.height: 30
+
+    onOpened: {
+      root.popUpOpened();
+    }
+    onClosed: {
+      root.popUpClosed();
+    }
   }
 
   MouseArea {
     anchors.fill: parent
 
     onPressed: {
+      print('menu item pressed');
       let pos = mapToGlobal(root.x, root.y);
       _popUp.show(pos.x, pos.y);
+      mouse.accepted = true;
     }
+  }
+
+  function getWidth() {
+    if (root.fixedWidth > 0) {
+      return root.fixedWidth;
+    }
+    return root.visualType !== MenuBarItemDelegate.VisualType.ImageOnly ? _title.implicitWidth : 30;
   }
 }

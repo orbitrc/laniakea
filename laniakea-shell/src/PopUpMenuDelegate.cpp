@@ -109,6 +109,8 @@ PopUpMenu* PopUpMenuDelegate::construct_pop_up()
     PopUpMenu *pop_up = new PopUpMenu(this);
 
     pop_up->set_items(PopUpMenu::filter_items(this->m_items, this->path()));
+    QObject::connect(pop_up, &PopUpMenu::aboutToShow,
+                     this, [this]() { emit this->opened(); });
     QObject::connect(pop_up, &PopUpMenu::itemTriggered,
                      this, &PopUpMenuDelegate::emitSignalItemTriggered);
     QObject::connect(pop_up, &QMenu::aboutToHide,
