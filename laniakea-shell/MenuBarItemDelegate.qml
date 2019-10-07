@@ -30,6 +30,8 @@ Rectangle {
 
   property real fixedWidth: 0
 
+  signal menuItemTriggered(string path)
+  signal popUpAboutToOpen()
   signal popUpOpened()
   signal popUpClosed()
 
@@ -76,6 +78,9 @@ Rectangle {
     menuBarRect.width: 1024
     menuBarRect.height: 30
 
+    onItemTriggered: {
+      root.menuItemTriggered(path);
+    }
     onOpened: {
       root.popUpOpened();
     }
@@ -90,6 +95,7 @@ Rectangle {
     onClicked: {
       let pos = mapToGlobal(root.x, root.y);
       mouse.accepted = false;
+      root.popUpAboutToOpen();
       _popUp.show(pos.x, pos.y);
     }
   }

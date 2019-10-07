@@ -48,17 +48,14 @@ QtQuickWindow.Window {
       focused: focusedMenuItemIndex === 0
       fixedWidth: 40
 
-//      PopUpMenuDelegate {
-//        menu: root.systemMenu // still be used?
-
-//        path: '/'
       menuItems: root.systemMenu.items
-//        onItemTriggered: {
-//          let item = root.menuGetItem(systemMenuDelegate.menu, path);
-//          if (item !== null && item.action) {
-//            item.action();
-//          }
-//        }
+
+      onMenuItemTriggered: {
+        let item = root.getMenuItemByPath(this.menuItems, path);
+        if (item !== null && item.action) {
+          item.action();
+        }
+      }
 
       onPopUpOpened: {
         root.focusedMenuItemIndex = 0;
@@ -155,6 +152,8 @@ QtQuickWindow.Window {
   // Menu bar extensions
   //==========================
   Row {
+    id: menuBarExtensions
+
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.right: parent.right
@@ -164,73 +163,57 @@ QtQuickWindow.Window {
       visualType: MenuBarItemDelegate.VisualType.TitleOnly
       title: Shell.batteryLevel + '%' + (Shell.charging ? '*' : '')
 //      image: 'qrc:/assets/orbit-logo-light@256x256.png'
-//        path: '/'
+      focused: root.focusedExtensionIndex === root.getExtensionIndex(this)
       menuItems: [
         { path: '/asdf', title: 'Asdf' },
         { path: '/fdsa', title: 'Open Power Saving Preference ...' }
       ]
+
+      onPopUpOpened: {
+        root.focusedExtensionIndex = root.getExtensionIndex(this);
+      }
+      onPopUpClosed: {
+        root.focusedExtensionIndex = -1;
+      }
+      function createItems() {
+        let li = [];
+        for (let i = 0; i < Shell.preferences.desktop.numberOfDesktops; ++i) {
+          li.push({
+          path: '/',
+            title: 'Desktop ' + (i + 1)
+          });
+        }
+        return li;
+      }
     }
 
     // Desktops
-    MenuBarMenuItemDelegate {
-      title: Shell.currentDesktop
+    MenuBarItemDelegate {
+      title: '[ ' + Shell.currentDesktop + ' ]'
 
       anchors.top: parent.top
       anchors.bottom: parent.bottom
 
-      PopUpMenuDelegate {
-        id: desktopsMenuBarExtensionDelegate
-
-        menuBarRect.x: root.x
-        menuBarRect.y: root.y
-        menuBarRect.width: root.width
-        menuBarRect.height: root.height
-
-        path: '/'
-        items: []
-        onItemTriggered: {
-          let item = root.menuGetItem(desktopsMenuBarExtensionDelegate.menu, path);
-          if (item !== null && item.action) {
-            item.action();
-          }
-        }
-        Component.onCompleted: {
-          desktopsMenuBarExtensionDelegate.items = createItems();
-        }
-        function createItems() {
-          let li = [];
-          for (let i = 0; i < Shell.preferences.desktop.numberOfDesktops; ++i) {
-            li.push({
-              path: '/',
-              title: 'Desktop ' + (i + 1)
-            });
-          }
-          return li;
+      menuItems: []
+      onMenuItemTriggered: {
+        let item = root.getMenuItemByPath(this.menuItems, path);
+        if (item !== null && item.action) {
+          item.action();
         }
       }
-
-      onTriggered: {
-        desktopsMenuBarExtensionDelegate.show(x, 30);
+      onPopUpAboutToOpen: {
+        this.menuItems = createItems();
       }
-    }
-    Rectangle {
-      width: 100
-      anchors.top: parent.top
-      anchors.bottom: parent.bottom
-      color: "blue"
-      Repeater {
-        model: Shell.numberOfDesktops
-        Rectangle {
-          x: index * this.width
-          anchors.top: parent.top
-          anchors.bottom: parent.bottom
-          width: (100 / Shell.numberOfDesktops)
-          color: (Shell.currentDesktop === index + 1) ? "white" : "red"
-          border.width: 1
-          Label {
-            text: index + 1
-          }
+
+      function createItems() {
+        let li = [];
+        for (let i = 0; i < Shell.preferences.desktop.numberOfDesktops; ++i) {
+          li.push({
+          path: '/',
+            title: 'Desktop ' + (i + 1)
+          });
         }
+        return li;
       }
     }
     // Clock
@@ -255,12 +238,26 @@ QtQuickWindow.Window {
   Component.onDestruction: {
   }
 
+  // deprecated
   function menuGetItem(menu, path) {
-    for (let i = 0; i < menu.items.length; ++i) {
-      if (menu.items[i].path === path) {
-        return menu.items[i];
+    return root.getMenuItemByPath(menu.items, path);
+  }
+
+  function getMenuItemByPath(items, path) {
+    for (let i = 0; i < items.length; ++i) {
+      if (items[i].path === path) {
+        return items[i];
       }
     }
     return null;
+  }
+
+  function getExtensionIndex(extension) {
+    for (let i = 0; i < menuBarExtensions.children.length; ++i) {
+      if (extension === menuBarExtensions.children[i]) {
+        return i;
+      }
+    }
+    return -1;
   }
 }

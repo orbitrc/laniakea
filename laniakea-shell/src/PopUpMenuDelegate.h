@@ -71,6 +71,7 @@ signals:
     void itemFocused(int idx);
     void itemTriggered(QString path);
 
+    void aboutToOpen();
     void opened();
     void closed();
 

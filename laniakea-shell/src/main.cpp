@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
     QObject::connect(&app, &QApplication::aboutToQuit,
                      &rebus, &RebusListener::delete_host, Qt::AutoConnection);
 
+    // Initialize Blusher
     QVariantMap process;
     la::process = &process;
     QVariantMap process_env;
