@@ -14,6 +14,7 @@
 // Laniakea
 #include "global.h"
 #include "PopUpMenu.h"
+#include "MenuBar.h"
 
 // C
 #include <stdlib.h>
@@ -45,6 +46,9 @@ Shell::Shell(QWidget *parent)
     shutdown->set_menu_item_title("Shutdown");
 //    this->system_menu_delegate->add_item_delegate(about_system);
 //    this->system_menu_delegate->add_item_delegate(shutdown);
+
+    this->menu_bar = new MenuBar;
+    this->menu_bar->show();
 
     //=================
     // Set properties

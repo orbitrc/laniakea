@@ -21,6 +21,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         src/ConfFile.cpp \
         src/BlusherWidget.cpp \
+        src/Menu.cpp \
+        src/MenuBar.cpp \
         src/MenuItemDelegate.cpp \
         src/PopUpMenu.cpp \
         src/PopUpMenuDelegate.cpp \
@@ -54,6 +56,8 @@ HEADERS += \
     src/global.h \
     src/ConfFile.h \
     src/BlusherWidget.h \
+    src/Menu.h \
+    src/MenuBar.h \
     src/MenuItemDelegate.h \
     src/PopUpMenu.h \
     src/PopUpMenuDelegate.h \

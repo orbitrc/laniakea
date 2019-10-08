@@ -9,6 +9,7 @@
 #include <libudev.h>
 
 #include "PopUpMenu.h"
+#include "MenuBar.h"
 #include "ConfFile.h"
 
 namespace la {
@@ -36,6 +37,7 @@ private:
     Preferences conf_file;
     struct udev *p_udev;
 //    PopUpMenu *system_menu_delegate;
+    MenuBar *menu_bar;
 public:
     explicit Shell(QWidget *parent = nullptr);
 

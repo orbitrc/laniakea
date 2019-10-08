@@ -68,6 +68,7 @@ int main(int argc, char *argv[])
 
     QList<QScreen*> screens = QGuiApplication::screens();
 
+    /*
     QObject::connect(&app, &QGuiApplication::screenAdded,
                      &app, [](QScreen *screen) {
         fprintf(stderr, "screen added!\n");
@@ -76,6 +77,7 @@ int main(int argc, char *argv[])
                      &app, [](QScreen *screen) {
         fprintf(stderr, "screen removed!\n");
     });
+    */
 
 //    QObject::connect(
 //        &app, &QObject::objectNameChanged,
@@ -83,7 +85,7 @@ int main(int argc, char *argv[])
 //        Qt::QueuedConnection
 //    );
 
-    engine.load(QUrl("qrc:/main.qml"));
+//    engine.load(QUrl("qrc:/main.qml"));
 
     return app.exec();
 }
