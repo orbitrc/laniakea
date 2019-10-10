@@ -21,8 +21,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         src/ConfFile.cpp \
         src/BlusherWidget.cpp \
+        src/DebugButton.cpp \
         src/Menu.cpp \
         src/MenuBar.cpp \
+        src/MenuBarMenuItem.cpp \
         src/MenuItemDelegate.cpp \
         src/PopUpMenu.cpp \
         src/PopUpMenuDelegate.cpp \
@@ -53,6 +55,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    src/DebugButton.h \
+    src/MenuBarMenuItem.h \
     src/global.h \
     src/ConfFile.h \
     src/BlusherWidget.h \

@@ -1,33 +1,72 @@
 #include "MenuBar.h"
 
 #include "global.h"
+#include "DebugButton.h"
+#include "Menu.h"
 
 // Qt
 #include <QScreen>
 #include <QQuickItem>
+
+#include <QPushButton>
 
 // KDE Frameworks
 #include <kwindowsystem.h>
 
 namespace la {
 
-MenuBar::MenuBar(BlusherWidget *parent)
-    : BlusherWidget(la::engine, parent)
+MenuBar::MenuBar(QWidget *parent)
+    : QWidget(parent)
 {
     setWindowFlags(Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_X11NetWmWindowTypeDock);
 
     setGeometry(0, 0, 200, 30);
 
-    setResizeMode(QQuickWidget::SizeRootObjectToView);
+    this->m_focusedMenuItemIndex = -1;
+    this->m_focusedExtensionIndex = -1;
 
-    setSource(QUrl("qrc:/MenuBar.qml"));
+    // Set background.
+    QPalette pal = palette();
+    pal.setColor(QPalette::Background, QColor(24, 24, 24)); // #181818
+    setPalette(pal);
 
-    QQuickItem *obj = rootObject();
-    QObject::connect(obj, SIGNAL(clockClicked()),
-                     this, SLOT(onTest()));
-    QObject::connect(obj, SIGNAL(openMenu(QVariant items)),
-                     this, SLOT(onOpenMenu(QVariantMap items)));
+    // Kill button.
+    DebugButton *killButton = new DebugButton(this);
+    QObject::connect(killButton, &DebugButton::clicked,
+                     this, []() { la::shell->quit(); });
+    killButton->setGeometry(90, 0, 25, 25);
+    killButton->show();
+
+    // Layout.
+    this->menu_bar_layout = new QHBoxLayout;
+    this->menu_bar_layout->setContentsMargins(0, 0, 0, 0);
+    this->setLayout(this->menu_bar_layout);
+
+    this->menu_items_layout = new QHBoxLayout;
+    this->menu_items_layout->setContentsMargins(0, 0, 0, 0);
+    this->menu_extensions_layout = new QHBoxLayout;
+    this->menu_extensions_layout->setContentsMargins(0, 0, 0, 0);
+
+    this->menu_bar_layout->addLayout(this->menu_items_layout);
+    this->menu_bar_layout->addStretch();
+    this->menu_bar_layout->addLayout(this->menu_extensions_layout);
+
+    // System menu.
+    Menu *system_menu = new Menu(this);
+    QObject::connect(system_menu, &Menu::itemTriggered,
+                     this, &MenuBar::onSystemMenuItemTriggered);
+    system_menu->setItems(la::shell->systemMenu()["items"].toList());
+    MenuBarMenuItem *systemMenuItem = new MenuBarMenuItem;
+    systemMenuItem->setTitle("System");
+    systemMenuItem->setMenu(system_menu);
+    this->m_menuItems.push_back(systemMenuItem);
+    this->menu_items_layout->addWidget(systemMenuItem);
+    systemMenuItem->show();
+
+    //==================
+    // Menu extensions
+    //==================
 }
 
 
@@ -61,15 +100,25 @@ bool MenuBar::event(QEvent *event)
 }
 
 
+QList<MenuBarMenuItem*> MenuBar::menuItems()
+{
+    return this->m_menuItems;
+}
+
 
 void MenuBar::onTest()
 {
     qDebug() << "clockClicked received";
 }
 
-void MenuBar::onOpenMenu(QVariantMap items)
+void MenuBar::onSystemMenuItemTriggered(QString path)
 {
-    qDebug() << "onOpenMenu";
+    qDebug() << path;
 }
+
+//void MenuBar::onOpenMenu(QVariantMap items)
+//{
+//    qDebug() << "onOpenMenu";
+//}
 
 } // namespace la

@@ -10,13 +10,21 @@ class Menu : public QMenu
     Q_OBJECT
 
 private:
-    QVariantMap m_items;
+    QVariantList m_items;
 
 public:
     Menu(QWidget *parent = nullptr);
 
-    QVariantMap items() const;
-    void setItems(QVariantMap items);
+    QVariantList items() const;
+    void setItems(QVariantList items);
+
+    void open();
+
+signals:
+    void itemTriggered(QString path);
+
+private slots:
+    void q_onTriggered(QAction *action);
 };
 
 } // namespace la

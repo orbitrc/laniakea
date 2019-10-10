@@ -18,7 +18,7 @@ class Shell : public QWidget
 {
     Q_OBJECT
 
-    Q_PROPERTY(QVariant systemMenu READ systemMenu WRITE setSystemMenu)
+//    Q_PROPERTY(QVariant systemMenu READ systemMenu WRITE setSystemMenu)
     Q_PROPERTY(QJSValue menuBarMenu READ menuBarMenu WRITE setMenuBarMenu NOTIFY menuBarMenuChanged)
     Q_PROPERTY(QObject* systemPreferences READ systemPreferences WRITE setSystemPreferences)
     Q_PROPERTY(QObject* preferences READ preferences NOTIFY preferencesChanged)
@@ -28,6 +28,9 @@ class Shell : public QWidget
     // Power
     Q_PROPERTY(bool charging READ charging NOTIFY chargingChanged)
     Q_PROPERTY(int batteryLevel READ batteryLevel NOTIFY batteryLevelChanged)
+    // Menus
+    Q_PROPERTY(QVariantMap systemMenu READ systemMenu)
+
 private:
     QVariant system_menu;
     QJSValue m_menu_bar_menu;
@@ -63,7 +66,7 @@ public:
     //=================
     // Properties
     //=================
-    QVariant systemMenu();
+//    QVariant systemMenu();
     void setSystemMenu(QVariant menu);
 
     QJSValue& menuBarMenu();
@@ -80,6 +83,8 @@ public:
     bool charging() const;
 
     int batteryLevel() const;
+
+    QVariantMap systemMenu() const;
 
 signals:
     void created();
@@ -127,6 +132,13 @@ protected:
 #define LA_SHELL_INOTIFY_FILE_BATTERY_LEVEL "/sys/class/power_supply/BAT0/capacity"
 extern const char* inotify_list[LA_SHELL_INOTIFY_LIST_NUM];
 void _init_inotify_list();
+
+
+class Menus {
+public:
+    static QVariantMap system_menu;
+    static void init_system_menu();
+};
 
 } // namespace la
 #endif // _LA_SHELL_H

@@ -74,6 +74,7 @@ Shell::Shell(QWidget *parent)
 
     emit this->preferencesChanged();
 
+
     // Worker threads
     QThread *thr = QThread::create([this]() {
         this->monitor_devices();
@@ -314,10 +315,6 @@ bool Shell::event(QEvent *event)
 //================
 // Properties
 //================
-QVariant Shell::systemMenu()
-{
-    return this->system_menu;
-}
 
 void Shell::setSystemMenu(QVariant menu)
 {
@@ -405,5 +402,40 @@ int Shell::batteryLevel() const
     return data.toInt();
 }
 
+QVariantMap Shell::systemMenu() const
+{
+    if (!Menus::system_menu.contains("items")) {
+        Menus::init_system_menu();
+    }
+    return Menus::system_menu;
+}
+
+
+//==============
+// Menus class
+//==============
+QVariantMap Menus::system_menu;
+
+void Menus::init_system_menu()
+{
+    QVariantList system_menu_items;
+    QVariantMap menu_item;
+    menu_item.insert("path", "/preferences");
+    menu_item.insert("title", "System Preferences");
+    system_menu_items.push_back(menu_item);
+
+    menu_item = QVariantMap();
+    menu_item.insert("path", "/separator1");
+    menu_item.insert("title", "-------");
+    menu_item.insert("separator", true);
+    system_menu_items.push_back(menu_item);
+
+    menu_item = QVariantMap();
+    menu_item.insert("path", "/debug-quit'");
+    menu_item.insert("title", "(DEBUG) Quit Laniakea Shell");
+    system_menu_items.push_back(menu_item);
+
+    Menus::system_menu.insert("items", system_menu_items);
+}
 
 } // namespace la
