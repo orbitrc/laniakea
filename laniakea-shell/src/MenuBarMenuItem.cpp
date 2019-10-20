@@ -40,6 +40,17 @@ void MenuBarMenuItem::setTitle(QString title)
     this->rootObject()->setProperty("title", this->m_title);
 }
 
+QString MenuBarMenuItem::image() const
+{
+    return this->m_image;
+}
+
+void MenuBarMenuItem::setImage(QString image)
+{
+    this->m_image = image;
+    this->rootObject()->setProperty("image", this->m_image);
+}
+
 Menu* MenuBarMenuItem::menu()
 {
     return this->m_menu;

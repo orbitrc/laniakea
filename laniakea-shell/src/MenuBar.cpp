@@ -59,6 +59,7 @@ MenuBar::MenuBar(QWidget *parent)
     system_menu->setItems(la::shell->systemMenu()["items"].toList());
     MenuBarMenuItem *systemMenuItem = new MenuBarMenuItem;
     systemMenuItem->setTitle("System");
+    systemMenuItem->setImage("qrc:/assets/orbit-logo-light@256x256.png");
     systemMenuItem->setMenu(system_menu);
     this->m_menuItems.push_back(systemMenuItem);
     this->menu_items_layout->addWidget(systemMenuItem);

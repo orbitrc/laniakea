@@ -30,6 +30,9 @@ public:
     QString title() const;
     void setTitle(QString title);
 
+    QString image() const;
+    void setImage(QString image);
+
     Menu* menu();
     void setMenu(Menu *menu);
 
