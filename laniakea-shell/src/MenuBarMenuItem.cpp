@@ -61,15 +61,16 @@ void MenuBarMenuItem::setMenu(Menu *menu)
     this->m_menu = menu;
 }
 
-qreal implicitWidth()
+qreal MenuBarMenuItem::implicitWidth()
 {
-    return 80;
+    return this->rootObject()->property("implicitWidth").toReal();
 }
 
 
 QSize MenuBarMenuItem::sizeHint() const
 {
-    return QSize(80, 30);
+    qreal width = const_cast<MenuBarMenuItem*>(this)->implicitWidth();
+    return QSize(width, 30);
 }
 
 

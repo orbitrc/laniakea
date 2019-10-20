@@ -9,7 +9,11 @@ QtQuick.Item {
   property string title: ''
   property string image: ''
 
+  implicitWidth: getImplicitWidth()
+
   Label {
+    id: label
+
     text: root.title
     fontColor: "white"
     visible: root.image === ''
@@ -19,5 +23,13 @@ QtQuick.Item {
     visible: root.image !== ''
     width: 24
     height: 24
+  }
+
+  function getImplicitWidth() {
+    if (root.image === '') {
+      return label.implicitWidth;
+    } else {
+      return 32;
+    }
   }
 }
