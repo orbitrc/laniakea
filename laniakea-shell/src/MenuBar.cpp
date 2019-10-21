@@ -65,9 +65,14 @@ MenuBar::MenuBar(QWidget *parent)
     this->menu_items_layout->addWidget(systemMenuItem);
     systemMenuItem->show();
 
-    //==================
-    // Menu extensions
-    //==================
+    //======================
+    // Menu bar extensions
+    //======================
+    MenuBarMenuExtension *clockExtension = new MenuBarMenuExtension;
+    clockExtension->setTitle("00:00:00");
+    this->m_menuExtensions.push_back(clockExtension);
+    this->menu_extensions_layout->addWidget(clockExtension);
+    clockExtension->show();
 }
 
 

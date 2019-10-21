@@ -24,6 +24,7 @@ SOURCES += \
         src/DebugButton.cpp \
         src/Menu.cpp \
         src/MenuBar.cpp \
+        src/MenuBarMenuExtension.cpp \
         src/MenuBarMenuItem.cpp \
         src/MenuItemDelegate.cpp \
         src/PopUpMenu.cpp \
@@ -56,6 +57,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     src/DebugButton.h \
+    src/MenuBarMenuExtension.h \
     src/MenuBarMenuItem.h \
     src/global.h \
     src/ConfFile.h \

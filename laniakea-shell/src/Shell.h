@@ -124,7 +124,7 @@ public slots:
     void onPreferenceChanged(QString category, QString key, QVariant value);
 
 protected:
-    bool event(QEvent *event) override;
+    // bool event(QEvent *event) override;
 };
 
 #define LA_SHELL_INOTIFY_LIST_NUM 2

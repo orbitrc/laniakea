@@ -38,7 +38,7 @@ Shell::Shell(QWidget *parent)
     this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     this->setAttribute(Qt::WA_X11NetWmWindowTypeDock);
 
-    this->setGeometry(0, 0, 1, 1);
+    this->setGeometry(0, 0, 0, 0);
 
     MenuItemDelegate *about_system = new MenuItemDelegate(nullptr);
     MenuItemDelegate *shutdown = new MenuItemDelegate(nullptr);
@@ -286,31 +286,6 @@ PopUpMenu* Shell::systemMenuDelegate() const
 //=================
 // Event handlers
 //=================
-bool Shell::event(QEvent *event)
-{
-    switch (event->type()) {
-    case QEvent::WinIdChange:
-    {
-        std::cout << "[MenuBar(" << this << ")" << "::WinIdChange]" << std::endl;
-        QRect rect = this->window()->windowHandle()->screen()->geometry();
-        this->setGeometry(rect.x(), rect.y(), 1, 1); // (0, 0) not strut.
-
-        WId wid = effectiveWinId();
-        KWindowSystem::setExtendedStrut(wid,
-            0, 0, 0,
-            0, 0, 0,
-            30, rect.x(), rect.width() - 1,
-            0, 0, 0);
-        KWindowSystem::setOnDesktop(wid, NET::OnAllDesktops);
-
-        break;
-    }
-    default:
-        break;
-    }
-
-    return QWidget::event(event);
-}
 
 //================
 // Properties
