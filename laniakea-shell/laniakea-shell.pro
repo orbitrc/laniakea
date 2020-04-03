@@ -5,9 +5,10 @@ CONFIG += console
 
 VERSION = 0.1.0
 
-LIBS += -ludev -lcurl -ljson-c -lhttp_parser
+LIBS += -ludev -lcurl -ljson-c -lhttp_parser -lblusher
 
-INCLUDEPATH += ./libraries/httproto/include
+INCLUDEPATH += ./libraries/httproto/include \
+        /home/hardboiled65/dev/Blusher/include
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings

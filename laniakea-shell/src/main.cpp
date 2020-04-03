@@ -2,7 +2,8 @@
 #include <QQmlEngine>
 #include <QQmlApplicationEngine>
 #include <QScreen>
-#include <blusher/blusher-qt.h>
+
+#include <blusher.h>
 
 #include <curl/curl.h>
 
@@ -24,16 +25,15 @@ namespace la {
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
-    QQmlApplicationEngine engine;
+    bl::Application app(argc, argv);
 
     QApplication::setAttribute(Qt::AA_DisableHighDpiScaling);
 
-    engine.addImportPath(BLUSHER_PATH);
-    engine.addImportPath("qrc:/components");
-    engine.addImportPath("qrc:/modules");
-    engine.addPluginPath("/usr/lib");
-    la::engine = &engine;
+    app.engine()->addImportPath(BLUSHER_PATH);
+    app.engine()->addImportPath("qrc:/components");
+    app.engine()->addImportPath("qrc:/modules");
+    app.engine()->addPluginPath("/usr/lib");
+    la::engine = app.engine();
 
     // Connect to ReBus server and post new host.
     /*
@@ -45,28 +45,12 @@ int main(int argc, char *argv[])
                      &rebus, &RebusListener::delete_host, Qt::AutoConnection);
     */
 
-    // Initialize Blusher
-    QVariantMap process;
-    la::process = &process;
-    QVariantMap process_env;
-    process_env.insert("BLUSHER_PATH", BLUSHER_PATH);
-    process_env.insert("BLUSHER_DE_MODULE_PATH", "");
-    process_env.insert("BLUSHER_APP_NAME", BLUSHER_APP_NAME);
-    process_env.insert("BLUSHER_APP_VERSION", BLUSHER_APP_VERSION);
-#ifdef BLUSHER_DEBUG
-    process_env.insert("BLUSHER_DEBUG", true);
-#endif
-    process.insert("env", process_env);
-    process.insert("app", QVariant::fromValue(&app));
-
-    engine.rootContext()->setContextProperty("Process", process);
-
     la::Shell shell;
     la::shell = &shell;
 
     shell.show();
 
-    engine.rootContext()->setContextProperty("Shell", QVariant::fromValue(&shell));
+    la::engine->rootContext()->setContextProperty("Shell", QVariant::fromValue(&shell));
 
     qmlRegisterType<la::PopUpMenuDelegate>("LaniakeaShell", 0, 1, "PopUpMenuDelegate");
 
