@@ -4,12 +4,15 @@ import Blusher 0.1
 
 View {
   id: menuBar
+
+  width: 1500
+  height: 30
+
+  property string clock: ''
   Rectangle {
     id: rect
 
-     width: 1599
-     height: 30
-    property string clock: ''
+    anchors.fill: parent
 
     signal clockClicked()
     signal openMenu(var items)
@@ -58,34 +61,34 @@ View {
       }
     }
 
-    //=================
-    // Menu bar menus
-    //=================
-    Row {
-      id: menuBarMenus
-
+    //================
+    // System menu
+    //================
+    Item {
+      width: 50
       anchors.top: parent.top
       anchors.bottom: parent.bottom
-      anchors.left: parent.left
-
-      //================
-      // System menu
-      //================
-      Item {
-        width: 50
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        Text {
-          text: 'system'
-          color: "white"
+      Text {
+        text: 'System'
+        color: "white"
+      }
+      Menu2 {
+        id: systemMenu
+        title: 'System Menu'
+        type: Menu2.MenuType.Submenu
+        MenuItem2 {
+          title: 'Test'
         }
-        MouseArea {
-          anchors.fill: parent
+        MenuItem2 {
+          title: 'Quit'
+        }
+      }
 
-          onClicked: {
-            print('openMenu signal sent');
-            menuBar.openMenu({ 'path:' : '/preferences' });
-          }
+      MouseArea {
+        anchors.fill: parent
+
+        onClicked: {
+          systemMenu.open();
         }
       }
     }

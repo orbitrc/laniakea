@@ -1,6 +1,8 @@
 QT += quick quickwidgets KWindowSystem
 CONFIG += c++11
 
+CONFIG += console
+
 VERSION = 0.1.0
 
 LIBS += -ludev -lcurl -ljson-c -lhttp_parser
