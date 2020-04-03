@@ -27,6 +27,8 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     QQmlApplicationEngine engine;
 
+    QApplication::setAttribute(Qt::AA_DisableHighDpiScaling);
+
     engine.addImportPath(BLUSHER_PATH);
     engine.addImportPath("qrc:/components");
     engine.addImportPath("qrc:/modules");

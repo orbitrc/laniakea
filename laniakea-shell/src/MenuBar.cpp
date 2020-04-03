@@ -21,7 +21,7 @@ MenuBar::MenuBar(QQmlEngine *engine, QWidget *parent)
     setWindowFlags(Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_X11NetWmWindowTypeDock);
 
-    this->setSource(QUrl("qrc:/qml/quickwidget/MenuBar.qml"));
+    setSource(QUrl("qrc:/qml/quickwidget/MenuBar.qml"));
 
     setGeometry(0, 0, 200, 30);
 
