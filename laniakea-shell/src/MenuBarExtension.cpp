@@ -1,4 +1,4 @@
-#include "MenuBarMenuExtension.h"
+#include "MenuBarExtension.h"
 
 #include "global.h"
 
@@ -8,7 +8,7 @@
 
 namespace la {
 
-MenuBarMenuExtension::MenuBarMenuExtension(QQuickWidget *parent)
+MenuBarExtension::MenuBarExtension(QQuickWidget *parent)
     : BlusherWidget(la::engine, parent)
 {
     this->m_title = "Title";
@@ -19,69 +19,69 @@ MenuBarMenuExtension::MenuBarMenuExtension(QQuickWidget *parent)
     setSource(QUrl("qrc:/MenuBarItemContent.qml"));
 }
 
-QString MenuBarMenuExtension::path() const
+QString MenuBarExtension::path() const
 {
     return this->m_path;
 }
 
-void MenuBarMenuExtension::setPath(QString path)
+void MenuBarExtension::setPath(QString path)
 {
     this->m_path = path;
 }
 
-QString MenuBarMenuExtension::title() const
+QString MenuBarExtension::title() const
 {
     return this->m_title;
 }
 
-void MenuBarMenuExtension::setTitle(QString title)
+void MenuBarExtension::setTitle(QString title)
 {
     this->m_title = title;
     this->rootObject()->setProperty("title", this->m_title);
 }
 
-QString MenuBarMenuExtension::image() const
+QString MenuBarExtension::image() const
 {
     return this->m_image;
 }
 
-void MenuBarMenuExtension::setImage(QString image)
+void MenuBarExtension::setImage(QString image)
 {
     this->m_image = image;
     this->rootObject()->setProperty("image", this->m_image);
 }
 
-Menu* MenuBarMenuExtension::menu()
+Menu* MenuBarExtension::menu()
 {
     return this->m_menu;
 }
 
-void MenuBarMenuExtension::setMenu(Menu *menu)
+void MenuBarExtension::setMenu(Menu *menu)
 {
     this->m_menu = menu;
 }
 
-qreal MenuBarMenuExtension::implicitWidth()
+qreal MenuBarExtension::implicitWidth()
 {
     return this->rootObject()->property("implicitWidth").toReal();
 }
 
 
-QSize MenuBarMenuExtension::sizeHint() const
+QSize MenuBarExtension::sizeHint() const
 {
-    qreal width = const_cast<MenuBarMenuExtension*>(this)->implicitWidth();
+    qreal width = const_cast<MenuBarExtension*>(this)->implicitWidth();
     return QSize(width, 30);
 }
 
 
-void MenuBarMenuExtension::mousePressEvent(QMouseEvent *)
+void MenuBarExtension::mousePressEvent(QMouseEvent *)
 {
     if (this->m_menu != nullptr) {
         this->m_menu->open();
     }
 }
 
-void MenuBarMenuExtension::paintEvent(QPaintEvent *)
+void MenuBarExtension::paintEvent(QPaintEvent *)
 {
 }
 

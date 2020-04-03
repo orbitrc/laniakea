@@ -24,7 +24,7 @@ SOURCES += \
         src/DebugButton.cpp \
         src/Menu.cpp \
         src/MenuBar.cpp \
-        src/MenuBarMenuExtension.cpp \
+        src/MenuBarExtension.cpp \
         src/MenuBarMenuItem.cpp \
         src/MenuItemDelegate.cpp \
         src/PopUpMenu.cpp \
@@ -35,7 +35,7 @@ SOURCES += \
         src/main.cpp
 
 RESOURCES += qml.qrc \
-        assets.qrc
+        resources.qrc
 
 # Used to resolve QML modules in Qt Creator code model.
 QML_IMPORT_PATH = \
@@ -57,7 +57,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     src/DebugButton.h \
-    src/MenuBarMenuExtension.h \
+    src/MenuBarExtension.h \
     src/MenuBarMenuItem.h \
     src/global.h \
     src/ConfFile.h \

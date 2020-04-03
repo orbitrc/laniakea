@@ -5,7 +5,7 @@
 #include <QHBoxLayout>
 
 #include "MenuBarMenuItem.h"
-#include "MenuBarMenuExtension.h"
+#include "MenuBarExtension.h"
 
 namespace la {
 
@@ -15,7 +15,7 @@ class MenuBar : public QWidget
     Q_OBJECT
 private:
     QList<MenuBarMenuItem*> m_menuItems;
-    QList<MenuBarMenuExtension*> m_menuExtensions;
+    QList<MenuBarExtension*> m_menuExtensions;
     QHBoxLayout *menu_bar_layout;
     QHBoxLayout *menu_items_layout;
     QHBoxLayout *menu_extensions_layout;
@@ -27,6 +27,7 @@ public:
 
     QList<MenuBarMenuItem*> menuItems();
 //    MenuBarMenuItem* systemMenuItem();
+    void registerMenuBarExtension(QString path);
 
 public slots:
     void onTest();

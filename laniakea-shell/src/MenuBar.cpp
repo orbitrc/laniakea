@@ -68,11 +68,21 @@ MenuBar::MenuBar(QWidget *parent)
     //======================
     // Menu bar extensions
     //======================
-    MenuBarMenuExtension *clockExtension = new MenuBarMenuExtension;
+    MenuBarExtension *clockExtension = new MenuBarExtension;
     clockExtension->setTitle("00:00:00");
     this->m_menuExtensions.push_back(clockExtension);
     this->menu_extensions_layout->addWidget(clockExtension);
     clockExtension->show();
+}
+
+
+void MenuBar::registerMenuBarExtension(QString path)
+{
+    MenuBarExtension *ext = new MenuBarExtension;
+    ext->setPath(path);
+    this->m_menuExtensions.push_back(ext);
+    this->menu_extensions_layout->addWidget(ext);
+    ext->show();
 }
 
 

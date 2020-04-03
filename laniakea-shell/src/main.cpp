@@ -33,12 +33,14 @@ int main(int argc, char *argv[])
     la::engine = &engine;
 
     // Connect to ReBus server and post new host.
+    /*
     RebusListener rebus;
     if (rebus.post_host() != 201) {
         return 1;
     }
     QObject::connect(&app, &QApplication::aboutToQuit,
                      &rebus, &RebusListener::delete_host, Qt::AutoConnection);
+    */
 
     // Initialize Blusher
     QVariantMap process;

@@ -19,6 +19,8 @@ QtQuick.Item {
     visible: root.image === ''
   }
   QtQuick.Image {
+    anchors.centerIn: root
+
     source: root.image
     visible: root.image !== ''
     width: 24
@@ -29,7 +31,7 @@ QtQuick.Item {
     if (root.image === '') {
       return label.implicitWidth;
     } else {
-      return 32;
+      return 40;
     }
   }
 }

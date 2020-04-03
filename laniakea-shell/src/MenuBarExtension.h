@@ -1,5 +1,5 @@
-#ifndef _LA_MENU_BAR_MENU_EXTENSION_H
-#define _LA_MENU_BAR_MENU_EXTENSION_H
+#ifndef _LA_MENU_BAR_EXTENSION_H
+#define _LA_MENU_BAR_EXTENSION_H
 
 #include <QWidget>
 #include <QQuickWidget>
@@ -10,7 +10,7 @@
 
 namespace la {
 
-class MenuBarMenuExtension : public BlusherWidget
+class MenuBarExtension : public BlusherWidget
 {
     Q_OBJECT
 private:
@@ -22,7 +22,7 @@ private:
     Menu *m_menu;
 
 public:
-    explicit MenuBarMenuExtension(QQuickWidget *parent = nullptr);
+    explicit MenuBarExtension(QQuickWidget *parent = nullptr);
 
     QString path() const;
     void setPath(QString path);
@@ -52,4 +52,4 @@ public slots:
 
 } // namespace la
 
-#endif // _LA_MENU_BAR_MENU_EXTENSION_H
+#endif // _LA_MENU_BAR_EXTENSION_H
