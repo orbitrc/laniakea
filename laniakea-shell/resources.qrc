@@ -1,5 +1,11 @@
 <RCC>
     <qresource prefix="/assets">
-        <file >orbit-logo-light@256x256.png</file>
+        <file alias="orbit-logo-light@256x256.png">assets/orbit-logo-light@256x256.png</file>
+    </qresource>
+    <qresource prefix="/qml">
+        <file>qml/Dummy.qml</file>
+    </qresource>
+    <qresource prefix="/qml/quickwidget">
+        <file alias="MenuBar.qml">qml/quickwidget/MenuBar.qml</file>
     </qresource>
 </RCC>

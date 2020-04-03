@@ -5,8 +5,8 @@ import Blusher 0.1
 Rectangle {
   id: menuBar
 
-  // width: 1920
-  // height: 30
+   width: 1920
+   height: 30
 
   property string clock: ''
 

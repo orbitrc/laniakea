@@ -15,17 +15,20 @@
 
 namespace la {
 
-MenuBar::MenuBar(QWidget *parent)
-    : QWidget(parent)
+MenuBar::MenuBar(QQmlEngine *engine, QWidget *parent)
+    : QQuickWidget(engine, parent)
 {
     setWindowFlags(Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_X11NetWmWindowTypeDock);
+
+    this->setSource(QUrl("qrc:/qml/quickwidget/MenuBar.qml"));
 
     setGeometry(0, 0, 200, 30);
 
     this->m_focusedMenuItemIndex = -1;
     this->m_focusedExtensionIndex = -1;
 
+#if 0
     // Set background.
     QPalette pal = palette();
     pal.setColor(QPalette::Background, QColor(24, 24, 24)); // #181818
@@ -73,6 +76,7 @@ MenuBar::MenuBar(QWidget *parent)
     this->m_menuExtensions.push_back(clockExtension);
     this->menu_extensions_layout->addWidget(clockExtension);
     clockExtension->show();
+#endif
 }
 
 

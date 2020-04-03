@@ -30,6 +30,7 @@ int main(int argc, char *argv[])
     engine.addImportPath(BLUSHER_PATH);
     engine.addImportPath("qrc:/components");
     engine.addImportPath("qrc:/modules");
+    engine.addPluginPath("/usr/lib");
     la::engine = &engine;
 
     // Connect to ReBus server and post new host.

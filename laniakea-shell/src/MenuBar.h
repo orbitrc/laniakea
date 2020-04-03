@@ -1,7 +1,7 @@
 #ifndef _LA_MENU_BAR_H
 #define _LA_MENU_BAR_H
 
-#include <QWidget>
+#include <QQuickWidget>
 #include <QHBoxLayout>
 
 #include "MenuBarMenuItem.h"
@@ -10,7 +10,7 @@
 namespace la {
 
 
-class MenuBar : public QWidget
+class MenuBar : public QQuickWidget
 {
     Q_OBJECT
 private:
@@ -23,7 +23,7 @@ private:
     int m_focusedExtensionIndex;
 
 public:
-    MenuBar(QWidget *parent = nullptr);
+    MenuBar(QQmlEngine *engine, QWidget *parent = nullptr);
 
     QList<MenuBarMenuItem*> menuItems();
 //    MenuBarMenuItem* systemMenuItem();

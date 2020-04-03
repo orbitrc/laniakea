@@ -40,14 +40,16 @@ Shell::Shell(QWidget *parent)
 
     this->setGeometry(0, 0, 0, 0);
 
+    /*
     MenuItemDelegate *about_system = new MenuItemDelegate(nullptr);
     MenuItemDelegate *shutdown = new MenuItemDelegate(nullptr);
     about_system->set_menu_item_title("About Laniakea");
     shutdown->set_menu_item_title("Shutdown");
+    */
 //    this->system_menu_delegate->add_item_delegate(about_system);
 //    this->system_menu_delegate->add_item_delegate(shutdown);
 
-    this->menu_bar = new MenuBar;
+    this->menu_bar = new MenuBar(la::engine);
     this->menu_bar->show();
 
     //=================
