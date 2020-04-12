@@ -25,9 +25,9 @@ namespace la {
 
 int main(int argc, char *argv[])
 {
-    bl::Application app(argc, argv);
-
     QApplication::setAttribute(Qt::AA_DisableHighDpiScaling);
+
+    bl::Application app(argc, argv);
 
     app.engine()->addImportPath(BLUSHER_PATH);
     app.engine()->addImportPath("qrc:/components");
