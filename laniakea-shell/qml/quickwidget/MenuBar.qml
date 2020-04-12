@@ -81,6 +81,9 @@ View {
         }
         MenuItem2 {
           title: 'Quit'
+          onTriggered: {
+            Shell.quit();
+          }
         }
       }
 
