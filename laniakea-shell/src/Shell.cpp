@@ -91,6 +91,9 @@ Shell::Shell(QWidget *parent)
     // DEBUG
     QObject::connect(kWindowSystem, static_cast<void (KWindowSystem::*)(WId, NET::Properties, NET::Properties2)>(&KWindowSystem::windowChanged),
                      this, [](WId w_id, NET::Properties props, NET::Properties2 props2) {
+        (void)w_id;
+        (void)props;
+        (void)props2;
 //        fprintf(stderr, "WId: %d\n", w_id);
 //        fprintf(stderr, "WMGeometry: %d", static_cast<bool>(props | NET::WMGeometry));
 //        fprintf(stderr, "\n");
