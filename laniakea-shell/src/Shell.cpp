@@ -189,16 +189,6 @@ void Shell::openRebusMenu(QVariantMap *menu)
     }
 }
 
-void Shell::setMenuBarMenu(QVariantMap *menu)
-{
-    // TODO
-}
-
-void Shell::focusMenuItem(int64_t index)
-{
-    qDebug("focusMenuItem");
-}
-
 
 void Shell::setPreference(QString category, QString key, QVariant val)
 {

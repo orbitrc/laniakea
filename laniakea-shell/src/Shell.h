@@ -45,8 +45,6 @@ public:
     explicit Shell(QWidget *parent = nullptr);
 
     Q_INVOKABLE void openMenu(QObject *menu);
-    Q_INVOKABLE void focusMenuItem(int64_t index);
-    Q_INVOKABLE void setMenuBarMenu(QVariantMap *menu);
     Q_INVOKABLE void setPreference(QString category, QString key, QVariant val);
     Q_INVOKABLE void launchApplication(QString name);
     Q_INVOKABLE void runCommand(QString cmd);
