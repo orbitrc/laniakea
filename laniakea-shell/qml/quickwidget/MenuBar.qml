@@ -72,14 +72,14 @@ View {
         text: 'System'
         color: "white"
       }
-      Menu2 {
+      Menu {
         id: systemMenu
         title: 'System Menu'
-        type: Menu2.MenuType.Submenu
-        MenuItem2 {
+        type: Menu.MenuType.Submenu
+        MenuItem {
           title: 'Test'
         }
-        MenuItem2 {
+        MenuItem {
           title: 'Quit'
           onTriggered: {
             Shell.quit();
