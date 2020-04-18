@@ -91,7 +91,7 @@ View {
         anchors.fill: parent
 
         onClicked: {
-          systemMenu.open();
+          systemMenu.open(0, menuBar.height);
         }
       }
     }
