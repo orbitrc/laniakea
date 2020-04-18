@@ -9,13 +9,14 @@ View {
   height: 30
 
   property string clock: ''
+
+  signal clockClicked()
+  signal openMenu(var items)
+
   Rectangle {
     id: rect
 
     anchors.fill: parent
-
-    signal clockClicked()
-    signal openMenu(var items)
 
     color: "#181818"
 
@@ -106,6 +107,8 @@ View {
       anchors.bottom: parent.bottom
       anchors.right: parent.right
 
+      layoutDirection: Qt.RightToLeft
+
       // Clock
       Item {
         width: 90
@@ -121,6 +124,30 @@ View {
             print('clock clicked');
             menuBar.clockClicked();
           }
+        }
+      }
+
+      // Battery
+      Item {
+        width: batteryText.implicitWidth + 10
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        Text {
+          id: batteryText
+          text: Shell.batteryLevel + '%'
+          color: "white"
+        }
+      }
+
+      // Desktops
+      Item {
+        width: desktopText.implicitWidth + 10
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        Text {
+          id: desktopText
+          text: Shell.desktopName(Shell.currentDesktop)
+          color: "white"
         }
       }
     }

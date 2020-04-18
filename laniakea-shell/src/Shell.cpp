@@ -222,6 +222,11 @@ void Shell::runCommand(QString cmd)
     fprintf(stderr, "cmd = %s, f = %p\n", cmd.toStdString().c_str(), f);
 }
 
+QString Shell::desktopName(int desktop)
+{
+    return KWindowSystem::desktopName(desktop);
+}
+
 
 //==================
 // Signal handlers
