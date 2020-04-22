@@ -1,14 +1,16 @@
 QT += quick quickwidgets KWindowSystem
 CONFIG += c++11
 
-CONFIG += console
+CONFIG += console link_pkgconfig
 
 VERSION = 0.1.0
 
-LIBS += -ludev -lcurl -ljson-c -lhttp_parser -lblusher
+LIBS += -ludev -lcurl -ljson-c -lnm -lhttp_parser -lblusher
 
 INCLUDEPATH += ./libraries/httproto/include \
         /home/hardboiled65/dev/Blusher/include
+
+PKGCONFIG += libnm
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -30,6 +32,7 @@ SOURCES += \
         src/MenuBarExtension.cpp \
         src/MenuBarMenuItem.cpp \
         src/MenuItemDelegate.cpp \
+        src/NetworkManager.cpp \
         src/PopUpMenu.cpp \
         src/PopUpMenuDelegate.cpp \
         src/RebusListener.cpp \
@@ -68,6 +71,7 @@ HEADERS += \
     src/Menu.h \
     src/MenuBar.h \
     src/MenuItemDelegate.h \
+    src/NetworkManager.h \
     src/PopUpMenu.h \
     src/PopUpMenuDelegate.h \
     src/RebusListener.h \

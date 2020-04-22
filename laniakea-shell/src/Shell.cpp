@@ -49,6 +49,8 @@ Shell::Shell(QWidget *parent)
 //    this->system_menu_delegate->add_item_delegate(about_system);
 //    this->system_menu_delegate->add_item_delegate(shutdown);
 
+    this->m_networkManager = new NetworkManager;
+
     this->menu_bar = new MenuBar(la::engine);
     this->menu_bar->show();
 
@@ -322,6 +324,11 @@ void Shell::setSystemPreferences(QObject *preferences)
 Preferences* Shell::preferences()
 {
     return &(this->conf_file);
+}
+
+NetworkManager* Shell::networkManager()
+{
+    return this->m_networkManager;
 }
 
 int Shell::numberOfDesktops()

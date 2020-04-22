@@ -11,6 +11,7 @@
 #include "PopUpMenu.h"
 #include "MenuBar.h"
 #include "ConfFile.h"
+#include "NetworkManager.h"
 
 namespace la {
 
@@ -22,6 +23,7 @@ class Shell : public QWidget
     Q_PROPERTY(QJSValue menuBarMenu READ menuBarMenu WRITE setMenuBarMenu NOTIFY menuBarMenuChanged)
     Q_PROPERTY(QObject* systemPreferences READ systemPreferences WRITE setSystemPreferences)
     Q_PROPERTY(QObject* preferences READ preferences NOTIFY preferencesChanged)
+    Q_PROPERTY(NetworkManager* networkManager READ networkManager CONSTANT)
     // Desktop
     Q_PROPERTY(int numberOfDesktops READ numberOfDesktops NOTIFY numberOfDesktopsChanged)
     Q_PROPERTY(int currentDesktop READ currentDesktop NOTIFY currentDesktopChanged)
@@ -38,6 +40,7 @@ private:
     QObject *system_preferences_window;
 
     Preferences conf_file;
+    NetworkManager *m_networkManager;
     struct udev *p_udev;
 //    PopUpMenu *system_menu_delegate;
     MenuBar *menu_bar;
@@ -75,6 +78,7 @@ public:
     void setSystemPreferences(QObject *preferences);
 
     Preferences* preferences();
+    NetworkManager* networkManager();
 
     int numberOfDesktops();
     int currentDesktop();

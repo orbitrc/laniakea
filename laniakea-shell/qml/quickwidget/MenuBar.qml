@@ -79,6 +79,9 @@ View {
         type: Menu.MenuType.Submenu
         MenuItem {
           title: 'Test'
+          onTriggered: {
+            print(Shell.networkManager.currentConnectionId);
+          }
         }
         MenuItem {
           title: 'Quit'
