@@ -81,6 +81,9 @@ View {
           title: 'Test'
           onTriggered: {
             print(Shell.networkManager.currentConnectionId);
+            for (let i = 0; i < Shell.networkManager.knownAps.length; ++i) {
+              print(Shell.networkManager.knownAps[i].ssid);
+            }
           }
         }
         MenuItem {
