@@ -22,8 +22,21 @@ Window {
   }
 
   onKeyPressed: {
+    if (event.key == Qt.Key_Escape) {
+      root.close();
+    }
     if (event.key == Qt.Key_Return) {
       Shell.runCommand(root.command);
+    }
+  }
+
+  // onActiveChanged directly causes an error message.
+  Connections {
+    target: root
+    onActiveChanged: {
+      if (root.active == false) {
+        root.close();
+      }
     }
   }
 }
