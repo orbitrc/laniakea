@@ -2,6 +2,8 @@ import QtQuick 2.12
 
 import Blusher 0.1
 
+import "../Laniakea"
+
 View {
   id: menuBar
 
@@ -40,6 +42,29 @@ View {
       }
       onExited: {
         _testRect.color = "red";
+      }
+    }
+    // Debug button
+    MouseArea {
+      width: 24
+      x: 340
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      hoverEnabled: true
+      Rectangle {
+        id: _debugButton
+        anchors.fill: parent
+        color: "green"
+      }
+      onClicked: {
+        runCommand.visible = true;
+        runCommand.requestActivate();
+      }
+      onEntered: {
+        _debugButton.color = "blue";
+      }
+      onExited: {
+        _debugButton.color = "green";
       }
     }
 
@@ -156,6 +181,10 @@ View {
           color: "white"
         }
       }
+    }
+
+    RunCommandPopup {
+      id: runCommand
     }
   }
 }
