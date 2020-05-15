@@ -37,14 +37,12 @@ int main(int argc, char *argv[])
 
     qmlRegisterUncreatableType<la::AccessPoint>("Laniakea", 0, 1, "AccessPoint", "");
     // Connect to ReBus server and post new host.
-    /*
     RebusListener rebus;
     if (rebus.post_host() != 201) {
         return 1;
     }
     QObject::connect(&app, &QApplication::aboutToQuit,
                      &rebus, &RebusListener::delete_host, Qt::AutoConnection);
-    */
 
     la::Shell shell;
     la::shell = &shell;

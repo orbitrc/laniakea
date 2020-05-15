@@ -570,8 +570,15 @@ int16_t RebusListener::post_host()
 
     if (res.status == 201) {
         json_object *val = json_tokener_parse(res.body + "\0");
-        if (json_object_get_type(val) == json_type_string) {
-            strcpy(this->id, json_object_get_string(val));
+        if (json_object_get_type(val) == json_type_object) {
+            json_object *uuid = json_object_object_get(val, "uuid");
+            if (json_object_get_type(uuid) != json_type_string) {
+                // ERROR!
+            }
+            strcpy(this->id, json_object_get_string(uuid));
+//        }
+//        if (json_object_get_type(val) == json_type_string) {
+//            strcpy(this->id, json_object_get_string(val));
         } else {
             fprintf(stderr, "[RebusListener::post_host] Response body is invalid. body: <%s>",
                 static_cast<const char*>(res.body));
