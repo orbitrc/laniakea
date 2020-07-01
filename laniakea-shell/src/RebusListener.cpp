@@ -544,7 +544,10 @@ void RebusListener::listen()
     QString path = QString(getenv("XDG_RUNTIME_DIR")) + "/rebus/" + this->id;
     QObject::connect(&this->socket, &QLocalServer::newConnection,
                      this, &RebusListener::onNewConnection);
-    this->socket.listen(path);
+    if (!this->socket.listen(path)) {
+        fprintf(stderr, "RebusListener::listen - error!\n");
+        qDebug() << this->socket.errorString();
+    }
 }
 
 int16_t RebusListener::post_host()
@@ -601,7 +604,7 @@ int16_t RebusListener::delete_host()
 
     QByteArray id(this->id);
     req.method = HttpRequest::Method::Delete;
-    req.path = "/hosts/laniakea/" + id;
+    req.path = "/hosts/laniakea";
     req.setHost("rebus");
     req.content_type = REBUS_HTTP_CONTENT_TYPE_JSON;
 
