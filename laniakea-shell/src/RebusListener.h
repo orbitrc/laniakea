@@ -17,6 +17,7 @@ public:
     RebusListener();
     ~RebusListener();
 
+    /// @brief Start listening upcomming messages.
     void listen();
 
 signals:

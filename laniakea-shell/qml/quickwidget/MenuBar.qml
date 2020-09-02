@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtQuick.Window 2.12 as QtQuickWindow
 
 import Blusher 0.1
 
@@ -7,7 +8,7 @@ import "../Laniakea"
 View {
   id: menuBar
 
-  width: 1500
+  width: QtQuickWindow.Screen.width
   height: 30
 
   property string clock: ''
@@ -65,6 +66,21 @@ View {
       }
       onExited: {
         _debugButton.color = "green";
+      }
+    }
+    MouseArea {
+      width: 24
+      x: 360
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      hoverEnabled: true
+      Rectangle {
+        id: _debugButton2
+        anchors.fill: parent
+        color: "cyan"
+      }
+      onClicked: {
+        print(QtQuickWindow.Screen.width);
       }
     }
 

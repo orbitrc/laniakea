@@ -8,8 +8,9 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 
-// C
+// C/C++
 #include <stdio.h>
+#include <filesystem>
 
 // Qt
 #include <QApplication>
@@ -541,10 +542,18 @@ RebusListener::~RebusListener()
 
 void RebusListener::listen()
 {
-    QString path = QString(getenv("XDG_RUNTIME_DIR")) + "/rebus/" + this->id;
+    namespace fs = std::filesystem;
+
+    // Make directory if not exists.
+    auto dir = fs::path(getenv("XDG_RUNTIME_DIR")) / "rebus";
+    if (!fs::directory_entry(dir).exists()) {
+        fs::create_directories(dir);
+    }
+
+    auto path = dir / this->id;
     QObject::connect(&this->socket, &QLocalServer::newConnection,
                      this, &RebusListener::onNewConnection);
-    if (!this->socket.listen(path)) {
+    if (!this->socket.listen(path.c_str())) {
         fprintf(stderr, "RebusListener::listen - error!\n");
         qDebug() << this->socket.errorString();
     }
