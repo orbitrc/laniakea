@@ -1,7 +1,10 @@
 QT += quick quickwidgets KWindowSystem
 CONFIG += c++17
 
-CONFIG += console link_pkgconfig
+CONFIG += link_pkgconfig
+CONFIG(debug, debug|release) {
+    CONFIG += qml_debug
+}
 
 VERSION = 0.1.0
 

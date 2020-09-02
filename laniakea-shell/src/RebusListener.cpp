@@ -749,7 +749,7 @@ void Routes::MenuBar::applicationMenu(const httproto_protocol *request, QLocalSo
     }
 }
 
-// [POST] /shell/runCommand
+// [POST] /shell/run-command
 void Routes::Shell::runCommand(const httproto_protocol *request, QLocalSocket *connection)
 {
     switch (request->method) {

@@ -113,8 +113,8 @@ signals:
     //==========================
     void menuBarMenuChanged();
 
-    void numberOfDesktopsChanged();
-    void currentDesktopChanged();
+    void numberOfDesktopsChanged(int num);
+    void currentDesktopChanged(int desktop);
 
     void chargingChanged();
 

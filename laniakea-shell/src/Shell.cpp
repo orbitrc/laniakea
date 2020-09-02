@@ -65,9 +65,9 @@ Shell::Shell(QWidget *parent)
     // KWindowSystem
     KWindowSystem *kWindowSystem = KWindowSystem::self();
     QObject::connect(kWindowSystem, &KWindowSystem::numberOfDesktopsChanged,
-                     this, [this](int) { emit this->numberOfDesktopsChanged(); });
+                     this, &Shell::numberOfDesktopsChanged);
     QObject::connect(kWindowSystem, &KWindowSystem::currentDesktopChanged,
-                     this, [this](int) { emit this->currentDesktopChanged(); });
+                     this, &Shell::currentDesktopChanged);
     // Shell
     QObject::connect(this, &Shell::confFileChanged,
                      this, &Shell::onConfFileChanged);

@@ -33,7 +33,7 @@ Window {
   // onActiveChanged directly causes an error message.
   Connections {
     target: root
-    onActiveChanged: {
+    function onActiveChanged() {
       if (root.active == false) {
         root.close();
       }
