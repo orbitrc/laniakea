@@ -110,10 +110,31 @@ View {
       width: 50
       anchors.top: parent.top
       anchors.bottom: parent.bottom
-      Text {
-        text: 'System'
-        color: "white"
+
+      states: [
+        State {
+          name: 'active'
+          PropertyChanges {
+            target: activeColor
+            color: "blue"
+          }
+        }
+      ]
+      Rectangle {
+        id: activeColor
+        width: 30
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        color: "transparent"
       }
+      Image {
+        source: 'qrc:/assets/orbit-logo-light@256x256.png'
+        anchors.centerIn: parent
+        width: 30
+        height: 30
+      }
+
       Menu {
         id: systemMenu
         title: 'System Menu'
@@ -140,6 +161,7 @@ View {
 
         onClicked: {
           systemMenu.open(0, menuBar.height);
+          parent.state = 'active';
         }
       }
     }
