@@ -130,12 +130,6 @@ protected:
     // bool event(QEvent *event) override;
 };
 
-#define LA_SHELL_INOTIFY_LIST_NUM 2
-#define LA_SHELL_INOTIFY_FILE_CHARGING "/sys/class/power_supply/BAT0/status"
-#define LA_SHELL_INOTIFY_FILE_BATTERY_LEVEL "/sys/class/power_supply/BAT0/capacity"
-extern const char* inotify_list[LA_SHELL_INOTIFY_LIST_NUM];
-void _init_inotify_list();
-
 
 class Menus {
 public:

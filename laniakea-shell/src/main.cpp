@@ -63,20 +63,6 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<la::PopUpMenuDelegate>("LaniakeaShell", 0, 1, "PopUpMenuDelegate");
 
-
-    QList<QScreen*> screens = QGuiApplication::screens();
-
-    /*
-    QObject::connect(&app, &QGuiApplication::screenAdded,
-                     &app, [](QScreen *screen) {
-        fprintf(stderr, "screen added!\n");
-    });
-    QObject::connect(&app, &QGuiApplication::screenRemoved,
-                     &app, [](QScreen *screen) {
-        fprintf(stderr, "screen removed!\n");
-    });
-    */
-
 //    QObject::connect(
 //        &app, &QObject::objectNameChanged,
 //        &app, [app](const QString& objectName) { app.onObjectNameChanged(objectName); },
