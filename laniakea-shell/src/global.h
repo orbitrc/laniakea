@@ -7,6 +7,8 @@
 
 #include "Shell.h"
 
+#define LA_SHELL_VERSION "0.1.0"
+
 namespace la {
 
 // Forward declaration.
