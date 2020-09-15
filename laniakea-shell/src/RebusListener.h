@@ -37,6 +37,9 @@ struct httproto_protocol;
 
 class Routes {
 public:
+    // [GET] /ping
+    static void ping(const httproto_protocol *request, QLocalSocket *conection);
+
     // [POST] /quit
     static void quit(const httproto_protocol *request, QLocalSocket *connection);
 

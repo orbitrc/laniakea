@@ -3,7 +3,7 @@
 #include <QQmlApplicationEngine>
 #include <QScreen>
 
-#include <blusher.h>
+#include <blusher/blusher.h>
 
 #include <curl/curl.h>
 

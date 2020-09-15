@@ -8,9 +8,9 @@ CONFIG(debug, debug|release) {
 
 VERSION = 0.1.0
 
-LIBS += -ludev -lcurl -ljson-c -lnm -lhttp_parser -lblusher
+LIBS += -ludev -lcurl -ljson-c -lnm -lhttproto
 
-INCLUDEPATH += ./libraries/httproto/include \
+INCLUDEPATH += \
         /home/hardboiled65/dev/Blusher/include
 
 PKGCONFIG += libnm
@@ -40,7 +40,6 @@ SOURCES += \
         src/PopUpMenuDelegate.cpp \
         src/RebusListener.cpp \
         src/Shell.cpp \
-        libraries/httproto/src/httproto.c \
         src/main.cpp
 
 RESOURCES += qml.qrc \
@@ -78,6 +77,5 @@ HEADERS += \
     src/PopUpMenu.h \
     src/PopUpMenuDelegate.h \
     src/RebusListener.h \
-    src/Shell.h \
-    libraries/httproto/include/httproto/httproto.h
+    src/Shell.h
 

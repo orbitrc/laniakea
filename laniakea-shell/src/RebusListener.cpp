@@ -23,8 +23,6 @@ extern "C" {
 #include <json-c/json_visit.h>
 }
 
-#include <http_parser.h>
-
 #include <httproto/httproto.h>
 
 
@@ -202,35 +200,23 @@ public:
         req.content_length = -1;
         req.ready = false;
 
-
-        http_parser parser;
-        http_parser_settings parser_settings;
-
-        http_parser_init(&parser, HTTP_REQUEST);
-        parser.data = static_cast<void*>(&req);
-
-        http_parser_settings_init(&parser_settings);
-        parser_settings.on_url = HttpRequest::parser_on_url;
-        parser_settings.on_header_field = HttpRequest::parser_on_header_field;
-        parser_settings.on_header_value = HttpRequest::parser_on_header_value;
-        parser_settings.on_body = HttpRequest::parser_on_body;
-
-        size_t parsed = http_parser_execute(&parser, &parser_settings, request, len);
-        if (parsed != len) {
-            fprintf(stderr, "Parse failed. %s: %s\n",
-                http_errno_name(static_cast<enum http_errno>(parser.http_errno)),
-                http_errno_description(static_cast<enum http_errno>(parser.http_errno))
-            );
+        httproto_protocol *protocol = httproto_protocol_create(HTTPROTO_REQUEST);
+        httproto_protocol_parse(protocol, request, len);
+        if (!protocol) {    // Error check needed.
+//            fprintf(stderr, "Parse failed. %s: %s\n",
+//                http_errno_name(static_cast<enum http_errno>(parser.http_errno)),
+//                http_errno_description(static_cast<enum http_errno>(parser.http_errno))
+//            );
             fprintf(stderr, "Invalid HTTP request. >%s<\n", request);
             return req;
         }
 
         // HTTP method.
-        if (parser.method == HTTP_GET) {
+        if (protocol->method == HTTPROTO_GET) {
             req.method = HttpRequest::Method::Get;
-        } else if (parser.method == HTTP_POST) {
+        } else if (protocol->method == HTTPROTO_POST) {
             req.method = HttpRequest::Method::Post;
-        } else if (parser.method == HTTP_DELETE) {
+        } else if (protocol->method == HTTPROTO_DELETE) {
             req.method = HttpRequest::Method::Delete;
         } else {
             fprintf(stderr, "Invalid HTTP method. %s\n", request);
@@ -238,7 +224,7 @@ public:
         }
 
         // Headers.
-        req.content_length = parser.content_length;
+        req.content_length = protocol->content_length;
         if (req.content_length == -1) { req.content_length = 0; }
 
         // Last assert.
@@ -253,46 +239,7 @@ public:
     }
 
 private:
-    static int parser_on_url(http_parser *parser, const char *at, size_t len)
-    {
-        HttpRequest *req = (HttpRequest*)(parser->data);
-        QByteArray val(at, len);
-        req->path = val.split('?')[0];
-        return 0;
-    }
-    static int parser_on_header_field(http_parser *parser, const char *at, size_t len)
-    {
-        HttpRequest *req = (HttpRequest*)(parser->data);
-        req->temp_key = QByteArray(at, static_cast<int>(len));
-        return 0;
-    }
-    static int parser_on_header_value(http_parser *parser, const char *at, size_t len)
-    {
-        HttpRequest *req = (HttpRequest*)(parser->data);
-        QByteArray val(at, len);
-        if (req->temp_key == "Content-Length") {
-            req->content_length = val.toLongLong();
-        } else if (req->temp_key == "Content-Type") {
-            if (val == REBUS_HTTP_CONTENT_TYPE_JSON) {
-                req->content_type = REBUS_HTTP_CONTENT_TYPE_JSON;
-            } else if (req->temp_key == "Host") {
-                // TODO: Other types.
-                strncpy(req->host, at, len);
-                req->host[len] = '\0';
-            } else {
-                return 1;
-            }
-        }
-        return 0;
-    }
-    static int parser_on_body(http_parser *parser, const char *at, size_t len)
-    {
-        HttpRequest *req = (HttpRequest*)(parser->data);
-        req->body = QByteArray(at, len);
-        return 0;
-    }
 };
-
 
 //==================
 // Static functions
@@ -452,6 +399,8 @@ static void routes(const httproto_protocol *request, QLocalSocket *connection)
         Routes::MenuBar::applicationMenu(request, connection);
     } else if (path == "/shell/run-command") {
         Routes::Shell::runCommand(request, connection);
+    } else if (path == "/ping") {
+        Routes::ping(request, connection);
     } else if (path == "/quit") {
         Routes::quit(request, connection);
     } else {
@@ -645,13 +594,38 @@ void RebusListener::onNewConnection()
 // API handlers
 //========================
 
+// [GET] /ping
+void Routes::ping(const httproto_protocol *request, QLocalSocket *connection)
+{
+    switch (request->method) {
+    case HTTPROTO_GET:
+        connection->write("HTTP/1.1 200 ");
+        connection->write(httproto_status_code_to_string(HTTPROTO_OK));
+        connection->write("\r\n");
+        connection->write("Content-Type: application/json\r\n"
+                          "Content-Length: 6\r\n"
+                          "\"pong\"");
+        if (!connection->flush()) {
+            fprintf(stderr, "(slot) [RebusListener::onNewConnection] Failed to write to the connected socket.\n");
+        }
+        connection->close();
+//        httproto_protocol_free(request);
+        break;
+    default:
+        connection->write(VOID_BAD_REQUEST_RESPONSE);
+        connection->flush();
+        connection->close();
+        break;
+    }
+}
+
 // [POST] /quit
 void Routes::quit(const httproto_protocol *request, QLocalSocket *connection)
 {
     switch (request->method) {
     case HTTPROTO_POST:
         connection->write("HTTP/1.1 202 ");
-        connection->write(http_status_str(HTTP_STATUS_ACCEPTED));
+        connection->write(httproto_status_code_to_string(HTTPROTO_ACCEPTED));
         connection->write("\r\n");
         connection->write("Content-Type: application/json\r\n"
                           "Content-Length: 0\r\n"
@@ -738,7 +712,7 @@ void Routes::MenuBar::applicationMenu(const httproto_protocol *request, QLocalSo
     }
     default:
         connection->write("HTTP/1.1 405 ");
-        connection->write(http_status_str(HTTP_STATUS_METHOD_NOT_ALLOWED));
+        connection->write(httproto_status_code_to_string(HTTPROTO_METHOD_NOT_ALLOWED));
         connection->write("\r\n");
         connection->write("Content-Type: application/json\r\n"
                           "Content-Length: 0\r\n"
@@ -762,7 +736,7 @@ void Routes::Shell::runCommand(const httproto_protocol *request, QLocalSocket *c
     }
     default:
         connection->write("HTTP/1.1 405 ");
-        connection->write(http_status_str(HTTP_STATUS_METHOD_NOT_ALLOWED));
+        connection->write(httproto_status_code_to_string(HTTPROTO_METHOD_NOT_ALLOWED));
         connection->write("\r\n");
         connection->write("Content-Type: application/json\r\n"
                           "Content-Length: 0\r\n"
