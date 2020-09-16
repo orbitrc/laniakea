@@ -140,6 +140,20 @@ View {
         title: 'System Menu'
         type: Menu.MenuType.Submenu
         MenuItem {
+          title: 'About System...'
+        }
+        MenuItem {
+          title: ''
+          separator: true
+        }
+        MenuItem {
+          title: 'System Preferences...'
+        }
+        MenuItem {
+          title: ''
+          separator: true
+        }
+        MenuItem {
           title: 'Test'
           onTriggered: {
             print(Shell.networkManager.currentConnectionId);
