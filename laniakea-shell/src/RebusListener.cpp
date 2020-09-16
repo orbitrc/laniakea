@@ -604,6 +604,7 @@ void Routes::ping(const httproto_protocol *request, QLocalSocket *connection)
         connection->write("\r\n");
         connection->write("Content-Type: application/json\r\n"
                           "Content-Length: 6\r\n"
+                          "\r\n"
                           "\"pong\"");
         if (!connection->flush()) {
             fprintf(stderr, "(slot) [RebusListener::onNewConnection] Failed to write to the connected socket.\n");
