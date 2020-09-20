@@ -51,9 +51,6 @@ Shell::Shell(QWidget *parent)
 
     this->m_networkManager = new NetworkManager;
 
-    this->menu_bar = new MenuBar(la::engine);
-    this->menu_bar->show();
-
     //=================
     // Set properties
     //=================
