@@ -36,6 +36,7 @@ Window {
     target: root
     function onActiveChanged() {
       if (root.active === true) {
+        _text.focus = true;
       }
       if (root.active === false) {
         root.close();
