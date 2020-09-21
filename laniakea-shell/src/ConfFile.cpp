@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 #include <QFile>
+#include <QFileSystemWatcher>
 #include <QString>
 #include <QMap>
 #include <QVariant>
@@ -19,6 +20,7 @@ struct Preferences::Impl {
     int inotify_fd;
     int inotify_wd;
     bool inotify_watching;
+    QFileSystemWatcher watcher;
     QVariantMap conf_dict;
     Preferences::Desktop *desktop;
     Preferences::Keyboard *keyboard;

@@ -87,6 +87,29 @@ Window {
       _testRect.color = "red";
     }
   }
+  // Run command debug button
+  MouseArea {
+    width: 24
+    x: 340
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    hoverEnabled: true
+    Rectangle {
+      id: _debugButton
+      anchors.fill: parent
+      color: "green"
+    }
+    onClicked: {
+      runCommand.visible = true;
+      runCommand.requestActivate();
+    }
+    onEntered: {
+      _debugButton.color = "blue";
+    }
+    onExited: {
+      _debugButton.color = "green";
+    }
+  }
 
   //=======================
   // Menu bar extensions
@@ -102,6 +125,8 @@ Window {
 
     // Clock
     MenuBarExtension {
+      id: clockExtension
+
       text: '00:00:00'
     }
 
@@ -151,6 +176,32 @@ Window {
       onTriggered: {
         Shell.quit();
       }
+    }
+  }
+
+  RunCommandPopup {
+    id: runCommand
+  }
+
+  //=============
+  // Timer
+  //=============
+  Timer {
+    interval: 1000
+    running: true
+    repeat: true
+    onTriggered: {
+//      root.clock = new Date();
+      let now = new Date();
+      let text = '';
+      let dateString = {
+        hour: now.getHours().toString().padStart(2, '0'),
+        minute: now.getMinutes().toString().padStart(2, '0'),
+        second: now.getSeconds().toString().padStart(2, '0')
+      };
+
+      text += dateString.hour + ':' + dateString.minute + ':' + dateString.second;
+      clockExtension.text = text;
     }
   }
 }
