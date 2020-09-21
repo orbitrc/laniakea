@@ -8,6 +8,7 @@ Window {
 
   visible: true
   netWmWindowType: Window.NetWmWindowType.Dock
+  onAllDesktops: true
 
   x: 0
   y: 0
@@ -84,6 +85,34 @@ Window {
     }
     onExited: {
       _testRect.color = "red";
+    }
+  }
+
+  //=======================
+  // Menu bar extensions
+  //=======================
+  Row {
+    id: menuBarExtensions
+
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+
+    layoutDirection: Qt.RightToLeft
+
+    // Clock
+    MenuBarExtension {
+      text: '00:00:00'
+    }
+
+    // Battery
+    MenuBarExtension {
+      text: Shell.batteryLevel + '%'
+    }
+
+    // Desktops
+    MenuBarExtension {
+      text: Shell.desktopName(Shell.currentDesktop)
     }
   }
 

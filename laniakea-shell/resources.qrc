@@ -4,6 +4,7 @@
     </qresource>
     <qresource prefix="/qml">
         <file alias="main.qml">qml/main.qml</file>
+        <file alias="MenuBarExtension.qml">qml/MenuBarExtension.qml</file>
     </qresource>
     <qresource prefix="/qml/Laniakea">
         <file alias="RunCommandPopup.qml">qml/Laniakea/RunCommandPopup.qml</file>
