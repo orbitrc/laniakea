@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtGraphicalEffects 1.0
 import QtQuick.Window 2.12 as QtQuickWindow
 
 import Blusher 0.1
@@ -51,11 +52,18 @@ Window {
       color: "transparent"
     }
     Image {
+      id: logoImage
       source: 'qrc:/assets/orbit-logo-light@256x256.png'
       anchors.centerIn: parent
       width: 30
       height: 30
     }
+    ColorOverlay {
+      anchors.fill: logoImage
+      source: logoImage
+      color: '#000000'
+    }
+
     MouseArea {
       anchors.fill: parent
 
