@@ -139,6 +139,7 @@ Window {
     // Desktops
     MenuBarExtension {
       text: Shell.desktopName(Shell.currentDesktop)
+      menu: desktopsMenu
     }
   }
 
@@ -176,6 +177,22 @@ Window {
       title: 'Quit'
       onTriggered: {
         Shell.quit();
+      }
+    }
+  }
+
+  Menu {
+    id: desktopsMenu
+    title: 'Desktops Menu'
+    type: Menu.MenuType.Submenu
+
+    Component.onCompleted: {
+      for (let i = 0; i < Shell.numberOfDesktops; ++i) {
+        let item = Qt.createQmlObject('import Blusher 0.1\n'
+          + 'MenuItem {\n'
+          + '    title: Shell.desktopName(' + i + ')\n'
+          + '}', desktopsMenu, '');
+        desktopsMenu.addItem(item);
       }
     }
   }

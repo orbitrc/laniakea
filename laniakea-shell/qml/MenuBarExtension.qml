@@ -7,6 +7,7 @@ View {
 
   property string text
   property string imageSource: ''
+  property Menu menu: null
 
   width: extensionText.implicitWidth + 10
   height: 30
@@ -14,5 +15,15 @@ View {
   Text {
     id: extensionText
     text: root.text
+  }
+
+  MouseArea {
+    anchors.fill: parent
+
+    onPressed: {
+      if (menu != null) {
+        menu.open(0, 0);
+      }
+    }
   }
 }
