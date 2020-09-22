@@ -3,7 +3,6 @@
         <file alias="main.qml">src/qml/main.qml</file>
         <file alias="MenuItemDelegate.qml">src/qml/MenuItemDelegate.qml</file>
         <file alias="MenuBarItemContent.qml">src/qml/MenuBarItemContent.qml</file>
-        <file>MenuBarExtensionContent.qml</file>
     </qresource>
     <qresource prefix="/components/LaniakeaShell">
         <file alias="MenuBar.qml">src/qml/components/LaniakeaShell/MenuBar.qml</file>
