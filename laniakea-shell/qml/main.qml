@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Window 2.12 as QtQuickWindow
 
 import Blusher 0.1
+import Blusher.DesktopEnvironment 0.1
 
 Window {
   id: root
@@ -10,8 +11,8 @@ Window {
   netWmWindowType: Window.NetWmWindowType.Dock
   onAllDesktops: true
 
-  x: 0
-  y: 0
+  x: DesktopEnvironment.primaryScreen.x
+  y: DesktopEnvironment.primaryScreen.y
   width: QtQuickWindow.Screen.width
   height: 30
 

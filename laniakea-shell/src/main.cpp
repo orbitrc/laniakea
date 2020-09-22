@@ -41,8 +41,9 @@ int main(int argc, char *argv[])
     app.engine()->addImportPath(BLUSHER_PATH);
     app.engine()->addImportPath("qrc:/components");
     app.engine()->addImportPath("qrc:/modules");
-    app.engine()->addPluginPath("/usr/lib");
     la::engine = app.engine();
+
+    qDebug() << app.engine()->importPathList();
 
     qmlRegisterUncreatableType<la::AccessPoint>("Laniakea", 0, 1, "AccessPoint", "");
     // Connect to ReBus server and post new host.

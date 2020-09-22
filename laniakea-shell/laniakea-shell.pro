@@ -47,7 +47,6 @@ RESOURCES += qml.qrc \
 
 # Used to resolve QML modules in Qt Creator code model.
 QML_IMPORT_PATH = \
-        /usr/lib/blusher/qml \
         ./src/qml/components \
         ./src/qml/modules
 
@@ -55,8 +54,7 @@ QML_IMPORT_PATH = \
 QML_DESIGNER_IMPORT_PATH =
 
 DEFINES += "BLUSHER_APP_NAME=\\\"Laniakea\\ Shell\\\""
-DEFINES += BLUSHER_APP_VERSION=\\\"$$VERSION\\\" \
-        BLUSHER_PATH=\\\"/usr/lib/blusher/qml\\\"
+DEFINES += BLUSHER_APP_VERSION=\\\"$$VERSION\\\"
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
