@@ -7,7 +7,4 @@
         <file alias="MenuBarExtension.qml">qml/MenuBarExtension.qml</file>
         <file alias="RunCommandPopup.qml">qml/RunCommandPopup.qml</file>
     </qresource>
-    <qresource prefix="/qml/quickwidget">
-        <file alias="MenuBar.qml">qml/quickwidget/MenuBar.qml</file>
-    </qresource>
 </RCC>
