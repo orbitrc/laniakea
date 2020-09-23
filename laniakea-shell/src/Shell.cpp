@@ -32,14 +32,9 @@
 
 namespace la {
 
-Shell::Shell(QWidget *parent)
-    : QWidget(parent)
+Shell::Shell(QObject *parent)
+    : QObject(parent)
 {
-    this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
-    this->setAttribute(Qt::WA_X11NetWmWindowTypeDock);
-
-    this->setGeometry(0, 0, 0, 0);
-
     /*
     MenuItemDelegate *about_system = new MenuItemDelegate(nullptr);
     MenuItemDelegate *shutdown = new MenuItemDelegate(nullptr);
@@ -98,10 +93,12 @@ Shell::Shell(QWidget *parent)
 //        fprintf(stderr, "\n");
     });
 
+    /*
     QShortcut *shortcut = new QShortcut(QKeySequence(Qt::Key_Alt, Qt::Key_T), parent);
     shortcut->setContext(Qt::ApplicationShortcut);
     QObject::connect(shortcut, &QShortcut::activated,
                      this, []() { fprintf(stderr, "pressed\n"); });
+    */
 }
 
 
@@ -160,12 +157,6 @@ void Shell::monitor_devices()
 void Shell::stop_monitoring()
 {
     udev_unref(this->p_udev);
-}
-
-void Shell::show()
-{
-    this->created();
-    QWidget::show();
 }
 
 void Shell::openMenu(QObject *menu)

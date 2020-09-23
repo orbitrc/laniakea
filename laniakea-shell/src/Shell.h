@@ -2,7 +2,6 @@
 #define _LA_SHELL_H
 
 #include <QObject>
-#include <QWidget>
 #include <QJSValue>
 #include <QVariantMap>
 
@@ -15,7 +14,7 @@
 
 namespace la {
 
-class Shell : public QWidget
+class Shell : public QObject
 {
     Q_OBJECT
 
@@ -45,7 +44,7 @@ private:
 //    PopUpMenu *system_menu_delegate;
     MenuBar *menu_bar;
 public:
-    explicit Shell(QWidget *parent = nullptr);
+    explicit Shell(QObject *parent = nullptr);
 
     Q_INVOKABLE void openMenu(QObject *menu);
     Q_INVOKABLE QString desktopName(int desktop);
@@ -121,8 +120,6 @@ signals:
     void batteryLevelChanged();
 
 public slots:
-    void show();
-
     void onConfFileChanged();
     void onPreferenceChanged(QString category, QString key, QVariant value);
 

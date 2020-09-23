@@ -58,8 +58,6 @@ int main(int argc, char *argv[])
     la::Shell shell;
     la::shell = &shell;
 
-    shell.show();
-
     la::engine->rootContext()->setContextProperty("Shell", QVariant::fromValue(&shell));
 
     qmlRegisterType<la::PopUpMenuDelegate>("LaniakeaShell", 0, 1, "PopUpMenuDelegate");
