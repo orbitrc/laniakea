@@ -7,8 +7,6 @@
 
 #include <libudev.h>
 
-#include "PopUpMenu.h"
-#include "MenuBar.h"
 #include "ConfFile.h"
 #include "NetworkManager.h"
 
@@ -41,8 +39,6 @@ private:
     Preferences conf_file;
     NetworkManager *m_networkManager;
     struct udev *p_udev;
-//    PopUpMenu *system_menu_delegate;
-    MenuBar *menu_bar;
 public:
     explicit Shell(QObject *parent = nullptr);
 
@@ -60,7 +56,6 @@ public:
     void stop_monitoring();
 
     // Getters
-    PopUpMenu* systemMenuDelegate() const;
 
     void openRebusMenu(QVariantMap *menu);
 

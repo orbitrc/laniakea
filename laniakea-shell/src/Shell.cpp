@@ -14,7 +14,6 @@
 // Laniakea
 #include "global.h"
 #include "PopUpMenu.h"
-#include "MenuBar.h"
 
 // C
 #include <stdlib.h>
@@ -268,10 +267,6 @@ void Shell::onPreferenceChanged(QString category, QString key, QVariant value)
 
 
 // Getters
-PopUpMenu* Shell::systemMenuDelegate() const
-{
-    return nullptr; //this->system_menu_delegate;
-}
 
 //=================
 // Event handlers

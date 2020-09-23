@@ -31,7 +31,6 @@ SOURCES += \
         src/BlusherWidget.cpp \
         src/DebugButton.cpp \
         src/Menu.cpp \
-        src/MenuBar.cpp \
         src/MenuBarExtension.cpp \
         src/MenuBarMenuItem.cpp \
         src/MenuItemDelegate.cpp \
@@ -69,7 +68,6 @@ HEADERS += \
     src/ConfFile.h \
     src/BlusherWidget.h \
     src/Menu.h \
-    src/MenuBar.h \
     src/MenuItemDelegate.h \
     src/NetworkManager.h \
     src/PopUpMenu.h \
