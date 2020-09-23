@@ -28,20 +28,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         src/ConfFile.cpp \
-        src/BlusherWidget.cpp \
-        src/DebugButton.cpp \
-        src/Menu.cpp \
-        src/MenuBarExtension.cpp \
-        src/MenuBarMenuItem.cpp \
-        src/MenuItemDelegate.cpp \
         src/NetworkManager.cpp \
-        src/PopUpMenu.cpp \
-        src/PopUpMenuDelegate.cpp \
         src/RebusListener.cpp \
         src/Shell.cpp \
         src/main.cpp
 
-RESOURCES += qml.qrc \
+RESOURCES += \
         resources.qrc
 
 # Used to resolve QML modules in Qt Creator code model.
@@ -61,17 +53,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    src/DebugButton.h \
-    src/MenuBarExtension.h \
-    src/MenuBarMenuItem.h \
     src/global.h \
     src/ConfFile.h \
-    src/BlusherWidget.h \
-    src/Menu.h \
-    src/MenuItemDelegate.h \
     src/NetworkManager.h \
-    src/PopUpMenu.h \
-    src/PopUpMenuDelegate.h \
     src/RebusListener.h \
     src/Shell.h
 

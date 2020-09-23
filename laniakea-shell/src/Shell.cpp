@@ -13,7 +13,6 @@
 
 // Laniakea
 #include "global.h"
-#include "PopUpMenu.h"
 
 // C
 #include <stdlib.h>

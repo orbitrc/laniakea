@@ -12,10 +12,7 @@
 
 #include "global.h"
 #include "Shell.h"
-#include "BlusherWidget.h"
 #include "RebusListener.h"
-#include "PopUpMenu.h"
-#include "PopUpMenuDelegate.h"
 
 namespace la {
     Shell *shell = nullptr;
@@ -59,8 +56,6 @@ int main(int argc, char *argv[])
     la::shell = &shell;
 
     la::engine->rootContext()->setContextProperty("Shell", QVariant::fromValue(&shell));
-
-    qmlRegisterType<la::PopUpMenuDelegate>("LaniakeaShell", 0, 1, "PopUpMenuDelegate");
 
 //    QObject::connect(
 //        &app, &QObject::objectNameChanged,

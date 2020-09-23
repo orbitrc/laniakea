@@ -1,6 +1,0 @@
-module LaniakeaShell
-MenuBar 0.1 MenuBar.qml
-MenuBarItemDelegate 0.1 MenuBarItemDelegate.qml
-MenuBarMenuItemDelegate 0.1 MenuBarMenuItemDelegate.qml
-SystemPreferences 0.1 SystemPreferences.qml
-ApplicationLauncher 0.1 ApplicationLauncher.qml
