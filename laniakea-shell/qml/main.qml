@@ -198,7 +198,7 @@ Window {
       for (let i = 0; i < Shell.numberOfDesktops; ++i) {
         let item = Qt.createQmlObject('import Blusher 0.1\n'
           + 'MenuItem {\n'
-          + '    title: Shell.desktopName(' + i + ')\n'
+          + '    title: Shell.desktopName(' + (i + 1) + ')\n'
           + '}', desktopsMenu, '');
         desktopsMenu.addItem(item);
       }
