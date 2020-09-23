@@ -1,4 +1,4 @@
-#include "ConfFile.h"
+#include "Preferences.h"
 
 #include <unistd.h>
 #include <sys/inotify.h>

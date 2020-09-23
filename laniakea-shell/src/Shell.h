@@ -7,7 +7,7 @@
 
 #include <libudev.h>
 
-#include "ConfFile.h"
+#include "Preferences.h"
 #include "NetworkManager.h"
 
 namespace la {

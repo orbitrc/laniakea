@@ -27,8 +27,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        src/ConfFile.cpp \
         src/NetworkManager.cpp \
+        src/Preferences.cpp \
         src/RebusListener.cpp \
         src/Shell.cpp \
         src/main.cpp
@@ -53,8 +53,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    src/Preferences.h \
     src/global.h \
-    src/ConfFile.h \
     src/NetworkManager.h \
     src/RebusListener.h \
     src/Shell.h
