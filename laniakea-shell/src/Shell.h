@@ -2,27 +2,24 @@
 #define _LA_SHELL_H
 
 #include <QObject>
-#include <QWidget>
 #include <QJSValue>
 #include <QVariantMap>
 
 #include <libudev.h>
 
-#include "PopUpMenu.h"
-#include "MenuBar.h"
-#include "ConfFile.h"
+#include "Preferences.h"
 #include "NetworkManager.h"
 
 namespace la {
 
-class Shell : public QWidget
+class Shell : public QObject
 {
     Q_OBJECT
 
 //    Q_PROPERTY(QVariant systemMenu READ systemMenu WRITE setSystemMenu)
     Q_PROPERTY(QJSValue menuBarMenu READ menuBarMenu WRITE setMenuBarMenu NOTIFY menuBarMenuChanged)
     Q_PROPERTY(QObject* systemPreferences READ systemPreferences WRITE setSystemPreferences)
-    Q_PROPERTY(QObject* preferences READ preferences NOTIFY preferencesChanged)
+    Q_PROPERTY(Preferences* preferences READ preferences NOTIFY preferencesChanged)
     Q_PROPERTY(NetworkManager* networkManager READ networkManager CONSTANT)
     // Desktop
     Q_PROPERTY(int numberOfDesktops READ numberOfDesktops NOTIFY numberOfDesktopsChanged)
@@ -39,13 +36,12 @@ private:
     // QML references.
     QObject *system_preferences_window;
 
-    Preferences conf_file;
+    Preferences *m_preferences;
     NetworkManager *m_networkManager;
     struct udev *p_udev;
-//    PopUpMenu *system_menu_delegate;
-    MenuBar *menu_bar;
 public:
-    explicit Shell(QWidget *parent = nullptr);
+    explicit Shell(QObject *parent = nullptr);
+    ~Shell();
 
     Q_INVOKABLE void openMenu(QObject *menu);
     Q_INVOKABLE QString desktopName(int desktop);
@@ -61,7 +57,6 @@ public:
     void stop_monitoring();
 
     // Getters
-    PopUpMenu* systemMenuDelegate() const;
 
     void openRebusMenu(QVariantMap *menu);
 
@@ -121,8 +116,6 @@ signals:
     void batteryLevelChanged();
 
 public slots:
-    void show();
-
     void onConfFileChanged();
     void onPreferenceChanged(QString category, QString key, QVariant value);
 

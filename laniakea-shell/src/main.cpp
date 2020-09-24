@@ -12,10 +12,7 @@
 
 #include "global.h"
 #include "Shell.h"
-#include "BlusherWidget.h"
 #include "RebusListener.h"
-#include "PopUpMenu.h"
-#include "PopUpMenuDelegate.h"
 
 namespace la {
     Shell *shell = nullptr;
@@ -41,8 +38,9 @@ int main(int argc, char *argv[])
     app.engine()->addImportPath(BLUSHER_PATH);
     app.engine()->addImportPath("qrc:/components");
     app.engine()->addImportPath("qrc:/modules");
-    app.engine()->addPluginPath("/usr/lib");
     la::engine = app.engine();
+
+    qDebug() << app.engine()->importPathList();
 
     qmlRegisterUncreatableType<la::AccessPoint>("Laniakea", 0, 1, "AccessPoint", "");
     // Connect to ReBus server and post new host.
@@ -57,11 +55,7 @@ int main(int argc, char *argv[])
     la::Shell shell;
     la::shell = &shell;
 
-    shell.show();
-
     la::engine->rootContext()->setContextProperty("Shell", QVariant::fromValue(&shell));
-
-    qmlRegisterType<la::PopUpMenuDelegate>("LaniakeaShell", 0, 1, "PopUpMenuDelegate");
 
 //    QObject::connect(
 //        &app, &QObject::objectNameChanged,
@@ -69,7 +63,7 @@ int main(int argc, char *argv[])
 //        Qt::QueuedConnection
 //    );
 
-//    engine.load(QUrl("qrc:/main.qml"));
+    app.engine()->load(QUrl("qrc:/qml/main.qml"));
 
     return app.exec();
 }

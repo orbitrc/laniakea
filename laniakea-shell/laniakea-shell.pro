@@ -8,7 +8,7 @@ CONFIG(debug, debug|release) {
 
 VERSION = 0.1.0
 
-LIBS += -ludev -lcurl -ljson-c -lnm -lhttproto
+LIBS += -ludev -lcurl -ljson-c -lnm -lhttproto -llaniakea
 
 INCLUDEPATH += \
         /home/hardboiled65/dev/Blusher/include
@@ -27,27 +27,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        src/ConfFile.cpp \
-        src/BlusherWidget.cpp \
-        src/DebugButton.cpp \
-        src/Menu.cpp \
-        src/MenuBar.cpp \
-        src/MenuBarExtension.cpp \
-        src/MenuBarMenuItem.cpp \
-        src/MenuItemDelegate.cpp \
         src/NetworkManager.cpp \
-        src/PopUpMenu.cpp \
-        src/PopUpMenuDelegate.cpp \
+        src/Preferences.cpp \
         src/RebusListener.cpp \
         src/Shell.cpp \
         src/main.cpp
 
-RESOURCES += qml.qrc \
+RESOURCES += \
         resources.qrc
 
 # Used to resolve QML modules in Qt Creator code model.
 QML_IMPORT_PATH = \
-        /usr/lib/blusher/qml \
         ./src/qml/components \
         ./src/qml/modules
 
@@ -55,8 +45,7 @@ QML_IMPORT_PATH = \
 QML_DESIGNER_IMPORT_PATH =
 
 DEFINES += "BLUSHER_APP_NAME=\\\"Laniakea\\ Shell\\\""
-DEFINES += BLUSHER_APP_VERSION=\\\"$$VERSION\\\" \
-        BLUSHER_PATH=\\\"/usr/lib/blusher/qml\\\"
+DEFINES += BLUSHER_APP_VERSION=\\\"$$VERSION\\\"
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -64,18 +53,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    src/DebugButton.h \
-    src/MenuBarExtension.h \
-    src/MenuBarMenuItem.h \
+    src/Preferences.h \
     src/global.h \
-    src/ConfFile.h \
-    src/BlusherWidget.h \
-    src/Menu.h \
-    src/MenuBar.h \
-    src/MenuItemDelegate.h \
     src/NetworkManager.h \
-    src/PopUpMenu.h \
-    src/PopUpMenuDelegate.h \
     src/RebusListener.h \
     src/Shell.h
 

@@ -13,8 +13,6 @@
 
 // Laniakea
 #include "global.h"
-#include "PopUpMenu.h"
-#include "MenuBar.h"
 
 // C
 #include <stdlib.h>
@@ -32,14 +30,9 @@
 
 namespace la {
 
-Shell::Shell(QWidget *parent)
-    : QWidget(parent)
+Shell::Shell(QObject *parent)
+    : QObject(parent)
 {
-    this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
-    this->setAttribute(Qt::WA_X11NetWmWindowTypeDock);
-
-    this->setGeometry(0, 0, 0, 0);
-
     /*
     MenuItemDelegate *about_system = new MenuItemDelegate(nullptr);
     MenuItemDelegate *shutdown = new MenuItemDelegate(nullptr);
@@ -49,10 +42,8 @@ Shell::Shell(QWidget *parent)
 //    this->system_menu_delegate->add_item_delegate(about_system);
 //    this->system_menu_delegate->add_item_delegate(shutdown);
 
+    this->m_preferences = new Preferences;
     this->m_networkManager = new NetworkManager;
-
-    this->menu_bar = new MenuBar(la::engine);
-    this->menu_bar->show();
 
     //=================
     // Set properties
@@ -86,7 +77,7 @@ Shell::Shell(QWidget *parent)
     thr->start();
 
     QThread *thr_inotify = QThread::create([this]() {
-        this->conf_file.run_watch_loop();
+        this->m_preferences->run_watch_loop();
     });
     thr_inotify->start();
 
@@ -101,12 +92,17 @@ Shell::Shell(QWidget *parent)
 //        fprintf(stderr, "\n");
     });
 
+    /*
     QShortcut *shortcut = new QShortcut(QKeySequence(Qt::Key_Alt, Qt::Key_T), parent);
     shortcut->setContext(Qt::ApplicationShortcut);
     QObject::connect(shortcut, &QShortcut::activated,
                      this, []() { fprintf(stderr, "pressed\n"); });
+    */
 }
 
+Shell::~Shell()
+{
+}
 
 void Shell::monitor_devices()
 {
@@ -165,12 +161,6 @@ void Shell::stop_monitoring()
     udev_unref(this->p_udev);
 }
 
-void Shell::show()
-{
-    this->created();
-    QWidget::show();
-}
-
 void Shell::openMenu(QObject *menu)
 {
     qDebug("Shell::openMenu");
@@ -197,7 +187,7 @@ void Shell::openRebusMenu(QVariantMap *menu)
 
 void Shell::setPreference(QString category, QString key, QVariant val)
 {
-    this->conf_file.set_preference(category.toLocal8Bit(), key.toLocal8Bit(), val);
+    this->m_preferences->set_preference(category.toLocal8Bit(), key.toLocal8Bit(), val);
 }
 
 //=========================
@@ -235,7 +225,7 @@ QString Shell::desktopName(int desktop)
 //==================
 void Shell::onConfFileChanged()
 {
-    int number_of_desktops = this->conf_file.number_of_desktops();
+    int number_of_desktops = this->m_preferences->number_of_desktops();
 // x11
     if (qApp->platformName() == "xcb") {
         QString cmd = "wmctrl -n " + QString::number(number_of_desktops);
@@ -267,11 +257,11 @@ void Shell::onPreferenceChanged(QString category, QString key, QVariant value)
     } else if (category == "keyboard") {
         // [keyboard]
         if (key == "delay_until_repeat") {
-            QVariant repeat = this->conf_file.get_preference("keyboard", "key_repeat");
+            QVariant repeat = this->m_preferences->get_preference("keyboard", "key_repeat");
             QString cmd = "xset r rate " + value.toString() + " " + repeat.toString();
             system(cmd.toLocal8Bit());
         } else if (key == "key_repeat") {
-            QVariant delay = this->conf_file.get_preference("keyboard", "delay_until_repeat");
+            QVariant delay = this->m_preferences->get_preference("keyboard", "delay_until_repeat");
             QString cmd = "xset r rate " + delay.toString() + " " + value.toString();
             system(cmd.toLocal8Bit());
         }
@@ -280,10 +270,6 @@ void Shell::onPreferenceChanged(QString category, QString key, QVariant value)
 
 
 // Getters
-PopUpMenu* Shell::systemMenuDelegate() const
-{
-    return nullptr; //this->system_menu_delegate;
-}
 
 //=================
 // Event handlers
@@ -323,7 +309,7 @@ void Shell::setSystemPreferences(QObject *preferences)
 
 Preferences* Shell::preferences()
 {
-    return &(this->conf_file);
+    return this->m_preferences;
 }
 
 NetworkManager* Shell::networkManager()

@@ -27,6 +27,7 @@ Window {
     }
     if (event.key == Qt.Key_Return) {
       Shell.runCommand(root.command);
+      _text.text = '';
     }
   }
 
@@ -34,7 +35,10 @@ Window {
   Connections {
     target: root
     function onActiveChanged() {
-      if (root.active == false) {
+      if (root.active === true) {
+        _text.focus = true;
+      }
+      if (root.active === false) {
         root.close();
       }
     }

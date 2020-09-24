@@ -86,6 +86,9 @@ public:
 signals:
     void desktopChanged();
     void keyboardChanged();
+
+public slots:
+    void diff();
 };
 
 
