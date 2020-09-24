@@ -269,13 +269,23 @@ int Preferences::number_of_desktops() const
 
 void Preferences::diff()
 {
-    qDebug() << "preferences.conf file changed.";
     auto& impl = this->impl();
     if (!impl.watcher.files().contains(impl.conf_file_path())) {
         while (!impl.watcher.addPath(impl.conf_file_path())) {
             // Trying to add path.
         }
     }
+
+    // Reload preferences.conf file.
+    laniakea_preferences_free(impl.preferences);
+    impl.preferences = laniakea_preferences_new();
+    laniakea_preferences_load(impl.preferences);
+
+    // Set changes.
+    auto delay = laniakea_preferences_keyboard_delay_until_repeat(impl.preferences);
+    impl.keyboard->setDelayUntilRepeat(delay);
+    auto repeat = laniakea_preferences_keyboard_key_repeat(impl.preferences);
+    impl.keyboard->setKeyRepeat(repeat);
 }
 
 
