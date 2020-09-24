@@ -19,7 +19,7 @@ class Shell : public QObject
 //    Q_PROPERTY(QVariant systemMenu READ systemMenu WRITE setSystemMenu)
     Q_PROPERTY(QJSValue menuBarMenu READ menuBarMenu WRITE setMenuBarMenu NOTIFY menuBarMenuChanged)
     Q_PROPERTY(QObject* systemPreferences READ systemPreferences WRITE setSystemPreferences)
-    Q_PROPERTY(QObject* preferences READ preferences NOTIFY preferencesChanged)
+    Q_PROPERTY(Preferences* preferences READ preferences NOTIFY preferencesChanged)
     Q_PROPERTY(NetworkManager* networkManager READ networkManager CONSTANT)
     // Desktop
     Q_PROPERTY(int numberOfDesktops READ numberOfDesktops NOTIFY numberOfDesktopsChanged)
@@ -36,11 +36,12 @@ private:
     // QML references.
     QObject *system_preferences_window;
 
-    Preferences conf_file;
+    Preferences *m_preferences;
     NetworkManager *m_networkManager;
     struct udev *p_udev;
 public:
     explicit Shell(QObject *parent = nullptr);
+    ~Shell();
 
     Q_INVOKABLE void openMenu(QObject *menu);
     Q_INVOKABLE QString desktopName(int desktop);

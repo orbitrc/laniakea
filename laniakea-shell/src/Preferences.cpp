@@ -11,6 +11,8 @@
 #include <QMap>
 #include <QVariant>
 
+#include <laniakea/preferences.h>
+
 #include "global.h"
 
 namespace la {
@@ -20,10 +22,17 @@ struct Preferences::Impl {
     int inotify_fd;
     int inotify_wd;
     bool inotify_watching;
+    laniakea_preferences *preferences;
     QFileSystemWatcher watcher;
     QVariantMap conf_dict;
     Preferences::Desktop *desktop;
     Preferences::Keyboard *keyboard;
+
+public:
+    QString conf_file_path() const
+    {
+        return QString("%1/.config/laniakea/preferences.conf").arg(getenv("HOME"));
+    }
 };
 
 Preferences::Preferences()
@@ -35,6 +44,15 @@ Preferences::Preferences()
     const char *home = getenv("HOME");
     sprintf(this->impl().conf_path, "%s/.config/laniakea.conf", home);
 
+    // Initialize laniakea preferences.
+    this->impl().preferences = laniakea_preferences_new();
+    laniakea_preferences_load(this->impl().preferences);
+
+    // Setup file system watcher.
+    this->impl().watcher.addPath(this->impl().conf_file_path());
+    QObject::connect(&(this->impl().watcher), &QFileSystemWatcher::fileChanged,
+                     this, &Preferences::diff);
+
     // Initialize inotify variables.
     this->impl().inotify_fd = -1;
     this->impl().inotify_wd = -1;
@@ -45,6 +63,10 @@ Preferences::Preferences()
     emit this->desktopChanged();
     this->impl().keyboard = new Keyboard(this);
     emit this->keyboardChanged();
+    this->impl().keyboard->setDelayUntilRepeat(
+        laniakea_preferences_keyboard_delay_until_repeat(this->impl().preferences));
+    this->impl().keyboard->setKeyRepeat(
+        laniakea_preferences_keyboard_key_repeat(this->impl().preferences));
 
     this->read_conf_file();
     this->sync_with_file();
@@ -52,6 +74,7 @@ Preferences::Preferences()
 
 Preferences::~Preferences()
 {
+    laniakea_preferences_free(this->impl().preferences);
     delete (Preferences::Impl*)(this->pImpl);
 }
 
@@ -166,9 +189,9 @@ void Preferences::read_conf_file()
     Desktop *desktop = this->impl().desktop;
     desktop->setNumberOfDesktops(conf["desktop"].toMap()["number_of_desktops"].toInt());
     // [keyboard]
-    Keyboard *keyboard = this->impl().keyboard;
-    keyboard->setDelayUntilRepeat(conf["keyboard"].toMap()["delay_until_repeat"].toInt());
-    keyboard->setKeyRepeat(conf["keyboard"].toMap()["key_repeat"].toInt());
+//    Keyboard *keyboard = this->impl().keyboard;
+//    keyboard->setDelayUntilRepeat(conf["keyboard"].toMap()["delay_until_repeat"].toInt());
+//    keyboard->setKeyRepeat(conf["keyboard"].toMap()["key_repeat"].toInt());
 }
 
 
@@ -244,10 +267,22 @@ int Preferences::number_of_desktops() const
 }
 
 
+void Preferences::diff()
+{
+    qDebug() << "preferences.conf file changed.";
+    auto& impl = this->impl();
+    if (!impl.watcher.files().contains(impl.conf_file_path())) {
+        while (!impl.watcher.addPath(impl.conf_file_path())) {
+            // Trying to add path.
+        }
+    }
+}
 
 
 
-
+//============================
+// Preferences::Desktop
+//============================
 
 Preferences::Desktop::Desktop(QObject *parent)
     : QObject(parent)
@@ -276,11 +311,14 @@ void Preferences::Desktop::setNumberOfDesktops(int val)
 
 
 
-
+//===========================
+// Preferences::Keyboard
+//===========================
 
 Preferences::Keyboard::Keyboard(QObject *parent)
     : QObject(parent)
 {
+    this->m_key_repeat = 25;
 }
 
 Preferences::Keyboard::~Keyboard()
@@ -294,10 +332,14 @@ int Preferences::Keyboard::delayUntilRepeat() const
 
 void Preferences::Keyboard::setDelayUntilRepeat(int val)
 {
-    this->m_delay_until_repeat = val;
-    emit this->delayUntilRepeatChanged(val);
-    if (shell != nullptr) {
-        emit shell->preferenceChanged("keyboard", "delay_until_repeat", val);
+    if (this->m_delay_until_repeat != val) {
+        this->m_delay_until_repeat = val;
+
+        auto repeat = this->m_key_repeat;
+        QString cmd = QString("xset r rate %1 %2").arg(val).arg(repeat);
+        system(cmd.toLocal8Bit());
+
+        emit this->delayUntilRepeatChanged(val);
     }
 }
 
@@ -308,15 +350,22 @@ int Preferences::Keyboard::keyRepeat() const
 
 void Preferences::Keyboard::setKeyRepeat(int val)
 {
-    this->m_key_repeat = val;
-    emit this->keyRepeatChanged(val);
-    if (shell != nullptr) {
-        emit shell->preferenceChanged("keyboard", "key_repeat", val);
+    if (this->m_key_repeat != val) {
+        this->m_key_repeat = val;
+
+        auto delay = this->m_delay_until_repeat;
+        QString cmd = QString("xset r rate %1 %2").arg(delay).arg(val);
+        qDebug() << cmd;
+        system(cmd.toLocal8Bit());
+
+        emit this->keyRepeatChanged(val);
     }
 }
 
 
-
+//========================
+// Preferences::Display
+//========================
 
 Preferences::Display::Display(QObject *parent)
     : QObject(parent)
@@ -327,6 +376,9 @@ Preferences::Display::~Display()
 {
 }
 
+//===========================
+// Preferences::Localization
+//===========================
 
 Preferences::Localization::Localization(QObject *parent)
     : QObject(parent)
