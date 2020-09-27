@@ -1,7 +1,7 @@
 [Desktop Entry]
-Type=Application
-Exec=/usr/share/laniakea/bin/laniakea-wayland
-TryExec=/usr/share/laniakea/bin/laniakea-wayland
+Type=XSession
+Exec=/usr/bin/laniakea-x11
+TryExec=/usr/bin/laniakea-x11
 DesktopNames=Laniakea
 Name=Laniakea
 Name[en_GB]=Laniakea

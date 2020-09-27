@@ -9,6 +9,7 @@ Window {
   id: root
 
   visible: true
+  netWmStrutPartial: [0, 0, 30, 0, 0, 0, 0, 0, 0, 1000, 0, 0]
   netWmWindowType: Window.NetWmWindowType.Dock
   onAllDesktops: true
 

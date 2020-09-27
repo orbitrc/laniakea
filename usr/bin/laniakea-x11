@@ -1,0 +1,16 @@
+#!/bin/sh
+
+/bin/kwin_x11 &
+
+# Start ReBus daemon.
+systemctl --user start rebus.service
+
+/usr/appimages/Dock-x86_64.AppImage &
+DOCK_PID=$!
+
+/usr/bin/laniakea-shell
+
+# Clean background processes.
+# uwsgi --stop $XDG_RUNTIME_DIR/rebus.pid
+
+# /bin/top
