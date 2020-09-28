@@ -14,6 +14,8 @@ View {
 
   Text {
     id: extensionText
+
+    anchors.centerIn: parent
     text: root.text
   }
 

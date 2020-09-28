@@ -6,4 +6,5 @@ default:
 	cd build && make -j8
 
 install: build/laniakea-shell
+	strip build/laniakea-shell
 	cp build/laniakea-shell /usr/bin/laniakea-shell

@@ -210,6 +210,26 @@ Window {
     id: runCommand
   }
 
+  //==================
+  // Desktop windows
+  //==================
+  Repeater {
+    id: desktops
+
+    model: 1
+    View {
+      Window {
+        visible: true
+        netWmWindowType: Window.NetWmWindowType.Desktop
+
+        width: 1920
+        height: 1080
+
+        color: 'lightgray'
+      }
+    }
+  }
+
   //=============
   // Timer
   //=============
