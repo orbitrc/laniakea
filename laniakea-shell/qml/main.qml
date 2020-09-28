@@ -15,7 +15,7 @@ Window {
 
   x: DesktopEnvironment.primaryScreen.x
   y: DesktopEnvironment.primaryScreen.y
-  width: QtQuickWindow.Screen.width
+  width: DesktopEnvironment.primaryScreen.width
   height: 30
 
   color: "transparent"
