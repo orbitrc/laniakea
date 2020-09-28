@@ -117,9 +117,11 @@ signals:
 class Preferences::Keyboard : public QObject {
     Q_OBJECT
 
+    Q_PROPERTY(QString capsLockBehavior READ capsLockBehavior WRITE setCapsLockBehavior NOTIFY capsLockBehaviorChanged)
     Q_PROPERTY(int delayUntilRepeat READ delayUntilRepeat WRITE setDelayUntilRepeat NOTIFY delayUntilRepeatChanged)
     Q_PROPERTY(int keyRepeat READ keyRepeat WRITE setKeyRepeat NOTIFY keyRepeatChanged)
 private:
+    QString m_caps_lock_behavior;
     int m_delay_until_repeat;
     int m_key_repeat;
 public:
@@ -129,12 +131,16 @@ public:
     //==================
     // Properties
     //==================
+    QString capsLockBehavior() const;
+    void setCapsLockBehavior(const QString& behavior);
+
     int delayUntilRepeat() const;
     void setDelayUntilRepeat(int val);
 
     int keyRepeat() const;
     void setKeyRepeat(int val);
 signals:
+    void capsLockBehaviorChanged(QString behavior);
     void delayUntilRepeatChanged(int delay);
     void keyRepeatChanged(int repeat);
 };

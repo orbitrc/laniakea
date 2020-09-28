@@ -51,7 +51,7 @@ Preferences::Preferences()
     // Setup file system watcher.
     this->impl().watcher.addPath(this->impl().conf_file_path());
     QObject::connect(&(this->impl().watcher), &QFileSystemWatcher::fileChanged,
-                     this, &Preferences::diff);
+                     this, &Preferences::diff, Qt::QueuedConnection);
 
     // Initialize inotify variables.
     this->impl().inotify_fd = -1;
@@ -63,6 +63,8 @@ Preferences::Preferences()
     emit this->desktopChanged();
     this->impl().keyboard = new Keyboard(this);
     emit this->keyboardChanged();
+    this->impl().keyboard->setCapsLockBehavior(
+        laniakea_preferences_keyboard_caps_lock_behavior(this->impl().preferences));
     this->impl().keyboard->setDelayUntilRepeat(
         laniakea_preferences_keyboard_delay_until_repeat(this->impl().preferences));
     this->impl().keyboard->setKeyRepeat(
@@ -282,6 +284,8 @@ void Preferences::diff()
     laniakea_preferences_load(impl.preferences);
 
     // Set changes.
+    auto behavior = laniakea_preferences_keyboard_caps_lock_behavior(impl.preferences);
+    impl.keyboard->setCapsLockBehavior(behavior);
     auto delay = laniakea_preferences_keyboard_delay_until_repeat(impl.preferences);
     impl.keyboard->setDelayUntilRepeat(delay);
     auto repeat = laniakea_preferences_keyboard_key_repeat(impl.preferences);
@@ -333,6 +337,36 @@ Preferences::Keyboard::Keyboard(QObject *parent)
 
 Preferences::Keyboard::~Keyboard()
 {
+}
+
+QString Preferences::Keyboard::capsLockBehavior() const
+{
+    return this->m_caps_lock_behavior;
+}
+
+void Preferences::Keyboard::setCapsLockBehavior(const QString& behavior)
+{
+    if (this->m_caps_lock_behavior != behavior) {
+        const char *option;
+        if (behavior == "CapsLock") {
+            option = "capslock";
+        } else if (behavior == "Ctrl") {
+            option = "ctrl_modifier";
+        } else if (behavior == "Esc") {
+            option = "escape";
+        } else {
+            fprintf(stderr, "Invalid behavior: \"%s\"\n", behavior.toStdString().c_str());
+            return;
+        }
+
+        this->m_caps_lock_behavior = behavior;
+
+        QString cmd = QString("setxkbmap -option caps:%1").arg(option);
+        system("setxkbmap -option");
+        system(cmd.toLocal8Bit());
+
+        emit this->capsLockBehaviorChanged(behavior);
+    }
 }
 
 int Preferences::Keyboard::delayUntilRepeat() const
