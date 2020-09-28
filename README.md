@@ -19,8 +19,10 @@ Installed files
       +- laniakea
       |  |
       |  +- qml
-      |     |
-      |     +- DesktopEnvironmentModule/  (Blusher DE module path)
+      |  |  |
+      |  |  +- DesktopEnvironmentModule/  (Blusher DE module path)
+      |  |
+      |  +- wallpapers (default wallpapers)
       |
       |- xsessions/laniakea.desktop  (SDDM xsession file)
       +- wayland-sessions/laniakea.desktop
