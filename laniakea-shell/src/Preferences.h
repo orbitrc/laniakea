@@ -98,8 +98,7 @@ class Preferences::Desktop : public QObject {
     Q_OBJECT
 
     Q_PROPERTY(int numberOfDesktops READ numberOfDesktops WRITE setNumberOfDesktops NOTIFY numberOfDesktopsChanged)
-private:
-    int m_number_of_desktops;
+    Q_PROPERTY(QString wallpaper READ wallpaper WRITE setWallpaper NOTIFY wallpaperChanged)
 public:
     Desktop(QObject *parent);
     ~Desktop();
@@ -109,8 +108,17 @@ public:
     //=================
     int numberOfDesktops() const;
     void setNumberOfDesktops(int val);
+
+    QString wallpaper() const;
+    void setWallpaper(const QString& path);
+
 signals:
     void numberOfDesktopsChanged(int num);
+    void wallpaperChanged(QString path);
+
+private:
+    int m_number_of_desktops;
+    QString m_wallpaper;
 };
 
 

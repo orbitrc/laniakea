@@ -38,6 +38,7 @@ public:
 Preferences::Preferences()
 {
     this->pImpl = new Preferences::Impl;
+    auto& impl = this->impl();
 
     // Set file path.
     this->impl().conf_path = new char[512];
@@ -59,8 +60,13 @@ Preferences::Preferences()
     this->impl().inotify_watching = false;
 
     // Create categories.
+    //
+    // Desktop.
     this->impl().desktop = new Desktop(this);
     emit this->desktopChanged();
+    impl.desktop->setWallpaper(
+        laniakea_preferences_desktop_wallpaper(impl.preferences));
+    // Keyboard
     this->impl().keyboard = new Keyboard(this);
     emit this->keyboardChanged();
     this->impl().keyboard->setCapsLockBehavior(
@@ -322,7 +328,19 @@ void Preferences::Desktop::setNumberOfDesktops(int val)
     }
 }
 
+QString Preferences::Desktop::wallpaper() const
+{
+    return this->m_wallpaper;
+}
 
+void Preferences::Desktop::setWallpaper(const QString& path)
+{
+    if (this->m_wallpaper != path) {
+        this->m_wallpaper = path;
+
+        emit this->wallpaperChanged(path);
+    }
+}
 
 
 //===========================

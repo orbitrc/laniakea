@@ -24,6 +24,7 @@ class Shell : public QObject
     // Desktop
     Q_PROPERTY(int numberOfDesktops READ numberOfDesktops NOTIFY numberOfDesktopsChanged)
     Q_PROPERTY(int currentDesktop READ currentDesktop NOTIFY currentDesktopChanged)
+    Q_PROPERTY(QString wallpaper READ wallpaper NOTIFY wallpaperChanged)
     // Power
     Q_PROPERTY(bool charging READ charging NOTIFY chargingChanged)
     Q_PROPERTY(int batteryLevel READ batteryLevel NOTIFY batteryLevelChanged)
@@ -77,6 +78,7 @@ public:
 
     int numberOfDesktops();
     int currentDesktop();
+    QString wallpaper() const;
 
     bool charging() const;
 
@@ -110,6 +112,7 @@ signals:
 
     void numberOfDesktopsChanged(int num);
     void currentDesktopChanged(int desktop);
+    void wallpaperChanged(QString path);
 
     void chargingChanged();
 

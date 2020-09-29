@@ -14,9 +14,10 @@
 // Laniakea
 #include "global.h"
 
-// C
+// C/C++
 #include <stdlib.h>
 #include <string.h>
+#include <iostream>
 
 // Unix
 #include <unistd.h>
@@ -25,8 +26,6 @@
 
 // libudev
 #include <libudev.h>
-
-#include <iostream>
 
 namespace la {
 
@@ -325,6 +324,12 @@ int Shell::numberOfDesktops()
 int Shell::currentDesktop()
 {
     return KWindowSystem::currentDesktop();
+}
+
+QString Shell::wallpaper() const
+{
+    auto wallpaper_path = this->m_preferences->desktop()->wallpaper();
+    return wallpaper_path;
 }
 
 bool Shell::charging() const

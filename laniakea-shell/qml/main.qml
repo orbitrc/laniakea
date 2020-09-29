@@ -226,6 +226,20 @@ Window {
         height: 1080
 
         color: 'lightgray'
+
+        Image {
+          anchors.fill: parent
+
+          source: 'file:/' + Shell.wallpaper
+          onStatusChanged: {
+            if (status === Image.Error) {
+              print('Failed to load wallpaper image.');
+              this.visible = false;
+            } else if (status === Image.Ready) {
+              this.visible = true;
+            }
+          }
+        }
       }
     }
   }
