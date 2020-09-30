@@ -22,10 +22,10 @@ Window {
   }
 
   onKeyPressed: {
-    if (event.key == Qt.Key_Escape) {
+    if (event.key === Qt.Key_Escape) {
       root.close();
     }
-    if (event.key == Qt.Key_Return) {
+    if (event.key === Qt.Key_Return) {
       Shell.runCommand(root.command);
       _text.text = '';
     }
