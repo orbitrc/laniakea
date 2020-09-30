@@ -126,6 +126,15 @@ Window {
     }
   }
 
+  // Debug text
+  Text {
+    id: debugText
+
+    x: 370
+    text: JSON.stringify(DesktopEnvironment.screens) + '\n' + root.x + ', ' + root.y + ' ' + root.width + 'x' + root.height
+    font.pixelSize: 10
+  }
+
   //=======================
   // Menu bar extensions
   //=======================
