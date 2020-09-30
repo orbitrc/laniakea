@@ -287,7 +287,10 @@ void Preferences::diff()
     // Reload preferences.conf file.
     laniakea_preferences_free(impl.preferences);
     impl.preferences = laniakea_preferences_new();
-    laniakea_preferences_load(impl.preferences);
+    int err = laniakea_preferences_load(impl.preferences);
+    if (err != LANIAKEA_FILE_ERROR_SUCCESS) {
+        return;
+    }
 
     // Set changes.
     auto behavior = laniakea_preferences_keyboard_caps_lock_behavior(impl.preferences);
@@ -295,6 +298,7 @@ void Preferences::diff()
     auto delay = laniakea_preferences_keyboard_delay_until_repeat(impl.preferences);
     impl.keyboard->setDelayUntilRepeat(delay);
     auto repeat = laniakea_preferences_keyboard_key_repeat(impl.preferences);
+
     impl.keyboard->setKeyRepeat(repeat);
 }
 
