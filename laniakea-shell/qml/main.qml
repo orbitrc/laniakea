@@ -230,14 +230,18 @@ Window {
   Repeater {
     id: desktops
 
-    model: 1
+    model: DesktopEnvironment.screens.length
     View {
       Window {
         visible: true
         netWmWindowType: Window.NetWmWindowType.Desktop
 
-        width: 1920
-        height: 1080
+        title: 'laniakea-shell (Desktop)'
+
+        x: DesktopEnvironment.screens[index].x
+        y: DesktopEnvironment.screens[index].y
+        width: DesktopEnvironment.screens[index].width
+        height: DesktopEnvironment.screens[index].height
 
         color: 'lightgray'
 
