@@ -36,6 +36,8 @@ Window {
   // System menu
   //================
   View {
+    id: systemMenuItem
+
     width: 50
     anchors.top: parent.top
     anchors.bottom: parent.bottom
@@ -51,7 +53,7 @@ Window {
     ]
     Rectangle {
       id: activeColor
-      width: 30
+      width: 40
       anchors.top: parent.top
       anchors.bottom: parent.bottom
       anchors.right: parent.right
@@ -76,6 +78,13 @@ Window {
       onClicked: {
         systemMenu.open(0, root.height);
         parent.state = 'active';
+      }
+    }
+
+    Connections {
+      target: systemMenu
+      function onClosing() {
+        systemMenuItem.state = '';
       }
     }
   }
