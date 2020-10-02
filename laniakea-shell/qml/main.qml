@@ -248,7 +248,7 @@ Window {
         title: 'laniakea-shell (Desktop)'
 
         x: DesktopEnvironment.screens[index].x
-        y: DesktopEnvironment.screens[index].y
+        y: DesktopEnvironment.screens[index].y + 1  // To bypass cropped by struts bug.
         width: DesktopEnvironment.screens[index].width
         height: DesktopEnvironment.screens[index].height
 
@@ -266,6 +266,10 @@ Window {
               this.visible = true;
             }
           }
+        }
+        Component.onCompleted: {
+          // Restore position that +1 on created.
+          this.y = DesktopEnvironment.screens[index].y;
         }
       }
     }
