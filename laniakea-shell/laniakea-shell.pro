@@ -38,6 +38,7 @@ RESOURCES += \
 
 # Used to resolve QML modules in Qt Creator code model.
 QML_IMPORT_PATH = \
+        /usr/lib/blusher/qml \
         ./src/qml/components \
         ./src/qml/modules
 
