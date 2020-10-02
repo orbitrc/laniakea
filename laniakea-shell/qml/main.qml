@@ -279,7 +279,6 @@ Window {
     running: true
     repeat: true
     onTriggered: {
-//      root.clock = new Date();
       let now = new Date();
       let text = '';
       let dateString = {

@@ -24,7 +24,9 @@ View {
 
     onPressed: {
       if (menu != null) {
-        menu.open(0, 0);
+        let pos = mapToItem(root.parent.parent, root.x, 30);
+        print(pos);
+        menu.open(pos.x, pos.y);
       }
     }
   }
