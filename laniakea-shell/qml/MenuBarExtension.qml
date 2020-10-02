@@ -17,6 +17,7 @@ View {
 
     anchors.centerIn: parent
     text: root.text
+    font.pixelSize: 16
   }
 
   MouseArea {
