@@ -63,6 +63,9 @@ Shell::Shell(QObject *parent)
                      this, &Shell::onConfFileChanged);
     QObject::connect(this, &Shell::preferenceChanged,
                      this, &Shell::onPreferenceChanged);
+    // Preferences
+    QObject::connect(this->m_preferences->desktop(), &Preferences::Desktop::wallpaperChanged,
+                     this, &Shell::wallpaperChanged);
     // Belows will connected in QML.
 
 

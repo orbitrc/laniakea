@@ -292,7 +292,14 @@ void Preferences::diff()
         return;
     }
 
-    // Set changes.
+    //=================
+    // Set changes
+    //=================
+
+    // Desktop
+    auto wallpaper = laniakea_preferences_desktop_wallpaper(impl.preferences);
+    impl.desktop->setWallpaper(wallpaper);
+    // Keyboard
     auto behavior = laniakea_preferences_keyboard_caps_lock_behavior(impl.preferences);
     impl.keyboard->setCapsLockBehavior(behavior);
     auto delay = laniakea_preferences_keyboard_delay_until_repeat(impl.preferences);
