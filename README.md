@@ -27,3 +27,9 @@ Installed files
       |- xsessions/laniakea.desktop  (SDDM xsession file)
       +- wayland-sessions/laniakea.desktop
 ```
+
+Install Session
+----------------
+```sh
+$ make install
+```
