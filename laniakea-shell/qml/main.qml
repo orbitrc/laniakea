@@ -63,13 +63,14 @@ Window {
       id: logoImage
       source: 'qrc:/assets/orbit-logo-light@256x256.png'
       anchors.centerIn: parent
-      width: 30
-      height: 30
+      anchors.verticalCenter: parent
+      width: 24
+      height: 24
     }
     ColorOverlay {
       anchors.fill: logoImage
       source: logoImage
-      color: '#000000'
+      color: systemMenuItem.state !== 'active' ? '#000000' : '#ffffff'
     }
 
     MouseArea {
