@@ -7,6 +7,7 @@
 
 #include <QFile>
 #include <QFileSystemWatcher>
+#include <QDir>
 #include <QString>
 #include <QMap>
 #include <QVariant>
@@ -31,7 +32,12 @@ struct Preferences::Impl {
 public:
     QString conf_file_path() const
     {
-        return QString("%1/.config/laniakea/preferences.conf").arg(getenv("HOME"));
+        return QString("%1/.config/laniakea.conf").arg(getenv("HOME"));
+    }
+
+    QString conf_file_dir() const
+    {
+        return QString("%1/.config").arg(getenv("HOME"));
     }
 };
 
@@ -76,8 +82,13 @@ Preferences::Preferences()
     this->impl().keyboard->setKeyRepeat(
         laniakea_preferences_keyboard_key_repeat(this->impl().preferences));
 
-    this->read_conf_file();
-    this->sync_with_file();
+    if (this->read_conf_file() == false) {
+        if (this->make_conf_file() == false) {
+            fprintf(stderr, "Cannot create config file.\n");
+        }
+    } else {
+        this->sync_with_file();
+    }
 }
 
 Preferences::~Preferences()
@@ -179,13 +190,13 @@ void Preferences::sync_with_file()
     }
 }
 
-void Preferences::read_conf_file()
+bool Preferences::read_conf_file()
 {
     QFile f(this->impl().conf_path);
     if (!f.exists()) {
         fprintf(stderr, "%s\n", f.fileName().toStdString().c_str());
         fprintf(stderr, "ConfFile::read_conf_file - File not exitsts!\n");
-        return;
+        return false;
     }
     f.open(QFile::ReadOnly | QFile::Text);
     QString data = f.readAll();
@@ -200,6 +211,37 @@ void Preferences::read_conf_file()
 //    Keyboard *keyboard = this->impl().keyboard;
 //    keyboard->setDelayUntilRepeat(conf["keyboard"].toMap()["delay_until_repeat"].toInt());
 //    keyboard->setKeyRepeat(conf["keyboard"].toMap()["key_repeat"].toInt());
+
+    return true;
+}
+
+bool Preferences::make_conf_file()
+{
+    bool dir_exists = false;
+
+    QDir dir(this->impl().conf_file_dir());
+    if (!dir.exists()) {
+        bool result = dir.mkdir(this->impl().conf_file_dir());
+        if (result == false) {
+            return false;
+        }
+    } else {
+        dir_exists = true;
+    }
+
+    if (dir_exists == true) {
+        QFile f(this->impl().conf_file_path());
+        bool conf_exists = f.open(QIODevice::ReadWrite);
+        if (conf_exists == false) {
+            if (f.write("\n") == -1) {
+                f.close();
+                return false;
+            }
+        }
+        f.close();
+    }
+
+    return true;
 }
 
 

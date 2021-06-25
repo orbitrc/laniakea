@@ -61,7 +61,9 @@ public:
 
     void sync_with_file();
 
-    void read_conf_file();
+    bool read_conf_file();
+
+    bool make_conf_file();
 
     void write_conf_file();
 
