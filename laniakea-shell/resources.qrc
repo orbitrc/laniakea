@@ -6,5 +6,6 @@
         <file alias="main.qml">qml/main.qml</file>
         <file alias="MenuBarExtension.qml">qml/MenuBarExtension.qml</file>
         <file alias="RunCommandPopup.qml">qml/RunCommandPopup.qml</file>
+        <file alias="AboutSystemWindow.qml">qml/AboutSystemWindow.qml</file>
     </qresource>
 </RCC>

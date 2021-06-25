@@ -185,6 +185,9 @@ Window {
     type: Menu.MenuType.Submenu
     MenuItem {
       title: 'About System...'
+      onTriggered: {
+        aboutSystemWindowLoader.sourceComponent = aboutSystemWindow;
+      }
     }
     MenuItem {
       title: ''
@@ -288,6 +291,23 @@ Window {
         }
       }
     }
+  }
+
+  //=============
+  // Windows
+  //=============
+  Component {
+    id: aboutSystemWindow
+
+    AboutSystemWindow {
+    }
+  }
+
+  //=================
+  // Window loaders
+  //=================
+  Loader {
+    id: aboutSystemWindowLoader
   }
 
   //=============
