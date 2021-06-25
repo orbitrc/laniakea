@@ -76,27 +76,29 @@ NetworkManager::NetworkManager(QObject *parent)
 
     // DEBUG //
     // WIFI
-    const GPtrArray *aps = nm_device_wifi_get_access_points((NMDeviceWifi*)(this->impl()->wifi_device));
-    for (unsigned int i = 0; i < aps->len; ++i) {
-        NMAccessPoint *ap = NULL;
-        ap = (NMAccessPoint*)g_ptr_array_index(aps, i);
-        GBytes *ssid = nm_access_point_get_ssid(ap);
-        const char *ssid_str = nm_utils_ssid_to_utf8(
-            (const guint8*)g_bytes_get_data(ssid, NULL),
-            g_bytes_get_size(ssid)
-        );
-        fprintf(stderr, "%s\n", ssid_str);
-    }
-    fprintf(stderr, "=====================\n");
-    // Connections
-    const GPtrArray *conns = nm_client_get_connections(this->impl()->client);
-    for (unsigned int i = 0; i < conns->len; ++i) {
-        NMConnection *conn = (NMConnection*)g_ptr_array_index(conns, i);
-        if (nm_connection_is_type(conn, NM_SETTING_WIRELESS_SETTING_NAME) == TRUE) {
-            AccessPoint *ap = new AccessPoint;
-            ap->setSsid(nm_connection_get_id(conn));
-            ap->setUuid(nm_connection_get_uuid(conn));
-            this->impl()->known_ap_list.append(ap);
+    if (this->impl()->wifi_device != NULL) {
+        const GPtrArray *aps = nm_device_wifi_get_access_points((NMDeviceWifi*)(this->impl()->wifi_device));
+        for (unsigned int i = 0; i < aps->len; ++i) {
+            NMAccessPoint *ap = NULL;
+            ap = (NMAccessPoint*)g_ptr_array_index(aps, i);
+            GBytes *ssid = nm_access_point_get_ssid(ap);
+            const char *ssid_str = nm_utils_ssid_to_utf8(
+                (const guint8*)g_bytes_get_data(ssid, NULL),
+                g_bytes_get_size(ssid)
+            );
+            fprintf(stderr, "%s\n", ssid_str);
+        }
+        fprintf(stderr, "=====================\n");
+        // Connections
+        const GPtrArray *conns = nm_client_get_connections(this->impl()->client);
+        for (unsigned int i = 0; i < conns->len; ++i) {
+            NMConnection *conn = (NMConnection*)g_ptr_array_index(conns, i);
+            if (nm_connection_is_type(conn, NM_SETTING_WIRELESS_SETTING_NAME) == TRUE) {
+                AccessPoint *ap = new AccessPoint;
+                ap->setSsid(nm_connection_get_id(conn));
+                ap->setUuid(nm_connection_get_uuid(conn));
+                this->impl()->known_ap_list.append(ap);
+            }
         }
     }
 }
