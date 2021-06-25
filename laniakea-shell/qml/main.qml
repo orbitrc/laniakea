@@ -300,6 +300,14 @@ Window {
     id: aboutSystemWindow
 
     AboutSystemWindow {
+//      onClosing: {
+//        aboutSystemWindowLoader.sourceComponent = undefined;
+//      }
+      onVisibleChanged: {
+        if (this.visible === false) {
+          aboutSystemWindowLoader.sourceComponent = undefined;
+        }
+      }
     }
   }
 
