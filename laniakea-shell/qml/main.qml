@@ -318,6 +318,15 @@ Window {
     id: aboutSystemWindowLoader
   }
 
+  //==============
+  // Animation
+  //==============
+  NumberAnimation on y {
+    from: -root.height
+    to: 0
+    duration: 500
+  }
+
   //=============
   // Timer
   //=============
