@@ -221,11 +221,25 @@ Window {
 
     Component.onCompleted: {
       for (let i = 0; i < Shell.numberOfDesktops; ++i) {
-        let item = Qt.createQmlObject('import Blusher 0.1\n'
-          + 'MenuItem {\n'
-          + '    title: Shell.desktopName(' + (i + 1) + ')\n'
-          + '}', desktopsMenu, '');
+        let item = desktopsMenuItem.createObject(this, {
+          title: Shell.desktopName(i + 1),
+          index: i,
+        });
         desktopsMenu.addItem(item);
+      }
+    }
+  }
+
+  Component {
+    id: desktopsMenuItem
+
+    MenuItem {
+      property string title
+      property int index
+
+      title: this.title
+      onTriggered: {
+        console.log(this.index);
       }
     }
   }
