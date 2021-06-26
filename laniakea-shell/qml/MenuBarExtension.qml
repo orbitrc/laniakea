@@ -12,6 +12,29 @@ View {
   width: extensionText.implicitWidth + 10
   height: 30
 
+  states: [
+    State {
+      name: 'active'
+      PropertyChanges {
+        target: activeColor
+        color: 'blue'
+      }
+      PropertyChanges {
+        target: extensionText
+        color: 'white'
+      }
+    }
+  ]
+
+  Rectangle {
+    id: activeColor
+
+    anchors.fill: parent
+
+    visible: root.menu != null
+    color: 'transparent'
+  }
+
   Text {
     id: extensionText
 
@@ -28,7 +51,15 @@ View {
         let pos = mapToItem(root.parent.parent, root.x, 30);
         print(pos);
         menu.open(pos.x, pos.y);
+        root.state = 'active';
       }
+    }
+  }
+
+  Connections {
+    target: root.menu
+    function onClosing() {
+      root.state = '';
     }
   }
 }
