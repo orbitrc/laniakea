@@ -53,10 +53,9 @@ Window {
     ]
     Rectangle {
       id: activeColor
-      width: 40
-      anchors.top: parent.top
-      anchors.bottom: parent.bottom
-      anchors.right: parent.right
+      width: 36
+      height: root.height
+      anchors.centerIn: parent
       color: "transparent"
     }
     Image {
