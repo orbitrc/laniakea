@@ -100,9 +100,6 @@ signals:
     void menuBarMenuItemTriggered(QString path);
     void menuItemTriggered(QString path);
 
-    void confFileChanged();
-    void preferenceChanged(QString category, QString key, QVariant value);
-
     void preferencesChanged();
 
     //==========================
@@ -119,8 +116,6 @@ signals:
     void batteryLevelChanged();
 
 public slots:
-    void onConfFileChanged();
-    void onPreferenceChanged(QString category, QString key, QVariant value);
 
 protected:
     // bool event(QEvent *event) override;

@@ -59,17 +59,11 @@ Shell::Shell(QObject *parent)
     QObject::connect(kWindowSystem, &KWindowSystem::currentDesktopChanged,
                      this, &Shell::currentDesktopChanged);
     // Shell
-    QObject::connect(this, &Shell::confFileChanged,
-                     this, &Shell::onConfFileChanged);
-    QObject::connect(this, &Shell::preferenceChanged,
-                     this, &Shell::onPreferenceChanged);
+
     // Preferences
     QObject::connect(this->m_preferences->desktop(), &Preferences::Desktop::wallpaperChanged,
                      this, &Shell::wallpaperChanged);
     // Belows will connected in QML.
-
-
-    emit this->preferencesChanged();
 
 
     // Worker threads
@@ -78,10 +72,12 @@ Shell::Shell(QObject *parent)
     });
     thr->start();
 
+    /*
     QThread *thr_inotify = QThread::create([this]() {
         this->m_preferences->run_watch_loop();
     });
     thr_inotify->start();
+    */
 
     // DEBUG
     QObject::connect(kWindowSystem, static_cast<void (KWindowSystem::*)(WId, NET::Properties, NET::Properties2)>(&KWindowSystem::windowChanged),
@@ -189,7 +185,7 @@ void Shell::openRebusMenu(QVariantMap *menu)
 
 void Shell::setPreference(QString category, QString key, QVariant val)
 {
-    this->m_preferences->set_preference(category.toLocal8Bit(), key.toLocal8Bit(), val);
+//    this->m_preferences->set_preference(category.toLocal8Bit(), key.toLocal8Bit(), val);
 }
 
 //=========================
@@ -220,58 +216,6 @@ QString Shell::desktopName(int desktop)
 {
     return KWindowSystem::desktopName(desktop);
 }
-
-
-//==================
-// Signal handlers
-//==================
-void Shell::onConfFileChanged()
-{
-    int number_of_desktops = this->m_preferences->number_of_desktops();
-// x11
-    if (qApp->platformName() == "xcb") {
-        QString cmd = "wmctrl -n " + QString::number(number_of_desktops);
-        fprintf(stderr, "system(%s)\n", cmd.toStdString().c_str());
-        system(cmd.toLocal8Bit());
-    }
-// wayland
-    if (qApp->platformName() == "wayland") {
-        // TODO: Implement.
-    }
-}
-
-void Shell::onPreferenceChanged(QString category, QString key, QVariant value)
-{
-    if (category == "desktop") {
-        // [desktop]
-        if (key == "number_of_desktops") {
-// x11
-            if (qApp->platformName() == "xcb") {
-                QString cmd = "wmctrl -n " + value.toString();
-                fprintf(stderr, "system(%s)\n", cmd.toStdString().c_str());
-                system(cmd.toLocal8Bit());
-            }
-// wayland
-            if (qApp->platformName() == "wayland") {
-                // TODO: Implement.
-            }
-        }
-    } else if (category == "keyboard") {
-        // [keyboard]
-        if (key == "delay_until_repeat") {
-            QVariant repeat = this->m_preferences->get_preference("keyboard", "key_repeat");
-            QString cmd = "xset r rate " + value.toString() + " " + repeat.toString();
-            system(cmd.toLocal8Bit());
-        } else if (key == "key_repeat") {
-            QVariant delay = this->m_preferences->get_preference("keyboard", "delay_until_repeat");
-            QString cmd = "xset r rate " + delay.toString() + " " + value.toString();
-            system(cmd.toLocal8Bit());
-        }
-    }
-}
-
-
-// Getters
 
 //=================
 // Event handlers

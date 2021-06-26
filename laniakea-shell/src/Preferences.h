@@ -69,15 +69,6 @@ public:
 
     QVariantMap parse_conf_file(const QString& file_data);
 
-    void set_preference(const char *category, const char *key, QVariant value);
-
-    QVariant get_preference(const char *category, const char *key);
-
-    //===============
-    // Getters
-    //===============
-    double pixels_per_dp() const;
-
     //===============
     // Properties
     //===============
@@ -86,6 +77,8 @@ public:
 
     int number_of_desktops() const;
 signals:
+    void changed();
+
     void desktopChanged();
     void keyboardChanged();
 

@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdio.h>
 
+#include <QApplication>
 #include <QFile>
 #include <QFileSystemWatcher>
 #include <QDir>
@@ -25,7 +26,6 @@ struct Preferences::Impl {
     bool inotify_watching;
     laniakea_preferences *preferences;
     QFileSystemWatcher watcher;
-    QVariantMap conf_dict;
     Preferences::Desktop *desktop;
     Preferences::Keyboard *keyboard;
 
@@ -57,6 +57,7 @@ Preferences::Preferences()
 
     // Setup file system watcher.
     this->impl().watcher.addPath(this->impl().conf_file_path());
+    qDebug() << this->impl().watcher.files();
     QObject::connect(&(this->impl().watcher), &QFileSystemWatcher::fileChanged,
                      this, &Preferences::diff, Qt::QueuedConnection);
 
@@ -69,12 +70,10 @@ Preferences::Preferences()
     //
     // Desktop.
     this->impl().desktop = new Desktop(this);
-    emit this->desktopChanged();
     impl.desktop->setWallpaper(
         laniakea_preferences_desktop_wallpaper(impl.preferences));
     // Keyboard
     this->impl().keyboard = new Keyboard(this);
-    emit this->keyboardChanged();
     this->impl().keyboard->setCapsLockBehavior(
         laniakea_preferences_keyboard_caps_lock_behavior(this->impl().preferences));
     this->impl().keyboard->setDelayUntilRepeat(
@@ -131,10 +130,8 @@ int Preferences::run_watch_loop()
             if (evt->mask & IN_MODIFY) {
                 fprintf(stderr, "file changed!\n");
                 this->sync_with_file();
-                emit shell->confFileChanged();
             } else if (evt->mask & IN_IGNORED){
                 this->sync_with_file();
-                emit shell->confFileChanged();
 
                 fprintf(stderr, "IN_IGNORED. re-initiallize.\n");
                 inotify_rm_watch(this->impl().inotify_fd, this->impl().inotify_wd);
@@ -181,11 +178,11 @@ void Preferences::sync_with_file()
         if (line.startsWith("[") && line.endsWith("]")) {
             line.remove(0, 1);
             line.chop(1);
-            this->impl().conf_dict.insert(line, QVariantMap());
+//            this->impl().conf_dict.insert(line, QVariantMap());
         }
         if (line.startsWith("number_of_desktops")) {
             QStringList qv = line.split("=");
-            this->impl().conf_dict["desktop"].toMap().insert("number_of_desktops", qv[1]);
+//            this->impl().conf_dict["desktop"].toMap().insert("number_of_desktops", qv[1]);
         }
     }
 }
@@ -278,25 +275,6 @@ void Preferences::write_conf_file()
     QFile f(this->impl().conf_path);
 }
 
-
-void Preferences::set_preference(const char *category, const char *key, QVariant value)
-{
-    QVariant original_value = this->impl().conf_dict[category].toMap()[key];
-    if (original_value != value) {
-        this->impl().conf_dict[category].toMap()[key] = value;
-        emit shell->preferenceChanged(category, key, value);
-    }
-}
-
-
-QVariant Preferences::get_preference(const char *category, const char *key)
-{
-    const QVariantMap& category_dict = this->impl().conf_dict[category].toMap();
-    QVariant val = category_dict.value(key);
-
-    return val;
-}
-
 //==============
 // Getters
 //==============
@@ -312,8 +290,7 @@ Preferences::Keyboard* Preferences::keyboard() const
 
 int Preferences::number_of_desktops() const
 {
-    const QVariantMap& desktop = const_cast<Preferences*>(this)->impl().conf_dict.value("desktop").toMap();
-    return desktop.value("number_of_desktops").toInt();
+    return this->desktop()->numberOfDesktops();
 }
 
 
@@ -331,6 +308,7 @@ void Preferences::diff()
     impl.preferences = laniakea_preferences_new();
     int err = laniakea_preferences_load(impl.preferences);
     if (err != LANIAKEA_FILE_ERROR_SUCCESS) {
+        qDebug() << "preferences_load failed!";
         return;
     }
 
@@ -341,13 +319,16 @@ void Preferences::diff()
     // Desktop
     auto wallpaper = laniakea_preferences_desktop_wallpaper(impl.preferences);
     impl.desktop->setWallpaper(wallpaper);
+
     // Keyboard
     auto behavior = laniakea_preferences_keyboard_caps_lock_behavior(impl.preferences);
     impl.keyboard->setCapsLockBehavior(behavior);
+
     auto delay = laniakea_preferences_keyboard_delay_until_repeat(impl.preferences);
     impl.keyboard->setDelayUntilRepeat(delay);
-    auto repeat = laniakea_preferences_keyboard_key_repeat(impl.preferences);
 
+    auto repeat = laniakea_preferences_keyboard_key_repeat(impl.preferences);
+    qDebug() << repeat;
     impl.keyboard->setKeyRepeat(repeat);
 }
 
@@ -375,10 +356,19 @@ int Preferences::Desktop::numberOfDesktops() const
 void Preferences::Desktop::setNumberOfDesktops(int val)
 {
     this->m_number_of_desktops = val;
-    emit this->numberOfDesktopsChanged(val);
-    if (shell != nullptr) {
-        emit shell->preferenceChanged("desktop", "number_of_desktops", val);
+
+    // x11
+    if (qApp->platformName() == "xcb") {
+        QString cmd = "wmctrl -n " + QString::number(val);
+        fprintf(stderr, "system(%s)\n", cmd.toStdString().c_str());
+        system(cmd.toLocal8Bit());
     }
+    // wayland
+    if (qApp->platformName() == "wayland") {
+        // TODO: Implement.
+    }
+
+    emit this->numberOfDesktopsChanged(val);
 }
 
 QString Preferences::Desktop::wallpaper() const
@@ -403,7 +393,9 @@ void Preferences::Desktop::setWallpaper(const QString& path)
 Preferences::Keyboard::Keyboard(QObject *parent)
     : QObject(parent)
 {
-    this->m_key_repeat = 25;
+    this->m_caps_lock_behavior = LA_PREFERENCES_CAPS_LOCK_BEHAVIOR_CAPS_LOCK;
+    this->m_delay_until_repeat = LA_PREFERENCES_DEFAULT_KEYBOARD_DELAY_UNTIL_REPEAT;
+    this->m_key_repeat = LA_PREFERENCES_DEFAULT_KEYBOARD_KEY_REPEAT;
 }
 
 Preferences::Keyboard::~Keyboard()
