@@ -31,6 +31,7 @@ SOURCES += \
         src/Preferences.cpp \
         src/RebusListener.cpp \
         src/Shell.cpp \
+        src/SystemInformation.cpp \
         src/main.cpp
 
 RESOURCES += \
@@ -55,6 +56,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     src/Preferences.h \
+    src/SystemInformation.h \
     src/global.h \
     src/NetworkManager.h \
     src/RebusListener.h \

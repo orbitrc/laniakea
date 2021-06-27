@@ -43,6 +43,7 @@ Shell::Shell(QObject *parent)
 
     this->m_preferences = new Preferences;
     this->m_networkManager = new NetworkManager;
+    this->m_systemInformation = new SystemInformation;
 
     //=================
     // Set properties
@@ -261,6 +262,11 @@ Preferences* Shell::preferences()
 NetworkManager* Shell::networkManager()
 {
     return this->m_networkManager;
+}
+
+SystemInformation* Shell::systemInformation() const
+{
+    return this->m_systemInformation;
 }
 
 int Shell::numberOfDesktops()

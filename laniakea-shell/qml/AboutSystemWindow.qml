@@ -17,4 +17,32 @@ Window {
   height: this.maximumHeight
 
   title: 'About System'
+
+  Label {
+    id: distribution
+
+    x: 10
+    y: 10
+
+    text: Shell.systemInformation.distName
+    fontSize: 32
+  }
+
+  Flow {
+    anchors.top: distribution.bottom
+
+    flow: Flow.TopToBottom
+
+    Item {
+      Label {
+        id: labelKernel
+        text: 'Kernel:'
+      }
+      Label {
+        anchors.left: labelKernel.right
+        text: Shell.systemInformation.kernel
+        selectable: true
+      }
+    }
+  }
 }

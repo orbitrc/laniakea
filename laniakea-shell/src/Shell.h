@@ -9,6 +9,7 @@
 
 #include "Preferences.h"
 #include "NetworkManager.h"
+#include "SystemInformation.h"
 
 namespace la {
 
@@ -21,6 +22,7 @@ class Shell : public QObject
     Q_PROPERTY(QObject* systemPreferences READ systemPreferences WRITE setSystemPreferences)
     Q_PROPERTY(Preferences* preferences READ preferences NOTIFY preferencesChanged)
     Q_PROPERTY(NetworkManager* networkManager READ networkManager CONSTANT)
+    Q_PROPERTY(SystemInformation* systemInformation READ systemInformation CONSTANT)
     // Desktop
     Q_PROPERTY(int numberOfDesktops READ numberOfDesktops NOTIFY numberOfDesktopsChanged)
     Q_PROPERTY(int currentDesktop READ currentDesktop NOTIFY currentDesktopChanged)
@@ -39,6 +41,7 @@ private:
 
     Preferences *m_preferences;
     NetworkManager *m_networkManager;
+    SystemInformation *m_systemInformation;
     struct udev *p_udev;
 public:
     explicit Shell(QObject *parent = nullptr);
@@ -75,6 +78,7 @@ public:
 
     Preferences* preferences();
     NetworkManager* networkManager();
+    SystemInformation* systemInformation() const;
 
     int numberOfDesktops();
     int currentDesktop();
