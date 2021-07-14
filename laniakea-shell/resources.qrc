@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/assets">
         <file alias="orbit-logo-light@256x256.png">assets/orbit-logo-light@256x256.png</file>
+        <file alias="dist-icon-fallback.png">assets/dist-icon-fallback.png</file>
     </qresource>
     <qresource prefix="/qml">
         <file alias="main.qml">qml/main.qml</file>

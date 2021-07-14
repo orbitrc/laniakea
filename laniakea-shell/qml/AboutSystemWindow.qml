@@ -18,10 +18,20 @@ Window {
 
   title: 'About System'
 
+  Image {
+    id: distIcon
+
+    x: 10
+    y: 10
+    width: 64
+    height: 64
+    source: Shell.systemInformation.distIcon
+  }
+
   Label {
     id: distribution
 
-    x: 10
+    x: 80
     y: 10
 
     text: Shell.systemInformation.distName

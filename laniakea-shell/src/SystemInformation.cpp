@@ -1,11 +1,19 @@
 #include "SystemInformation.h"
 
+#include <string>
+#include <map>
+
 #include <sys/utsname.h>
 
 #include <QProcess>
 #include <QDebug>
 
 namespace la {
+
+static const std::map<std::string, const char*> dist_icon_map = {
+    { "Manjaro", "file:///usr/share/icons/manjaro/maia/maia.svg" },
+    { "Fallback", "qrc:/assets/dist-icon-fallback.png" },
+};
 
 SystemInformation::SystemInformation(QObject *parent) : QObject(parent)
 {
@@ -22,6 +30,16 @@ QString SystemInformation::distName() const
         }
     }
     return "Linux(Unknown)";
+}
+
+QString SystemInformation::distIcon() const
+{
+    try {
+        auto icon = dist_icon_map.at(this->distName().toStdString());
+        return icon;
+    }  catch (std::out_of_range) {
+        return dist_icon_map.at("Fallback");
+    }
 }
 
 QString SystemInformation::kernel() const
