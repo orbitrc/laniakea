@@ -321,8 +321,8 @@ Window {
   // Animation
   //==============
   NumberAnimation on y {
-    from: -root.height
-    to: 0
+    from: root.y - root.height
+    to: root.y
     duration: 500
   }
 
