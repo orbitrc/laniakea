@@ -298,6 +298,7 @@ Window {
     id: aboutSystemWindow
 
     AboutSystemWindow {
+      transientFor: root.windowId
 //      onClosing: {
 //        aboutSystemWindowLoader.sourceComponent = undefined;
 //      }
