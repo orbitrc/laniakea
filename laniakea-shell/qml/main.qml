@@ -24,10 +24,10 @@ Window {
 
   color: "transparent"
 
-  Rectangle {
+  Box {
     id: fillColor
 
-    anchors.fill: parent
+    anchors.fill: root.body
     color: "#77ffffff"
   }
 
@@ -38,8 +38,8 @@ Window {
     id: systemMenuItem
 
     width: 50
-    anchors.top: parent.top
-    anchors.bottom: parent.bottom
+    anchors.top: root.body.top
+    anchors.bottom: root.body.bottom
 
     states: [
       State {
@@ -50,7 +50,7 @@ Window {
         }
       }
     ]
-    Rectangle {
+    Box {
       id: activeColor
       width: 36
       height: root.height
@@ -92,8 +92,7 @@ Window {
   MouseArea {
     width: 24
     x: 300
-    anchors.top: parent.top
-    anchors.bottom: parent.bottom
+    height: root.height
     hoverEnabled: true
     Rectangle {
       id: _testRect
@@ -114,8 +113,7 @@ Window {
   MouseArea {
     width: 24
     x: 340
-    anchors.top: parent.top
-    anchors.bottom: parent.bottom
+    height: root.height
     hoverEnabled: true
     Rectangle {
       id: _debugButton
@@ -146,31 +144,37 @@ Window {
   //=======================
   // Menu bar extensions
   //=======================
-  Row {
-    id: menuBarExtensions
+  View {
+    anchors.top: root.body.top
+    anchors.bottom: root.body.bottom
+    anchors.right: root.body.right
 
-    anchors.top: parent.top
-    anchors.bottom: parent.bottom
-    anchors.right: parent.right
+    width: MenuBarExtension.childrenRect
 
-    layoutDirection: Qt.RightToLeft
+    Row {
+      id: menuBarExtensions
 
-    // Clock
-    MenuBarExtension {
-      id: clockExtension
+      anchors.fill: parent
 
-      text: '00:00:00'
-    }
+      layoutDirection: Qt.RightToLeft
 
-    // Battery
-    MenuBarExtension {
-      text: Shell.batteryLevel + '%'
-    }
+      // Clock
+      MenuBarExtension {
+        id: clockExtension
 
-    // Desktops
-    MenuBarExtension {
-      text: Shell.desktopName(Shell.currentDesktop)
-      menu: desktopsMenu
+        text: '00:00:00'
+      }
+
+      // Battery
+      MenuBarExtension {
+        text: Shell.batteryLevel + '%'
+      }
+
+      // Desktops
+      MenuBarExtension {
+        text: Shell.desktopName(Shell.currentDesktop)
+        menu: desktopsMenu
+      }
     }
   }
 

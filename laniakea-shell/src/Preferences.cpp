@@ -24,7 +24,7 @@ struct Preferences::Impl {
     int inotify_fd;
     int inotify_wd;
     bool inotify_watching;
-    laniakea_preferences *preferences;
+    la_preferences *preferences;
     QFileSystemWatcher watcher;
     Preferences::Desktop *desktop;
     Preferences::Keyboard *keyboard;
@@ -52,8 +52,8 @@ Preferences::Preferences()
     sprintf(this->impl().conf_path, "%s/.config/laniakea.conf", home);
 
     // Initialize laniakea preferences.
-    this->impl().preferences = laniakea_preferences_new();
-    laniakea_preferences_load(this->impl().preferences);
+    this->impl().preferences = la_preferences_new();
+    la_preferences_load(this->impl().preferences);
 
     // Setup file system watcher.
     this->impl().watcher.addPath(this->impl().conf_file_path());
@@ -71,15 +71,15 @@ Preferences::Preferences()
     // Desktop.
     this->impl().desktop = new Desktop(this);
     impl.desktop->setWallpaper(
-        laniakea_preferences_desktop_wallpaper(impl.preferences));
+        la_preferences_desktop_wallpaper(impl.preferences));
     // Keyboard
     this->impl().keyboard = new Keyboard(this);
     this->impl().keyboard->setCapsLockBehavior(
-        laniakea_preferences_keyboard_caps_lock_behavior(this->impl().preferences));
+        la_preferences_keyboard_caps_lock_behavior(this->impl().preferences));
     this->impl().keyboard->setDelayUntilRepeat(
-        laniakea_preferences_keyboard_delay_until_repeat(this->impl().preferences));
+        la_preferences_keyboard_delay_until_repeat(this->impl().preferences));
     this->impl().keyboard->setKeyRepeat(
-        laniakea_preferences_keyboard_key_repeat(this->impl().preferences));
+        la_preferences_keyboard_key_repeat(this->impl().preferences));
 
     if (this->read_conf_file() == false) {
         if (this->make_conf_file() == false) {
@@ -92,7 +92,7 @@ Preferences::Preferences()
 
 Preferences::~Preferences()
 {
-    laniakea_preferences_free(this->impl().preferences);
+    la_preferences_free(this->impl().preferences);
     delete (Preferences::Impl*)(this->pImpl);
 }
 
@@ -304,10 +304,10 @@ void Preferences::diff()
     }
 
     // Reload preferences.conf file.
-    laniakea_preferences_free(impl.preferences);
-    impl.preferences = laniakea_preferences_new();
-    int err = laniakea_preferences_load(impl.preferences);
-    if (err != LANIAKEA_FILE_ERROR_SUCCESS) {
+    la_preferences_free(impl.preferences);
+    impl.preferences = la_preferences_new();
+    int err = la_preferences_load(impl.preferences);
+    if (err != LA_FILE_ERROR_SUCCESS) {
         qDebug() << "preferences_load failed!";
         return;
     }
@@ -317,17 +317,17 @@ void Preferences::diff()
     //=================
 
     // Desktop
-    auto wallpaper = laniakea_preferences_desktop_wallpaper(impl.preferences);
+    auto wallpaper = la_preferences_desktop_wallpaper(impl.preferences);
     impl.desktop->setWallpaper(wallpaper);
 
     // Keyboard
-    auto behavior = laniakea_preferences_keyboard_caps_lock_behavior(impl.preferences);
+    auto behavior = la_preferences_keyboard_caps_lock_behavior(impl.preferences);
     impl.keyboard->setCapsLockBehavior(behavior);
 
-    auto delay = laniakea_preferences_keyboard_delay_until_repeat(impl.preferences);
+    auto delay = la_preferences_keyboard_delay_until_repeat(impl.preferences);
     impl.keyboard->setDelayUntilRepeat(delay);
 
-    auto repeat = laniakea_preferences_keyboard_key_repeat(impl.preferences);
+    auto repeat = la_preferences_keyboard_key_repeat(impl.preferences);
     qDebug() << repeat;
     impl.keyboard->setKeyRepeat(repeat);
 }
