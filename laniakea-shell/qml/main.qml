@@ -88,6 +88,21 @@ Window {
     }
   }
 
+  // Debug print button
+  MouseArea {
+    width: 24
+    x: 200
+    height: root.height
+    hoverEnabled: true
+    Box {
+      anchors.fill: parent
+      color: 'cyan'
+    }
+    onClicked: {
+      console.log(systemMenuItem.y);
+    }
+  }
+
   // Kill button
   MouseArea {
     width: 24
