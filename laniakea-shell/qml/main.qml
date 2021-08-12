@@ -298,6 +298,8 @@ Window {
     id: aboutSystemWindow
 
     AboutSystemWindow {
+      x: 0
+      y: DesktopEnvironment.primaryScreen.y + (height / 2)
       transientFor: root.windowId
 //      onClosing: {
 //        aboutSystemWindowLoader.sourceComponent = undefined;
