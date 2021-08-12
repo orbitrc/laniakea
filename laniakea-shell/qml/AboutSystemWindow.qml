@@ -18,40 +18,48 @@ Window {
 
   title: 'About System'
 
-  Image {
-    id: distIcon
+  View {
+    id: distIconView
 
     x: 10
     y: 10
     width: 64
     height: 64
-    source: Shell.systemInformation.distIcon
+    Image {
+      id: distIcon
+
+      anchors.fill: parent
+      source: Shell.systemInformation.distIcon
+    }
   }
 
   Label {
     id: distribution
 
-    x: 80
-    y: 10
+    anchors.left: distIconView.right
+    anchors.leftMargin: 12
+    anchors.verticalCenter: distIconView.verticalCenter
 
     text: Shell.systemInformation.distName
     fontSize: 32
   }
 
-  Flow {
+  View {
     anchors.top: distribution.bottom
 
-    flow: Flow.TopToBottom
+    Flow {
+      flow: Flow.TopToBottom
 
-    Item {
-      Label {
-        id: labelKernel
-        text: 'Kernel:'
-      }
-      Label {
-        anchors.left: labelKernel.right
-        text: Shell.systemInformation.kernel
-        selectable: true
+      Item {
+        Label {
+          id: labelKernel
+          text: 'Kernel:'
+        }
+        Label {
+          anchors.left: labelKernel.right
+          text: Shell.systemInformation.kernel
+          selectable: true
+        }
       }
     }
   }
