@@ -72,6 +72,8 @@ Preferences::Preferences()
     this->impl().desktop = new Desktop(this);
     impl.desktop->setWallpaper(
         la_preferences_desktop_wallpaper(impl.preferences));
+    impl.desktop->setNumberOfDesktops(
+        la_preferences_desktop_number_of_desktops(impl.preferences));
     // Keyboard
     this->impl().keyboard = new Keyboard(this);
     this->impl().keyboard->setCapsLockBehavior(
@@ -100,62 +102,6 @@ Preferences::Impl& Preferences::impl()
 {
     return *((Preferences::Impl*)(this->pImpl));
 }
-
-int Preferences::run_watch_loop()
-{
-    int fd = 0;
-    struct inotify_event *evt;
-    char *p_evt;
-    int read_len;
-    char buffer[512];
-    int mask = IN_MODIFY | IN_IGNORED | IN_CLOSE_WRITE;
-
-    this->impl().inotify_fd = inotify_init();
-    if (this->impl().inotify_fd == -1) {
-        // ERROR!
-        fprintf(stderr, "ConfFile::run_watch_loop - Failed to init inotify.\n");
-        return 1;
-    }
-    int wd = inotify_add_watch(this->impl().inotify_fd, this->impl().conf_path, mask);
-    this->impl().inotify_wd = wd;
-
-    this->impl().inotify_watching = true;
-    while (this->impl().inotify_watching) {
-        read_len = read(this->impl().inotify_fd, buffer, 512);
-
-        for (p_evt = buffer; p_evt < buffer + read_len; ) {
-            evt = (struct inotify_event*)p_evt;
-            fprintf(stderr, "evt: %d\n", evt->mask);
-
-            if (evt->mask & IN_MODIFY) {
-                fprintf(stderr, "file changed!\n");
-                this->sync_with_file();
-            } else if (evt->mask & IN_IGNORED){
-                this->sync_with_file();
-
-                fprintf(stderr, "IN_IGNORED. re-initiallize.\n");
-                inotify_rm_watch(this->impl().inotify_fd, this->impl().inotify_wd);
-                close(this->impl().inotify_fd);
-                this->impl().inotify_fd = inotify_init();
-                this->impl().inotify_wd = inotify_add_watch(
-                    this->impl().inotify_fd,
-                    this->impl().conf_path, mask);
-            }
-
-            p_evt += sizeof(struct inotify_event) + evt->len;
-        }
-    }
-
-    fprintf(stderr, "inotify watch end.\n");
-    return 0;
-}
-
-
-void Preferences::exit_loop()
-{
-    this->impl().inotify_watching = false;
-}
-
 
 void Preferences::sync_with_file()
 {
@@ -202,8 +148,8 @@ bool Preferences::read_conf_file()
     QVariantMap conf = this->parse_conf_file(data);
 
     // [desktop]
-    Desktop *desktop = this->impl().desktop;
-    desktop->setNumberOfDesktops(conf["desktop"].toMap()["number_of_desktops"].toInt());
+//    Desktop *desktop = this->impl().desktop;
+//    desktop->setNumberOfDesktops(conf["desktop"].toMap()["number_of_desktops"].toInt());
     // [keyboard]
 //    Keyboard *keyboard = this->impl().keyboard;
 //    keyboard->setDelayUntilRepeat(conf["keyboard"].toMap()["delay_until_repeat"].toInt());
@@ -319,6 +265,9 @@ void Preferences::diff()
     // Desktop
     auto wallpaper = la_preferences_desktop_wallpaper(impl.preferences);
     impl.desktop->setWallpaper(wallpaper);
+
+    auto numberOfDesktops = la_preferences_desktop_number_of_desktops(impl.preferences);
+    impl.desktop->setNumberOfDesktops(numberOfDesktops);
 
     // Keyboard
     auto behavior = la_preferences_keyboard_caps_lock_behavior(impl.preferences);

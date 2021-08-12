@@ -46,7 +46,7 @@ Window {
   }
 
   View {
-    anchors.top: distribution.bottom
+    anchors.top: distIconView.bottom
 
     Flow {
       flow: Flow.TopToBottom

@@ -53,12 +53,6 @@ public:
 
     Impl& impl();
 
-    /// \brief  Start inotify watch loop.
-    int run_watch_loop();
-
-    /// \brief  Stop inotify watch loop.
-    void exit_loop();
-
     void sync_with_file();
 
     bool read_conf_file();
