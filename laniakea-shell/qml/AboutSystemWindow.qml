@@ -18,40 +18,64 @@ Window {
 
   title: 'About System'
 
-  Image {
-    id: distIcon
+  View {
+    id: distIconView
 
     x: 10
     y: 10
     width: 64
     height: 64
-    source: Shell.systemInformation.distIcon
+    Image {
+      id: distIcon
+
+      anchors.fill: parent
+      source: Shell.systemInformation.distIcon
+    }
   }
 
   Label {
     id: distribution
 
-    x: 80
-    y: 10
+    anchors.left: distIconView.right
+    anchors.leftMargin: 12
+    anchors.verticalCenter: distIconView.verticalCenter
 
     text: Shell.systemInformation.distName
     fontSize: 32
+    backgroundColor: 'green'
   }
 
-  Flow {
-    anchors.top: distribution.bottom
+  View {
+    anchors.top: distIconView.bottom
 
-    flow: Flow.TopToBottom
+    Flow {
+      flow: Flow.TopToBottom
 
-    Item {
-      Label {
-        id: labelKernel
-        text: 'Kernel:'
+      View {
+        Label {
+          id: labelKernel
+          text: 'Kernel:'
+        }
+        Label {
+          anchors.left: labelKernel.right
+          text: Shell.systemInformation.kernel
+          selectable: true
+        }
       }
-      Label {
-        anchors.left: labelKernel.right
-        text: Shell.systemInformation.kernel
-        selectable: true
+    }
+  }
+
+  // Debug button.
+  Box {
+    anchors.right: root.body.right
+    width: 30
+    height: 30
+    color: 'red'
+    MouseArea {
+      anchors.fill: parent
+      onClicked: {
+        distIconView.height = distIconView.height + 1;
+        console.log(distribution.height);
       }
     }
   }

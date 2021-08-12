@@ -14,6 +14,8 @@ Window {
   width: 320
   height: 50
 
+//  menu: null
+
 //  TextField {
 //  }
   TextInput {
