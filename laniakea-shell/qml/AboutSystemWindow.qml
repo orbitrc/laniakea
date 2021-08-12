@@ -42,6 +42,7 @@ Window {
 
     text: Shell.systemInformation.distName
     fontSize: 32
+    backgroundColor: 'green'
   }
 
   View {
@@ -50,7 +51,7 @@ Window {
     Flow {
       flow: Flow.TopToBottom
 
-      Item {
+      View {
         Label {
           id: labelKernel
           text: 'Kernel:'
@@ -60,6 +61,21 @@ Window {
           text: Shell.systemInformation.kernel
           selectable: true
         }
+      }
+    }
+  }
+
+  // Debug button.
+  Box {
+    anchors.right: root.body.right
+    width: 30
+    height: 30
+    color: 'red'
+    MouseArea {
+      anchors.fill: parent
+      onClicked: {
+        distIconView.height = distIconView.height + 1;
+        console.log(distribution.height);
       }
     }
   }
