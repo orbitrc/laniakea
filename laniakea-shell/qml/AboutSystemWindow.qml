@@ -64,6 +64,7 @@ Window {
       text: 'CPU model:'
     }
     Label {
+      anchors.top: labelCpuModel.top
       anchors.left: labelCpuModel.right
       text: Shell.systemInformation.cpuModel
       selectable: true
