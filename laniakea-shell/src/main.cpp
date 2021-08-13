@@ -35,9 +35,6 @@ int main(int argc, char *argv[])
 
     bl::Application app(argc, argv);
 
-    app.engine()->addImportPath(BLUSHER_PATH);
-    app.engine()->addImportPath("qrc:/components");
-    app.engine()->addImportPath("qrc:/modules");
     la::engine = app.engine();
 
     qDebug() << app.engine()->importPathList();
