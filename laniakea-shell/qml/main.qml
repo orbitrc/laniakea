@@ -50,6 +50,7 @@ Window {
         }
       }
     ]
+
     Box {
       id: activeColor
       width: 36
@@ -164,7 +165,7 @@ Window {
     anchors.bottom: root.body.bottom
     anchors.right: root.body.right
 
-    width: MenuBarExtension.childrenRect
+    width: menuBarExtensions.childrenRect
 
     Row {
       id: menuBarExtensions
@@ -287,7 +288,7 @@ Window {
         width: DesktopEnvironment.screens[index].width
         height: DesktopEnvironment.screens[index].height
 
-        color: 'lightgray'
+        color: 'midnightblue'
 
         Image {
           anchors.fill: parent
