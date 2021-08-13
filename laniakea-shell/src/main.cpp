@@ -5,8 +5,6 @@
 
 #include <blusher/blusher.h>
 
-#include <curl/curl.h>
-
 #include <stdint.h>
 #include <stdio.h>
 

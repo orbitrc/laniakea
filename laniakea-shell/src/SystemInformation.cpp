@@ -51,6 +51,40 @@ QString SystemInformation::kernel() const
     return ret.release;
 }
 
+QString SystemInformation::cpuModel() const
+{
+    QProcess pCat;
+    QProcess pGrep;
+
+    pCat.setStandardOutputProcess(&pGrep);
+
+    pCat.start("cat", QStringList("/proc/cpuinfo"));
+    pGrep.start("grep", QStringList("model name"));
+    pGrep.setProcessChannelMode(QProcess::ForwardedChannels);
+
+    if (!pCat.waitForStarted(500)) {
+        return "Could not read CPU information.";
+    }
+
+    if (!pCat.waitForFinished(500)) {
+        return pCat.errorString();
+    }
+    if (!pGrep.waitForFinished(500)) {
+        return pGrep.errorString();
+    }
+    QString res = pGrep.readLine();
+    res = res.remove("model name");
+    res = res.trimmed();
+    res = res.remove(":");
+    res = res.trimmed();
+
+    return res;
+}
+
+//======================
+// Private methods.
+//======================
+
 bool SystemInformation::has_lsb_release() const
 {
     if (system("which lsb_release > /dev/null 2>&1") == 0) {

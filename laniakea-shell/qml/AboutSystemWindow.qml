@@ -9,7 +9,7 @@ Window {
 
   netWmWindowType: Window.NetWmWindowType.Utility
 
-  maximumWidth: 300
+  maximumWidth: 400
   maximumHeight: 300
   minimumWidth: this.maximumWidth
   minimumHeight: this.maximumHeight
@@ -48,20 +48,26 @@ Window {
   View {
     anchors.top: distIconView.bottom
 
-    Flow {
-      flow: Flow.TopToBottom
 
-      View {
-        Label {
-          id: labelKernel
-          text: 'Kernel:'
-        }
-        Label {
-          anchors.left: labelKernel.right
-          text: Shell.systemInformation.kernel
-          selectable: true
-        }
-      }
+    Label {
+      id: labelKernel
+      text: 'Kernel:'
+    }
+    Label {
+      anchors.left: labelKernel.right
+      text: Shell.systemInformation.kernel
+      selectable: true
+    }
+    Label {
+      id: labelCpuModel
+      anchors.top: labelKernel.bottom
+      text: 'CPU model:'
+    }
+    Label {
+      anchors.left: labelCpuModel.right
+      text: Shell.systemInformation.cpuModel
+      selectable: true
+      backgroundColor: 'red'
     }
   }
 

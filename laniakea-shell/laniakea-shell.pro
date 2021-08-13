@@ -8,7 +8,7 @@ CONFIG(debug, debug|release) {
 
 VERSION = 0.1.0
 
-LIBS += -ludev -lcurl -ljson-c -lnm -lhttproto -llaniakea
+LIBS += -ludev -ljson-c -lnm -lhttproto -llaniakea
 
 INCLUDEPATH += \
         /home/hardboiled65/dev/Blusher/include
