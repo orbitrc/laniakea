@@ -12,5 +12,3 @@ DOCK_PID=$!
 
 # Clean background processes.
 # uwsgi --stop $XDG_RUNTIME_DIR/rebus.pid
-
-# /bin/top
