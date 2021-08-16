@@ -6,13 +6,6 @@
 
 namespace la {
 
-Display::Mode::Mode(uint32_t width, uint32_t height, const QString& refreshRate)
-{
-    this->m_width = width;
-    this->m_height = height;
-    this->m_refreshRate = refreshRate;
-}
-
 Display::Display(const QString& output, const Display::Mode& mode,
         uint32_t crtc)
     : m_output(output),
@@ -20,6 +13,39 @@ Display::Display(const QString& output, const Display::Mode& mode,
 {
     this->m_crtc = crtc;
 }
+
+//=====================
+// Display::Mode
+//=====================
+Display::Mode::Mode(uint32_t id, uint32_t width, uint32_t height,
+        const QString& refreshRate)
+{
+    this->m_id = id;
+    this->m_width = width;
+    this->m_height = height;
+    this->m_refreshRate = refreshRate;
+}
+
+uint32_t Display::Mode::id() const
+{
+    return this->m_id;
+}
+
+uint32_t Display::Mode::width() const
+{
+    return this->m_width;
+}
+
+uint32_t Display::Mode::height() const
+{
+    return this->m_height;
+}
+
+QString Display::Mode::refreshRate() const
+{
+    return this->m_refreshRate;
+}
+
 
 //=====================
 // Display::Output
@@ -93,6 +119,67 @@ const QList<Display::Output> Displays::outputs() const
 //==================
 // Private methods
 //==================
+QList<Display::Mode> Displays::modes_for_output(const Display::Output &output)
+{
+    QList<Display::Mode> ret;
 
+    auto output_cookie = xcb_randr_get_output_info(
+        this->m_connection, output.id(), 0);
+    auto output_reply = xcb_randr_get_output_info_reply(
+        this->m_connection, output_cookie, NULL);
+
+    // Get modes for given output.
+    xcb_randr_mode_t *modes = xcb_randr_get_output_info_modes(output_reply);
+    int modes_length = xcb_randr_get_output_info_modes_length(output_reply);
+    QList<xcb_randr_mode_t> modes_list;
+    for (int i = 0; i < modes_length; ++i) {
+        modes_list.append(modes[i]);
+    }
+    free(output_reply);
+
+    auto screen_resources_cookie = xcb_randr_get_screen_resources(
+        this->m_connection, this->m_screen->root);
+    auto screen_resources_reply = xcb_randr_get_screen_resources_reply(
+        this->m_connection, screen_resources_cookie, NULL);
+
+    auto all_mode_iter = xcb_randr_get_screen_resources_modes_iterator(
+        screen_resources_reply);
+    int all_modes_length = xcb_randr_get_screen_resources_modes_length(
+        screen_resources_reply);
+    for (int i = 0; i < all_modes_length; ++i) {
+        xcb_randr_mode_info_t *mode_info = all_mode_iter.data;
+        if (modes_list.contains(mode_info->id)) {
+            double refresh_rate =
+                ((double)mode_info->dot_clock) / (mode_info->htotal * mode_info->vtotal);
+            auto refresh_rate_str = QString{"%1"}.arg(refresh_rate, 5, 'f', 2);
+            Display::Mode mode(
+                mode_info->id,
+                mode_info->width,
+                mode_info->height,
+                refresh_rate_str
+            );
+            ret.append(mode);
+        }
+
+        xcb_randr_mode_info_next(&all_mode_iter);
+    }
+    free(screen_resources_reply);
+
+    return ret;
+}
+
+uint32_t Displays::crtc_for_output(const Display::Output &output)
+{
+    auto output_cookie = xcb_randr_get_output_info(
+        this->m_connection, output.id(), 0);
+    auto output_reply = xcb_randr_get_output_info_reply(
+        this->m_connection, output_cookie, NULL);
+
+    uint32_t crtc = output_reply->crtc;
+
+    free(output_reply);
+
+    return crtc;
+}
 
 } // namespace la
