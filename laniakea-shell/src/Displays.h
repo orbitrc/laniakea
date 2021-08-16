@@ -51,6 +51,10 @@ public:
     Display(const Display::Output& output, const QList<Display::Mode>& modes,
             uint32_t crtc);
 
+    Display::Output output() const;
+
+    QList<Display::Mode> modes() const;
+
     bool connection() const;
     void setConnection(bool value);
 
@@ -74,6 +78,9 @@ public:
     ~Displays();
 
     void init();
+
+    QList<Display> displays() const;
+
     const QList<Display::Output> outputs() const;
 
 signals:

@@ -50,6 +50,11 @@ Shell::Shell(QObject *parent)
     this->m_displays = new Displays(xcb_connect(NULL, NULL), this);
 
     //=================
+    // Init displays
+    //=================
+    this->m_displays->init();
+
+    //=================
     // Set properties
     //=================
     this->m_menu_bar_menu = QJSValue::NullValue;
@@ -86,10 +91,16 @@ Shell::Shell(QObject *parent)
 
     // DEBUG
     qDebug() << "Shell::Shell() - outputs:";
-    auto outputs = this->m_displays->outputs();
-    for (int i = 0; i < outputs.length(); ++i) {
-        qDebug() << "  id:" << outputs[i].id()
-            << ", name:" << outputs[i].name();
+    auto displays = this->m_displays->displays();
+    for (int i = 0; i < displays.length(); ++i) {
+        auto output = displays[i].output();
+        auto modes = displays[i].modes();
+
+        qDebug() << "  output:" << output.name();
+        for (int i = 0; i < modes.length(); ++i) {
+            qDebug() << "    " << modes[i].width() << "x" << modes[i].height()
+                << "@" << modes[i].refreshRate();
+        }
     }
     QObject::connect(kWindowSystem, static_cast<void (KWindowSystem::*)(WId, NET::Properties, NET::Properties2)>(&KWindowSystem::windowChanged),
                      this, [](WId w_id, NET::Properties props, NET::Properties2 props2) {

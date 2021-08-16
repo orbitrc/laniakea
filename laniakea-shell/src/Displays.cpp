@@ -15,6 +15,16 @@ Display::Display(const Display::Output& output, const QList<Display::Mode>& mode
     this->m_connection = false;
 }
 
+Display::Output Display::output() const
+{
+    return this->m_output;
+}
+
+QList<Display::Mode> Display::modes() const
+{
+    return this->m_modes;
+}
+
 bool Display::connection() const
 {
     return this->m_connection;
@@ -115,6 +125,11 @@ void Displays::init()
 
         this->m_displays.append(display);
     }
+}
+
+QList<Display> Displays::displays() const
+{
+    return this->m_displays;
 }
 
 const QList<Display::Output> Displays::outputs() const
