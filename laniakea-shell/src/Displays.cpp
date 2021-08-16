@@ -199,8 +199,16 @@ QList<Display::Mode> Displays::modes_for_output(const Display::Output &output)
     for (int i = 0; i < all_modes_length; ++i) {
         xcb_randr_mode_info_t *mode_info = all_mode_iter.data;
         if (modes_list.contains(mode_info->id)) {
+            // Get refresh rate.
+            double vtotal = mode_info->vtotal;
+            if (mode_info->mode_flags & XCB_RANDR_MODE_FLAG_DOUBLE_SCAN) {
+                vtotal *= 2;
+            }
+            if (mode_info->mode_flags & XCB_RANDR_MODE_FLAG_INTERLACE) {
+                vtotal /= 2;
+            }
             double refresh_rate =
-                ((double)mode_info->dot_clock) / (mode_info->htotal * mode_info->vtotal);
+                ((double)mode_info->dot_clock) / (mode_info->htotal * vtotal);
             auto refresh_rate_str = QString{"%1"}.arg(refresh_rate, 5, 'f', 2);
             Display::Mode mode(
                 mode_info->id,
