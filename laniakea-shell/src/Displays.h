@@ -32,6 +32,7 @@ public:
     class Mode
     {
     public:
+        Mode();
         Mode(uint32_t id, uint32_t width, uint32_t height,
                 const QString& refreshRate);
 
@@ -47,13 +48,18 @@ public:
     };
 
 public:
-    Display(const QString& output, const Display::Mode& mode, uint32_t crtc);
+    Display(const Display::Output& output, const QList<Display::Mode>& modes,
+            uint32_t crtc);
+
+    bool connection() const;
+    void setConnection(bool value);
 
 private:
-    QString m_output;
+    Display::Output m_output;
     Display::Mode m_mode;
     uint32_t m_crtc;
     QList<Display::Mode> m_modes;
+    bool m_connection;
 };
 
 
@@ -67,6 +73,7 @@ public:
     explicit Displays(xcb_connection_t *conn, QObject *parent = nullptr);
     ~Displays();
 
+    void init();
     const QList<Display::Output> outputs() const;
 
 signals:
@@ -74,10 +81,12 @@ signals:
 private:
     QList<Display::Mode> modes_for_output(const Display::Output& output);
     uint32_t crtc_for_output(const Display::Output& output);
+    bool connection_for_output(const Display::Output& output);
 
 private:
     xcb_connection_t *m_connection;
     xcb_screen_t *m_screen;
+    QList<Display> m_displays;
 };
 
 } // namespace la

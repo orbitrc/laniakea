@@ -6,17 +6,38 @@
 
 namespace la {
 
-Display::Display(const QString& output, const Display::Mode& mode,
+Display::Display(const Display::Output& output, const QList<Display::Mode>& modes,
         uint32_t crtc)
-    : m_output(output),
-      m_mode(mode)
+    : m_output(output)
 {
+    this->m_modes = modes;
     this->m_crtc = crtc;
+    this->m_connection = false;
+}
+
+bool Display::connection() const
+{
+    return this->m_connection;
+}
+
+void Display::setConnection(bool value)
+{
+    if (this->m_connection != value) {
+        this->m_connection = value;
+    }
 }
 
 //=====================
 // Display::Mode
 //=====================
+Display::Mode::Mode()
+{
+    this->m_id = 0;
+    this->m_width = 0;
+    this->m_height = 0;
+    this->m_refreshRate = "";
+}
+
 Display::Mode::Mode(uint32_t id, uint32_t width, uint32_t height,
         const QString& refreshRate)
 {
@@ -80,6 +101,20 @@ Displays::Displays(xcb_connection_t *conn, QObject *parent)
 Displays::~Displays()
 {
     xcb_disconnect(this->m_connection);
+}
+
+void Displays::init()
+{
+    auto outputs = this->outputs();
+
+    for (int i = 0; i < outputs.length(); ++i) {
+        auto modes = this->modes_for_output(outputs[i]);
+        auto crtc = this->crtc_for_output(outputs[i]);
+        Display display(outputs[i], modes, crtc);
+        display.setConnection(this->connection_for_output(outputs[i]));
+
+        this->m_displays.append(display);
+    }
 }
 
 const QList<Display::Output> Displays::outputs() const
@@ -180,6 +215,23 @@ uint32_t Displays::crtc_for_output(const Display::Output &output)
     free(output_reply);
 
     return crtc;
+}
+
+bool Displays::connection_for_output(const Display::Output &output)
+{
+    bool connection = false;
+
+    auto output_cookie = xcb_randr_get_output_info(
+        this->m_connection, output.id(), 0);
+    auto output_reply = xcb_randr_get_output_info_reply(
+        this->m_connection, output_cookie, NULL);
+
+    if (output_reply->connection == XCB_RANDR_CONNECTION_CONNECTED) {
+        connection = true;
+    }
+    free(output_reply);
+
+    return connection;
 }
 
 } // namespace la
