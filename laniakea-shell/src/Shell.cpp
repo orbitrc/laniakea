@@ -27,6 +27,9 @@
 // libudev
 #include <libudev.h>
 
+// xcb
+#include <xcb/xcb.h>
+
 namespace la {
 
 Shell::Shell(QObject *parent)
@@ -44,6 +47,7 @@ Shell::Shell(QObject *parent)
     this->m_preferences = new Preferences;
     this->m_networkManager = new NetworkManager;
     this->m_systemInformation = new SystemInformation;
+    this->m_displays = new Displays(xcb_connect(NULL, NULL), this);
 
     //=================
     // Set properties
@@ -81,6 +85,12 @@ Shell::Shell(QObject *parent)
     */
 
     // DEBUG
+    qDebug() << "Shell::Shell() - outputs:";
+    auto outputs = this->m_displays->outputs();
+    for (int i = 0; i < outputs.length(); ++i) {
+        qDebug() << "  id:" << outputs[i].id()
+            << ", name:" << outputs[i].name();
+    }
     QObject::connect(kWindowSystem, static_cast<void (KWindowSystem::*)(WId, NET::Properties, NET::Properties2)>(&KWindowSystem::windowChanged),
                      this, [](WId w_id, NET::Properties props, NET::Properties2 props2) {
         (void)w_id;

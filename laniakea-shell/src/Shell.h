@@ -10,6 +10,7 @@
 #include "Preferences.h"
 #include "NetworkManager.h"
 #include "SystemInformation.h"
+#include "Displays.h"
 
 namespace la {
 
@@ -42,6 +43,7 @@ private:
     Preferences *m_preferences;
     NetworkManager *m_networkManager;
     SystemInformation *m_systemInformation;
+    Displays *m_displays;
     struct udev *p_udev;
 public:
     explicit Shell(QObject *parent = nullptr);

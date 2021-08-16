@@ -8,7 +8,7 @@ CONFIG(debug, debug|release) {
 
 VERSION = 0.1.0
 
-LIBS += -ludev -ljson-c -lnm -lhttproto -llaniakea
+LIBS += -ludev -lxcb -lxcb-randr -ljson-c -lnm -lhttproto -llaniakea
 
 INCLUDEPATH += \
         /home/hardboiled65/dev/Blusher/include
@@ -27,6 +27,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+        src/Displays.cpp \
         src/NetworkManager.cpp \
         src/Preferences.cpp \
         src/RebusListener.cpp \
@@ -55,6 +56,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    src/Displays.h \
     src/Preferences.h \
     src/SystemInformation.h \
     src/global.h \
