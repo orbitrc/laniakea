@@ -2,6 +2,7 @@
 #define DISPLAYS_H
 
 #include <QObject>
+#include <QPoint>
 
 #include <xcb/xcb.h>
 
@@ -55,8 +56,13 @@ public:
 
     QList<Display::Mode> modes() const;
 
+    uint32_t crtc() const;
+
     bool connection() const;
     void setConnection(bool value);
+
+    QPoint position() const;
+    void setPosition(const QPoint& position);
 
 private:
     Display::Output m_output;
@@ -64,6 +70,7 @@ private:
     uint32_t m_crtc;
     QList<Display::Mode> m_modes;
     bool m_connection;
+    QPoint m_position;
 };
 
 
@@ -81,6 +88,11 @@ public:
 
     QList<Display> displays() const;
 
+    //=============================
+    // Displays modifying methods
+    //=============================
+    void setDisplayOutput(const Display& display, const Display::Mode& mode);
+
     const QList<Display::Output> outputs() const;
 
 signals:
@@ -89,6 +101,7 @@ private:
     QList<Display::Mode> modes_for_output(const Display::Output& output);
     uint32_t crtc_for_output(const Display::Output& output);
     bool connection_for_output(const Display::Output& output);
+    QPoint position_for_display(const Display& display);
 
 private:
     xcb_connection_t *m_connection;

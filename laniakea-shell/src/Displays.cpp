@@ -25,6 +25,11 @@ QList<Display::Mode> Display::modes() const
     return this->m_modes;
 }
 
+uint32_t Display::crtc() const
+{
+    return this->m_crtc;
+}
+
 bool Display::connection() const
 {
     return this->m_connection;
@@ -34,6 +39,18 @@ void Display::setConnection(bool value)
 {
     if (this->m_connection != value) {
         this->m_connection = value;
+    }
+}
+
+QPoint Display::position() const
+{
+    return this->m_position;
+}
+
+void Display::setPosition(const QPoint &position)
+{
+    if (this->m_position != position) {
+        this->m_position = position;
     }
 }
 
@@ -122,6 +139,7 @@ void Displays::init()
         auto crtc = this->crtc_for_output(outputs[i]);
         Display display(outputs[i], modes, crtc);
         display.setConnection(this->connection_for_output(outputs[i]));
+        display.setPosition(this->position_for_display(display));
 
         this->m_displays.append(display);
     }
@@ -130,6 +148,29 @@ void Displays::init()
 QList<Display> Displays::displays() const
 {
     return this->m_displays;
+}
+
+//==============================
+// Displays modifying methods
+//==============================
+void Displays::setDisplayOutput(const Display &display,
+        const Display::Mode &mode)
+{
+    xcb_randr_output_t outputs[1];
+    outputs[0] = display.output().id();
+
+    xcb_randr_set_crtc_config(
+        this->m_connection,
+        display.crtc(),
+        XCB_TIME_CURRENT_TIME,
+        XCB_TIME_CURRENT_TIME,
+        0,
+        0,
+        mode.id(),
+        XCB_RANDR_ROTATION_ROTATE_0,
+        1,
+        outputs
+    );
 }
 
 const QList<Display::Output> Displays::outputs() const
@@ -255,6 +296,23 @@ bool Displays::connection_for_output(const Display::Output &output)
     free(output_reply);
 
     return connection;
+}
+
+QPoint Displays::position_for_display(const Display &display)
+{
+    QPoint ret;
+
+    auto cookie = xcb_randr_get_crtc_info(
+        this->m_connection, display.crtc(), 0);
+    auto reply = xcb_randr_get_crtc_info_reply(
+        this->m_connection, cookie, NULL);
+
+    ret.setX(reply->x);
+    ret.setY(reply->y);
+
+    free(reply);
+
+    return ret;
 }
 
 } // namespace la
