@@ -117,7 +117,6 @@ public:
     void applyDisplaySettings(const Display& display,
             const Display::Mode &mode, const QPoint& position,
             Display::Rotation rotation);
-    void setDisplayMode(const Display& display, const Display::Mode& mode);
 
     const QList<Display::Output> outputs() const;
 

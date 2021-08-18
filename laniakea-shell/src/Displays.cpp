@@ -242,26 +242,6 @@ void Displays::applyDisplaySettings(const Display &display,
     target->setMode(mode);
 }
 
-void Displays::setDisplayMode(const Display& display,
-        const Display::Mode& mode)
-{
-    xcb_randr_output_t outputs[1];
-    outputs[0] = display.output().id();
-
-    xcb_randr_set_crtc_config(
-        this->m_connection,
-        display.crtc(),
-        XCB_TIME_CURRENT_TIME,
-        XCB_TIME_CURRENT_TIME,
-        display.position().x(),
-        display.position().y(),
-        mode.id(),
-        XCB_RANDR_ROTATION_ROTATE_0,
-        1,
-        outputs
-    );
-}
-
 const QList<Display::Output> Displays::outputs() const
 {
     auto screen_resources_cookie = xcb_randr_get_screen_resources(
