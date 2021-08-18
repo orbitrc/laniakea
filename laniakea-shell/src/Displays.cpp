@@ -153,7 +153,7 @@ QList<Display> Displays::displays() const
 //==============================
 // Displays modifying methods
 //==============================
-void Displays::setDisplayOutput(const Display &display,
+void Displays::setDisplayMode(const Display &display,
         const Display::Mode &mode)
 {
     xcb_randr_output_t outputs[1];
@@ -164,8 +164,8 @@ void Displays::setDisplayOutput(const Display &display,
         display.crtc(),
         XCB_TIME_CURRENT_TIME,
         XCB_TIME_CURRENT_TIME,
-        0,
-        0,
+        display.position().x(),
+        display.position().y(),
         mode.id(),
         XCB_RANDR_ROTATION_ROTATE_0,
         1,
