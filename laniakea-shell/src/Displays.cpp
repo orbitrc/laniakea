@@ -20,6 +20,25 @@ Display::Output Display::output() const
     return this->m_output;
 }
 
+void Display::setOutput(const Display::Output& output)
+{
+    if (this->m_output != output) {
+        this->m_output = output;
+    }
+}
+
+Display::Mode Display::mode() const
+{
+    return this->m_mode;
+}
+
+void Display::setMode(const Display::Mode& mode)
+{
+    if (this->m_mode != mode) {
+        this->m_mode = mode;
+    }
+}
+
 QList<Display::Mode> Display::modes() const
 {
     return this->m_modes;
@@ -94,6 +113,16 @@ QString Display::Mode::refreshRate() const
     return this->m_refreshRate;
 }
 
+bool Display::Mode::operator==(const Mode& other) const
+{
+    return this->m_id == other.id();
+}
+
+bool Display::Mode::operator!=(const Mode& other) const
+{
+    return this->m_id != other.id();
+}
+
 
 //=====================
 // Display::Output
@@ -112,6 +141,16 @@ uint32_t Display::Output::id() const
 QString Display::Output::name() const
 {
     return this->m_name;
+}
+
+bool Display::Output::operator==(const Output& other) const
+{
+    return this->m_id == other.id();
+}
+
+bool Display::Output::operator!=(const Output& other) const
+{
+    return this->m_id != other.id();
 }
 
 //===================
@@ -196,6 +235,11 @@ void Displays::applyDisplaySettings(const Display &display,
         1,
         outputs
     );
+
+    // Change internal display properties.
+    Display *target = this->_display_for_output(display.output());
+    target->setPosition(position);
+    target->setMode(mode);
 }
 
 void Displays::setDisplayMode(const Display& display,
@@ -356,6 +400,21 @@ QPoint Displays::position_for_display(const Display &display)
     ret.setY(reply->y);
 
     free(reply);
+
+    return ret;
+}
+
+Display* Displays::_display_for_output(const Display::Output& output)
+{
+    Display *ret = nullptr;
+
+    for (int i = 0; i < this->m_displays.length(); ++i) {
+        if (output.id() == this->m_displays[i].output().id() &&
+                output.name() == this->m_displays[i].output().name()) {
+            ret = &(this->m_displays[i]);
+            break;
+        }
+    }
 
     return ret;
 }

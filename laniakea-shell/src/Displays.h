@@ -22,6 +22,9 @@ public:
         uint32_t id() const;
         QString name() const;
 
+        bool operator==(const Output& other) const;
+        bool operator!=(const Output& other) const;
+
     private:
         uint32_t m_id;
         QString m_name;
@@ -41,6 +44,10 @@ public:
         uint32_t width() const;
         uint32_t height() const;
         QString refreshRate() const;
+
+        bool operator==(const Mode& other) const;
+        bool operator!=(const Mode& other) const;
+
     private:
         uint32_t m_id;
         uint32_t m_width;
@@ -65,6 +72,10 @@ public:
             uint32_t crtc);
 
     Display::Output output() const;
+    void setOutput(const Display::Output& output);
+
+    Display::Mode mode() const;
+    void setMode(const Display::Mode& mode);
 
     QList<Display::Mode> modes() const;
 
@@ -117,6 +128,8 @@ private:
     uint32_t crtc_for_output(const Display::Output& output);
     bool connection_for_output(const Display::Output& output);
     QPoint position_for_display(const Display& display);
+
+    Display* _display_for_output(const Display::Output& output);
 
 private:
     xcb_connection_t *m_connection;
