@@ -48,6 +48,18 @@ public:
         QString m_refreshRate;
     };
 
+    //====================
+    // Display::Rotation
+    //====================
+    enum class Rotation {
+        Normal,
+        Right,
+        Left,
+        Rotate180,
+        UpsideDown,
+        LeftAndRightReversed,
+    };
+
 public:
     Display(const Display::Output& output, const QList<Display::Mode>& modes,
             uint32_t crtc);
@@ -91,6 +103,9 @@ public:
     //=============================
     // Displays modifying methods
     //=============================
+    void applyDisplaySettings(const Display& display,
+            const Display::Mode &mode, const QPoint& position,
+            Display::Rotation rotation);
     void setDisplayMode(const Display& display, const Display::Mode& mode);
 
     const QList<Display::Output> outputs() const;

@@ -153,8 +153,53 @@ QList<Display> Displays::displays() const
 //==============================
 // Displays modifying methods
 //==============================
-void Displays::setDisplayMode(const Display &display,
-        const Display::Mode &mode)
+void Displays::applyDisplaySettings(const Display &display,
+        const Display::Mode &mode, const QPoint &position,
+        Display::Rotation rotation)
+{
+    xcb_randr_output_t outputs[1];
+    outputs[0] = display.output().id();
+
+    xcb_randr_rotation_t rotation_enum = XCB_RANDR_ROTATION_ROTATE_0;
+    switch (rotation) {
+    case Display::Rotation::Normal:
+        rotation_enum = XCB_RANDR_ROTATION_ROTATE_0;
+        break;
+    case Display::Rotation::Right:
+        rotation_enum = XCB_RANDR_ROTATION_ROTATE_90;
+        break;
+    case Display::Rotation::Left:
+        rotation_enum = XCB_RANDR_ROTATION_ROTATE_270;
+        break;
+    case Display::Rotation::Rotate180:
+        rotation_enum = XCB_RANDR_ROTATION_ROTATE_180;
+        break;
+    case Display::Rotation::UpsideDown:
+        rotation_enum = XCB_RANDR_ROTATION_REFLECT_Y;
+        break;
+    case Display::Rotation::LeftAndRightReversed:
+        rotation_enum = XCB_RANDR_ROTATION_REFLECT_X;
+        break;
+    default:
+        break;
+    }
+
+    xcb_randr_set_crtc_config(
+        this->m_connection,
+        display.crtc(),
+        XCB_TIME_CURRENT_TIME,
+        XCB_TIME_CURRENT_TIME,
+        position.x(),
+        position.y(),
+        mode.id(),
+        rotation_enum,
+        1,
+        outputs
+    );
+}
+
+void Displays::setDisplayMode(const Display& display,
+        const Display::Mode& mode)
 {
     xcb_randr_output_t outputs[1];
     outputs[0] = display.output().id();
