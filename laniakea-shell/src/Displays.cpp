@@ -197,7 +197,9 @@ void Displays::init()
         auto crtc = this->crtc_for_output(outputs[i]);
         Display display(outputs[i], modes, crtc);
         display.setConnection(this->connection_for_output(outputs[i]));
-        display.setPosition(this->position_for_display(display));
+        if (crtc != 0) {
+            display.setPosition(this->position_for_display(display));
+        }
 
         this->m_displays.append(display);
     }
@@ -286,7 +288,16 @@ const QList<Display::Output> Displays::outputs() const
             NULL
         );
         uint8_t *output_name = xcb_randr_get_output_info_name(output_reply);
-        Display::Output output(outputs[i], reinterpret_cast<char*>(output_name));
+        int output_name_length =
+            xcb_randr_get_output_info_name_length(output_reply);
+        QString output_name_str = QString::fromUtf8(
+            reinterpret_cast<char*>(output_name),
+            output_name_length
+        );
+        Display::Output output(
+            outputs[i],
+            output_name_str
+        );
         ret.append(output);
         free(output_reply);
     }
