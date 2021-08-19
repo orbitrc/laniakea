@@ -1,6 +1,7 @@
 #include "Displays.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 #include <xcb/randr.h>
 
@@ -151,6 +152,24 @@ bool Display::Output::operator==(const Output& other) const
 bool Display::Output::operator!=(const Output& other) const
 {
     return this->m_id != other.id();
+}
+
+//===================
+// Display::Edid
+//===================
+Display::Edid::Edid(uint8_t *data)
+{
+    this->m_data = data;
+}
+
+Display::Edid::~Edid()
+{
+    free(this->m_data);
+}
+
+const uint8_t* Display::Edid::data() const
+{
+    return this->m_data;
 }
 
 //===================
@@ -382,6 +401,70 @@ QPoint Displays::position_for_display(const Display &display)
     free(reply);
 
     return ret;
+}
+
+bool Displays::has_edid_for_otuput(const Display::Output &output)
+{
+    // Get atom EDID.
+    xcb_intern_atom_cookie_t intern_atom_cookie =
+        xcb_intern_atom(this->m_connection, 1, 4, "EDID");
+    xcb_intern_atom_reply_t *intern_atom_reply =
+        xcb_intern_atom_reply(this->m_connection, intern_atom_cookie, NULL);
+    xcb_atom_t atom_edid = intern_atom_reply->atom;
+    free(intern_atom_reply);
+
+    // Get output properties.
+    auto list_prop_cookie = xcb_randr_list_output_properties(
+        this->m_connection, output.id());
+    auto list_prop_reply = xcb_randr_list_output_properties_reply(
+        this->m_connection, list_prop_cookie, NULL);
+    xcb_atom_t *atoms =
+        xcb_randr_list_output_properties_atoms(list_prop_reply);
+    int atoms_length =
+        xcb_randr_list_output_properties_atoms_length(list_prop_reply);
+    QList<xcb_atom_t> atoms_list;
+    for (int i = 0; i < atoms_length; ++i) {
+        atoms_list.append(atoms[i]);
+    }
+    free(list_prop_reply);
+    if (!atoms_list.contains(atom_edid)) {
+        return false;
+    }
+
+    return true;
+}
+
+Display::Edid* Displays::edid_for_output(const Display::Output &output)
+{
+    // Get atom EDID.
+    xcb_intern_atom_cookie_t intern_atom_cookie =
+        xcb_intern_atom(this->m_connection, 1, 4, "EDID");
+    xcb_intern_atom_reply_t *intern_atom_reply =
+        xcb_intern_atom_reply(this->m_connection, intern_atom_cookie, NULL);
+    xcb_atom_t atom_edid = intern_atom_reply->atom;
+    free(intern_atom_reply);
+
+    auto property_cookie = xcb_randr_get_output_property(
+        this->m_connection,
+        output.id(),
+        atom_edid,
+        XCB_ATOM_ANY,
+        0,
+        512,
+        0,
+        0
+    );
+    auto property_reply = xcb_randr_get_output_property_reply(
+        this->m_connection, property_cookie, NULL);
+    uint8_t *data = xcb_randr_get_output_property_data(property_reply);
+    int data_length = xcb_randr_get_output_property_data_length(property_reply);
+    uint8_t *data_copy = (uint8_t*)malloc(128 * sizeof(uint8_t));
+    memcpy(data_copy, data, data_length);
+    free(property_reply);
+
+    Display::Edid *edid = new Display::Edid(data_copy);
+
+    return edid;
 }
 
 Display* Displays::_display_for_output(const Display::Output& output)

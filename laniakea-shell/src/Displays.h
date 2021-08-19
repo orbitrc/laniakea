@@ -67,6 +67,21 @@ public:
         LeftAndRightReversed,
     };
 
+    //===================
+    // Display::Edid
+    //===================
+    class Edid
+    {
+    public:
+        Edid(uint8_t *data);
+        ~Edid();
+
+        const uint8_t* data() const;
+
+    private:
+        uint8_t *m_data;
+    };
+
 public:
     Display(const Display::Output& output, const QList<Display::Mode>& modes,
             uint32_t crtc);
@@ -127,6 +142,8 @@ private:
     uint32_t crtc_for_output(const Display::Output& output);
     bool connection_for_output(const Display::Output& output);
     QPoint position_for_display(const Display& display);
+    bool has_edid_for_otuput(const Display::Output& output);
+    Display::Edid* edid_for_output(const Display::Output& output);
 
     Display* _display_for_output(const Display::Output& output);
 
