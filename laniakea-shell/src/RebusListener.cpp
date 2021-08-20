@@ -16,6 +16,9 @@
 #include <QApplication>
 #include <QVariant>
 #include <QLocalSocket>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
 // 3rd parties
 #include <json-c/json.h>
@@ -530,21 +533,17 @@ int16_t RebusListener::post_host()
     HttpResponse res = HttpResponse::parse(res_data);
 
     if (res.status == 201) {
-        json_object *val = json_tokener_parse(res.body + "\0");
-        if (json_object_get_type(val) == json_type_object) {
-            json_object *uuid = json_object_object_get(val, "uuid");
-            if (json_object_get_type(uuid) != json_type_string) {
-                // ERROR!
+        QJsonDocument jsonDocument = QJsonDocument::fromJson(res.body);
+        if (jsonDocument.isObject()) {
+            auto uuid = jsonDocument["uuid"];
+            if (!uuid.isString()) {
+                fprintf(stderr, "[RebusListener::post_host] uuid is not a string.");
             }
-            strcpy(this->id, json_object_get_string(uuid));
-//        }
-//        if (json_object_get_type(val) == json_type_string) {
-//            strcpy(this->id, json_object_get_string(val));
+            strcpy(this->id, uuid.toString().toUtf8());
         } else {
             fprintf(stderr, "[RebusListener::post_host] Response body is invalid. body: <%s>",
                 static_cast<const char*>(res.body));
         }
-        json_object_put(val);
 
         this->listen();
     } else {
